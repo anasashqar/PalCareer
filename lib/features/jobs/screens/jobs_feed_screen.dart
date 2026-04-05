@@ -8,11 +8,18 @@ import '../../../core/theme/app_colors.dart';
 import '../providers/jobs_provider.dart';
 import '../widgets/job_card.dart';
 
-class JobsFeedScreen extends ConsumerWidget {
+class JobsFeedScreen extends ConsumerStatefulWidget {
   const JobsFeedScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<JobsFeedScreen> createState() => _JobsFeedScreenState();
+}
+
+class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
+  int _selectedFilterIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
     final jobsAsyncValue = ref.watch(jobsProvider);
     final l10n = AppLocalizations.of(context)!;
 
@@ -29,7 +36,7 @@ class JobsFeedScreen extends ConsumerWidget {
               elevation: 0,
               backgroundColor: AppColors.surface.withOpacity(0.95),
               surfaceTintColor: Colors.transparent,
-              expandedHeight: 130,
+              expandedHeight: 140,
               actions: [
                 Container(
                   margin: const EdgeInsets.only(right: 16, left: 16),
@@ -50,13 +57,14 @@ class JobsFeedScreen extends ConsumerWidget {
                 titlePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 expandedTitleScale: 1.0,
                 title: Column(
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       l10n.jobsHomeTitle,
                       style: GoogleFonts.cairo(
-                        fontSize: 28,
+                        fontSize: 24,
                         fontWeight: FontWeight.w800,
                         color: AppColors.onSurface,
                         letterSpacing: -0.5,
@@ -67,7 +75,7 @@ class JobsFeedScreen extends ConsumerWidget {
                       data: (jobs) => Text(
                         '${jobs.length} ${l10n.availableJobs}',
                         style: GoogleFonts.cairo(
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: AppColors.primary,
                         ),
@@ -86,11 +94,23 @@ class JobsFeedScreen extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                 child: Row(
                   children: [
-                    _FilterChip(label: l10n.fieldIt, isSelected: true),
+                    _FilterChip(
+                      label: l10n.fieldIt, 
+                      isSelected: _selectedFilterIndex == 0,
+                      onTap: () => setState(() => _selectedFilterIndex = 0),
+                    ),
                     const SizedBox(width: 8),
-                    _FilterChip(label: l10n.remote, isSelected: false),
+                    _FilterChip(
+                      label: l10n.remote, 
+                      isSelected: _selectedFilterIndex == 1,
+                      onTap: () => setState(() => _selectedFilterIndex = 1),
+                    ),
                     const SizedBox(width: 8),
-                    _FilterChip(label: l10n.fullTime, isSelected: false),
+                    _FilterChip(
+                      label: l10n.fullTime, 
+                      isSelected: _selectedFilterIndex == 2,
+                      onTap: () => setState(() => _selectedFilterIndex = 2),
+                    ),
                   ],
                 ),
               ),
@@ -158,15 +178,18 @@ class JobsFeedScreen extends ConsumerWidget {
 class _FilterChip extends StatelessWidget {
   final String label;
   final bool isSelected;
+  final VoidCallback onTap;
 
-  const _FilterChip({required this.label, required this.isSelected});
+  const _FilterChip({required this.label, required this.isSelected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOutCubic,
-      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
       decoration: BoxDecoration(
         color: isSelected ? AppColors.primary : AppColors.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(24),
@@ -181,11 +204,11 @@ class _FilterChip extends StatelessWidget {
       child: Text(
         label,
         style: GoogleFonts.cairo(
-          fontSize: 14,
+          fontSize: 13,
           fontWeight: FontWeight.w700,
           color: isSelected ? AppColors.onPrimary : AppColors.onSurfaceVariant,
         ),
       ),
-    );
+    )); // Closed AnimatedContainer and GestureDetector properly
   }
 }

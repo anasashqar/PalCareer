@@ -7,22 +7,20 @@ import 'package:palcareer/l10n/generated/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 
 class MainScaffoldView extends StatelessWidget {
-  final Widget child;
+  final StatefulNavigationShell navigationShell;
 
-  const MainScaffoldView({super.key, required this.child});
+  const MainScaffoldView({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context) {
-    final location = GoRouterState.of(context).uri.toString();
-    int currentIndex = 0;
-    if (location.startsWith('/profile')) currentIndex = 1;
+    int currentIndex = navigationShell.currentIndex;
 
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.surface,
       extendBody: true, // Allows the body to scroll under the floating nav bar
-      body: child,
+      body: navigationShell,
       bottomNavigationBar: SafeArea(
         child: Container(
           margin: const EdgeInsets.only(left: 24, right: 24, bottom: 20),
@@ -41,7 +39,7 @@ class MainScaffoldView extends StatelessWidget {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
               child: Container(
-                height: 72,
+                height: 64,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
                   color: AppColors.surfaceContainerLowest.withOpacity(0.85),
@@ -59,14 +57,14 @@ class MainScaffoldView extends StatelessWidget {
                       activeIcon: Icons.work_rounded,
                       label: l10n.homeTab,
                       isSelected: currentIndex == 0,
-                      onTap: () => context.go('/home'),
+                      onTap: () => navigationShell.goBranch(0, initialLocation: currentIndex == 0),
                     ),
                     _NavBarItem(
                       icon: Icons.person_outline_rounded,
                       activeIcon: Icons.person_rounded,
                       label: l10n.profileTab,
                       isSelected: currentIndex == 1,
-                      onTap: () => context.go('/profile'),
+                      onTap: () => navigationShell.goBranch(1, initialLocation: currentIndex == 1),
                     ),
                   ],
                 ),
@@ -102,7 +100,7 @@ class _NavBarItem extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(24),
@@ -120,7 +118,7 @@ class _NavBarItem extends StatelessWidget {
                 isSelected ? activeIcon : icon,
                 key: ValueKey(isSelected),
                 color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
-                size: 26,
+                size: 24,
               ),
             ),
             // The expanding pill concept:
@@ -135,7 +133,7 @@ class _NavBarItem extends StatelessWidget {
                   child: Text(
                     label,
                     style: GoogleFonts.cairo(
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: AppColors.primary,
                     ),
