@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../shared/models/job_model.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
+import '../../../../shared/models/job_model.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../bookmarks/providers/bookmarks_provider.dart';
 
 class JobCardWidget extends StatefulWidget {
   final JobModel job;
@@ -55,8 +57,8 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
         builder: (context, child) => Transform.scale(
           scale: _scaleAnimation.value,
           child: Container(
-            padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.only(bottom: 12, left: 20, right: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            margin: const EdgeInsets.only(bottom: 10, left: 16, right: 16),
             decoration: BoxDecoration(
               color: AppColors.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(20),
@@ -82,24 +84,24 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
               children: [
                 // Company Logo Placeholder
                 Container(
-                  width: 52,
-                  height: 52,
+                  width: 44,
+                  height: 44,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: AppColors.primaryContainer.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
                   ),
                   child: Text(
                     companyInitial,
                     style: GoogleFonts.cairo(
-                      fontSize: 22,
+                      fontSize: 20,
                       fontWeight: FontWeight.w800,
                       color: AppColors.primary,
                     ),
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 12),
                 // Title and Company Info
                 Expanded(
                   child: Column(
@@ -108,15 +110,15 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                       Text(
                         widget.job.getLocalizedTitle(langCode),
                         style: GoogleFonts.cairo(
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.w800,
                           color: AppColors.onSurface,
-                          height: 1.3,
+                          height: 1.25,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       Text(
                         '${widget.job.company} • ${widget.job.getLocalizedLocation(langCode)}',
                         style: GoogleFonts.cairo(
@@ -130,23 +132,37 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                     ],
                   ),
                 ),
-                // Save/Bookmark Icon (Future Feature)
+                // Save/Bookmark Icon
                 const SizedBox(width: 8),
-                const Icon(
-                  Icons.bookmark_border_rounded,
-                  color: AppColors.outline,
-                  size: 22,
-                )
+                Consumer(
+                  builder: (context, ref, _) {
+                    final isSaved = ref.watch(bookmarksProvider).contains(widget.job.id);
+                    return GestureDetector(
+                      onTap: () {
+                        ref.read(bookmarksProvider.notifier).toggleBookmark(widget.job.id);
+                      },
+                      behavior: HitTestBehavior.opaque,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        child: Icon(
+                          isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                          color: isSaved ? AppColors.secondary : AppColors.outline,
+                          size: 24,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             // Footer: Tags & New Badge
             Row(
               children: [
                 Expanded(
                   child: Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
+                    spacing: 4,
+                    runSpacing: 4,
                     children: widget.job.getLocalizedTypes(langCode).map((t) => _MetadataChip(label: t)).toList(),
                   ),
                 ),

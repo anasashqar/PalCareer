@@ -6,6 +6,7 @@ import '../../features/jobs/screens/jobs_feed_screen.dart';
 import '../../features/jobs/screens/job_details_screen.dart';
 import '../../features/notifications/screens/notifications_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
+import '../../features/bookmarks/screens/bookmarks_screen.dart';
 import 'main_scaffold_view.dart';
 import '../../shared/models/job_model.dart';
 
@@ -34,6 +35,14 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/home',
               builder: (context, state) => const JobsFeedScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/bookmarks',
+              builder: (context, state) => const BookmarksScreen(),
             ),
           ],
         ),

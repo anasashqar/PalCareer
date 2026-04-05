@@ -19,56 +19,54 @@ class MainScaffoldView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.surface,
-      extendBody: true, // Allows the body to scroll under the floating nav bar
+      extendBody: false, // Standard, non-floating layout
       body: navigationShell,
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          margin: const EdgeInsets.only(left: 24, right: 24, bottom: 20),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.12),
-                blurRadius: 30,
-                offset: const Offset(0, 10),
-              ),
-            ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: AppColors.surfaceContainerLowest,
+          border: Border(
+            top: BorderSide(
+              color: AppColors.outlineVariant.withValues(alpha: 0.2),
+              width: 1.0,
+            ),
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(32),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-              child: Container(
-                height: 64,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceContainerLowest.withValues(alpha: 0.85),
-                  borderRadius: BorderRadius.circular(32),
-                  border: Border.all(
-                    color: AppColors.outlineVariant.withValues(alpha: 0.2),
-                    width: 1.5,
-                  ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Container(
+            height: 64,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _NavBarItem(
+                  icon: Icons.work_outline_rounded,
+                  activeIcon: Icons.work_rounded,
+                  label: l10n.homeTab,
+                  isSelected: currentIndex == 0,
+                  onTap: () => navigationShell.goBranch(0, initialLocation: currentIndex == 0),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _NavBarItem(
-                      icon: Icons.work_outline_rounded,
-                      activeIcon: Icons.work_rounded,
-                      label: l10n.homeTab,
-                      isSelected: currentIndex == 0,
-                      onTap: () => navigationShell.goBranch(0, initialLocation: currentIndex == 0),
-                    ),
-                    _NavBarItem(
-                      icon: Icons.person_outline_rounded,
-                      activeIcon: Icons.person_rounded,
-                      label: l10n.profileTab,
-                      isSelected: currentIndex == 1,
-                      onTap: () => navigationShell.goBranch(1, initialLocation: currentIndex == 1),
-                    ),
-                  ],
+                _NavBarItem(
+                  icon: Icons.bookmark_outline_rounded,
+                  activeIcon: Icons.bookmark_rounded,
+                  label: l10n.bookmarksTab,
+                  isSelected: currentIndex == 1,
+                  onTap: () => navigationShell.goBranch(1, initialLocation: currentIndex == 1),
                 ),
-              ),
+                _NavBarItem(
+                  icon: Icons.person_outline_rounded,
+                  activeIcon: Icons.person_rounded,
+                  label: l10n.profileTab,
+                  isSelected: currentIndex == 2,
+                  onTap: () => navigationShell.goBranch(2, initialLocation: currentIndex == 2),
+                ),
+              ],
             ),
           ),
         ),

@@ -1,0 +1,85 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:palcareer/l10n/generated/app_localizations.dart';
+
+import '../../../../core/theme/app_colors.dart';
+import '../../jobs/providers/jobs_provider.dart';
+import '../../jobs/widgets/job_card.dart';
+import '../providers/bookmarks_provider.dart';
+
+class BookmarksScreen extends ConsumerWidget {
+  const BookmarksScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final savedJobIds = ref.watch(bookmarksProvider);
+    final jobsAsyncValue = ref.watch(jobsProvider);
+
+    return Scaffold(
+      backgroundColor: AppColors.surface,
+      appBar: AppBar(
+        title: Text(
+          l10n.bookmarksTab,
+          style: GoogleFonts.cairo(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: AppColors.onSurface,
+          ),
+        ),
+        backgroundColor: AppColors.surface,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+      ),
+      body: jobsAsyncValue.when(
+        data: (groups) {
+          // Flatten all jobs and filter by saved status
+          final allJobs = groups.expand((g) => g.jobs).toList();
+          // Avoid duplicates if a job happens to appear in multiple groups
+          final Map<String, dynamic> uniqueJobs = {};
+          for (var j in allJobs) {
+            uniqueJobs[j.id] = j;
+          }
+          final savedJobs = uniqueJobs.values.where((j) => savedJobIds.contains(j.id)).toList();
+
+          if (savedJobs.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.bookmark_border_rounded, size: 80, color: AppColors.outlineVariant.withValues(alpha: 0.5)),
+                  const SizedBox(height: 16),
+                  Text(
+                    "لم تقم بحفظ أي وظيفة بعد",
+                    style: GoogleFonts.cairo(
+                      fontSize: 16,
+                      color: AppColors.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.only(top: 16, bottom: 32),
+            physics: const BouncingScrollPhysics(),
+            itemCount: savedJobs.length,
+            itemBuilder: (context, index) {
+              final job = savedJobs[index];
+              return JobCardWidget(
+                job: job,
+                onTap: () => context.push('/job-details', extra: job),
+              );
+            },
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+        error: (err, stack) => Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
+      ),
+    );
+  }
+}

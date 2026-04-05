@@ -343,6 +343,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile'**
   String get profileTab;
+
+  /// No description provided for @bookmarksTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get bookmarksTab;
 }
 
 class _AppLocalizationsDelegate

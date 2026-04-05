@@ -40,5 +40,6 @@
   "aboutApp": "عن التطبيق",
   "logoutBtn": "تسجيل الخروج",
   "homeTab": "الرئيسية",
-  "profileTab": "حسابي"
+  "profileTab": "حسابي",
+  "bookmarksTab": "محفوظاتي"
 }

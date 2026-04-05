@@ -169,7 +169,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                           }),
                           
                           if (isLastGroup)
-                            const SizedBox(height: 120), // Bottom padding for navbar
+                            const SizedBox(height: 16), // Light bottom padding
                         ],
                       );
                     },

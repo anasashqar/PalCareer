@@ -131,4 +131,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileTab => 'حسابي';
+
+  @override
+  String get bookmarksTab => 'محفوظاتي';
 }

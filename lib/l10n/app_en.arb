@@ -40,5 +40,6 @@
   "aboutApp": "About App",
   "logoutBtn": "Logout",
   "homeTab": "Home",
-  "profileTab": "Profile"
+  "profileTab": "Profile",
+  "bookmarksTab": "Saved"
 }
