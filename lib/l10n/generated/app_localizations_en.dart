@@ -105,6 +105,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationCenter => 'Notification Center';
 
   @override
+  String get notificationsTitle => 'Latest Alerts';
+
+  @override
+  String get notificationsSubtitle =>
+      'We found new jobs matching your career plan.';
+
+  @override
   String get yourProfile => 'Your Profile';
 
   @override

@@ -105,6 +105,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationCenter => 'مركز الإشعارات';
 
   @override
+  String get notificationsTitle => 'أحدث التنبيهات';
+
+  @override
+  String get notificationsSubtitle =>
+      'لقد وجدنا وظائف جديدة تتناسب مع خطتك المهنية.';
+
+  @override
   String get yourProfile => 'ملفك الشخصي';
 
   @override

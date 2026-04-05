@@ -290,6 +290,18 @@ abstract class AppLocalizations {
   /// **'Notification Center'**
   String get notificationCenter;
 
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest Alerts'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We found new jobs matching your career plan.'**
+  String get notificationsSubtitle;
+
   /// No description provided for @yourProfile.
   ///
   /// In en, this message translates to:

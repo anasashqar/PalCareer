@@ -1,6 +1,4 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
@@ -13,130 +11,291 @@ class NotificationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    // Mock data based directly on the provided user image
+    final List<Map<String, dynamic>> mockNotifications = [
+      {
+        'title': 'مطور أندرويد أول (Senior)',
+        'company': 'شركة جوال (Jawwal)',
+        'location': 'رام الله',
+        'time': 'منذ ساعة',
+        'isNew': true,
+        'isUnread': true,
+        'isExpired': false,
+        'type': null,
+      },
+      {
+        'title': 'مهندس برمجيات (Android SDK)',
+        'company': 'عسل للتكنولوجيا (Asal Technologies)',
+        'location': 'روابي',
+        'time': 'منذ 3 ساعات',
+        'isNew': false,
+        'isUnread': false,
+        'isExpired': false,
+        'type': 'دوام كامل',
+      },
+      {
+        'title': 'مطور تطبيقات جوال (Flutter)',
+        'company': 'شركة حضارة',
+        'location': 'غزة - عن بُعد',
+        'time': 'منذ 6 ساعات',
+        'isNew': false,
+        'isUnread': false,
+        'isExpired': false,
+        'type': null,
+      },
+      {
+        'title': 'مطور أندرويد متدرب',
+        'company': 'ستارت أب بال (StartUp Pal)',
+        'location': 'القدس',
+        'time': 'منذ يوم واحد',
+        'isNew': false,
+        'isUnread': false,
+        'isExpired': true, // This enables the expired disabled view
+        'type': null,
+      },
+    ];
+
     return Scaffold(
-      backgroundColor: AppColors.surface,
-      extendBodyBehindAppBar: true,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: ClipRRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: AppBar(
-              backgroundColor: AppColors.surface.withValues(alpha: 0.8),
-              elevation: 0,
-              centerTitle: true,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.onSurface),
-                onPressed: () => context.pop(),
-              ),
-              title: Text(
-                l10n.notificationCenter,
-                style: GoogleFonts.cairo(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.onSurface,
-                ),
-              ),
-            ),
-          ),
-        ),
+      backgroundColor: AppColors.surfaceContainerLowest, // matching the whitish background
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: AppColors.onSurface),
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + kToolbarHeight + 20,
-          left: 20,
-          right: 20,
-          bottom: 20,
-        ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         physics: const BouncingScrollPhysics(),
-        itemCount: 4, // Mock notifications count
-        itemBuilder: (context, index) {
-          final isUnread = index < 2; // First two are unread
-          return Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceContainerLowest,
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: isUnread 
-                  ? AppColors.primary.withValues(alpha: 0.5) 
-                  : AppColors.outlineVariant.withValues(alpha: 0.2)
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: isUnread 
-                    ? AppColors.primary.withValues(alpha: 0.08)
-                    : Colors.black.withValues(alpha: 0.02),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                )
-              ],
-            ),
-            child: Row(
+        children: [
+          // Screen Header
+          Padding(
+            padding: const EdgeInsets.only(bottom: 32),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: isUnread ? AppColors.primary.withValues(alpha: 0.1) : AppColors.surfaceContainerLow.withValues(alpha: 0.5),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.notifications_active_rounded,
-                    color: isUnread ? AppColors.primary : AppColors.onSurfaceVariant,
-                    size: 20,
+                Text(
+                  l10n.notificationsTitle,
+                  style: GoogleFonts.cairo(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.onSurface,
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
+                const SizedBox(height: 8),
+                Text(
+                  l10n.notificationsSubtitle,
+                  style: GoogleFonts.cairo(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.onSurfaceVariant,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Notifications List
+          ...mockNotifications.map((notif) => _NotificationCard(
+                title: notif['title'],
+                company: notif['company'],
+                location: notif['location'],
+                time: notif['time'],
+                type: notif['type'],
+                isNew: notif['isNew'],
+                isUnread: notif['isUnread'],
+                isExpired: notif['isExpired'],
+              )),
+              
+          const SizedBox(height: 100), // Bottom spacing for navigation bar
+        ],
+      ),
+    );
+  }
+}
+
+class _NotificationCard extends StatelessWidget {
+  final String title;
+  final String company;
+  final String location;
+  final String time;
+  final String? type;
+  final bool isNew;
+  final bool isUnread;
+  final bool isExpired;
+
+  const _NotificationCard({
+    required this.title,
+    required this.company,
+    required this.location,
+    required this.time,
+    this.type,
+    required this.isNew,
+    required this.isUnread,
+    required this.isExpired,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget cardContent = Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Unread Line Indicator (Green edge)
+              if (isUnread && !isExpired)
+                Container(
+                  width: 5,
+                  color: AppColors.secondary, // Greenish color in The Civic Curator
+                ),
+              
+              // Main content
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'وظيفة جديدة: مهندس برمجيات (React)',
-                        style: GoogleFonts.cairo(
-                          fontSize: 15,
-                          fontWeight: isUnread ? FontWeight.w800 : FontWeight.w600,
-                          color: AppColors.onSurface,
+                      // Text Column (Left/Center in RTL)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Title & New Badge Row
+                            Row(
+                              children: [
+                                if (isNew && !isExpired)
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 12),
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.secondary.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.newBadge,
+                                      style: GoogleFonts.cairo(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w800,
+                                        color: AppColors.secondary,
+                                        height: 1.2,
+                                      ),
+                                    ),
+                                  ),
+                                Expanded(
+                                  child: Text(
+                                    title,
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                      color: isExpired ? AppColors.onSurfaceVariant : AppColors.onSurface,
+                                      height: 1.3,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            
+                            // Company and Location
+                            Text(
+                              '$company • $location',
+                              style: GoogleFonts.cairo(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.onSurfaceVariant,
+                              ),
+                            ),
+                            
+                            const SizedBox(height: 12),
+                            
+                            // Bottom Metadata (Time and Type)
+                            Row(
+                              children: [
+                                const Icon(Icons.access_time_rounded, size: 14, color: AppColors.outline),
+                                const SizedBox(width: 4),
+                                Text(
+                                  time,
+                                  style: GoogleFonts.cairo(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.outline,
+                                  ),
+                                ),
+                                if (type != null) ...[
+                                  const SizedBox(width: 12),
+                                  const Icon(Icons.work_outline_rounded, size: 14, color: AppColors.outline),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    type!,
+                                    style: GoogleFonts.cairo(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.outline,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'تم إضافة وظيفة تناسب مهاراتك من قبل شركة TechPal. قدم الآن!',
-                        style: GoogleFonts.cairo(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.onSurfaceVariant,
+                      
+                      const SizedBox(width: 16),
+                      
+                      // Company Logo Box (Right)
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceContainerLow,
+                          borderRadius: BorderRadius.circular(14),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'منذ ساعتين',
-                        style: GoogleFonts.cairo(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary.withValues(alpha: 0.8),
+                        child: Icon(
+                          isExpired ? Icons.business_rounded : Icons.code_rounded, // Mock icons
+                          color: isExpired ? AppColors.outlineVariant : AppColors.primary,
+                          size: 26,
                         ),
                       ),
                     ],
                   ),
                 ),
-                if (isUnread)
-                  Container(
-                    margin: const EdgeInsets.only(top: 8),
-                    width: 12,
-                    height: 12,
-                    decoration: const BoxDecoration(
-                      color: AppColors.error,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-              ],
-            ),
-          );
-        },
+              ),
+            ],
+          ),
+        ),
       ),
+    );
+
+    // Apply Expired State Styling (Faded and unclickable)
+    if (isExpired) {
+      return Opacity(
+        opacity: 0.5,
+        child: cardContent,
+        // Notice no GestureDetector is wrapped here, so it is unclickable.
+      );
+    }
+
+    // Normal Clickable Card
+    return GestureDetector(
+      onTap: () {
+        // In the future: context.push('/job-details', extra: jobModel)
+      },
+      child: cardContent,
     );
   }
 }
