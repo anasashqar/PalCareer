@@ -180,29 +180,67 @@ class _StepOneWidget extends ConsumerWidget {
             color: AppColors.primary,
           ),
           const SizedBox(height: 24),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
+          GridView.count(
+            crossAxisCount: 3,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 0.85,
             children: [
-              _TagCard(
+              _FieldCard(
                 label: l10n.fieldIt,
-                isSelected: state.fieldOfStudy == 'it',
-                onTap: () => notifier.setFieldOfStudy('it'),
+                icon: Icons.computer_rounded,
+                isSelected: state.fieldsOfStudy.contains('it'),
+                onTap: () => notifier.toggleFieldOfStudy('it'),
               ),
-              _TagCard(
+              _FieldCard(
                 label: l10n.fieldEngineering,
-                isSelected: state.fieldOfStudy == 'engineering',
-                onTap: () => notifier.setFieldOfStudy('engineering'),
+                icon: Icons.architecture_rounded,
+                isSelected: state.fieldsOfStudy.contains('engineering'),
+                onTap: () => notifier.toggleFieldOfStudy('engineering'),
               ),
-              _TagCard(
+              _FieldCard(
                 label: l10n.fieldBusiness,
-                isSelected: state.fieldOfStudy == 'business',
-                onTap: () => notifier.setFieldOfStudy('business'),
+                icon: Icons.business_center_rounded,
+                isSelected: state.fieldsOfStudy.contains('business'),
+                onTap: () => notifier.toggleFieldOfStudy('business'),
               ),
-              _TagCard(
+              _FieldCard(
                 label: l10n.fieldAccounting,
-                isSelected: state.fieldOfStudy == 'accounting',
-                onTap: () => notifier.setFieldOfStudy('accounting'),
+                icon: Icons.account_balance_wallet_rounded,
+                isSelected: state.fieldsOfStudy.contains('accounting'),
+                onTap: () => notifier.toggleFieldOfStudy('accounting'),
+              ),
+              _FieldCard(
+                label: l10n.fieldEducation,
+                icon: Icons.school_rounded,
+                isSelected: state.fieldsOfStudy.contains('education'),
+                onTap: () => notifier.toggleFieldOfStudy('education'),
+              ),
+              _FieldCard(
+                label: l10n.fieldMarketing,
+                icon: Icons.campaign_rounded,
+                isSelected: state.fieldsOfStudy.contains('marketing'),
+                onTap: () => notifier.toggleFieldOfStudy('marketing'),
+              ),
+              _FieldCard(
+                label: l10n.fieldHealthcare,
+                icon: Icons.health_and_safety_rounded,
+                isSelected: state.fieldsOfStudy.contains('healthcare'),
+                onTap: () => notifier.toggleFieldOfStudy('healthcare'),
+              ),
+              _FieldCard(
+                label: l10n.fieldLaw,
+                icon: Icons.gavel_rounded,
+                isSelected: state.fieldsOfStudy.contains('law'),
+                onTap: () => notifier.toggleFieldOfStudy('law'),
+              ),
+              _FieldCard(
+                label: l10n.fieldOther,
+                icon: Icons.more_horiz_rounded,
+                isSelected: state.fieldsOfStudy.contains('other'),
+                onTap: () => notifier.toggleFieldOfStudy('other'),
               ),
             ],
           ),
@@ -461,6 +499,81 @@ class _TagCard extends StatelessWidget {
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
             color: isSelected ? AppColors.onPrimary : AppColors.onSurfaceVariant,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FieldCard extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _FieldCard({
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary : AppColors.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.outlineVariant.withValues(alpha: 0.3),
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: [
+            if (!isSelected)
+              BoxShadow(
+                color: AppColors.onSurface.withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              )
+            else
+               BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              )
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+             AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                isSelected ? Icons.check_circle_rounded : icon,
+                key: ValueKey<bool>(isSelected),
+                size: 28,
+                color: isSelected ? AppColors.onPrimary : AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.cairo(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                color: isSelected ? AppColors.onPrimary : AppColors.onSurfaceVariant,
+                height: 1.3,
+              ),
+            ),
+          ],
         ),
       ),
     );

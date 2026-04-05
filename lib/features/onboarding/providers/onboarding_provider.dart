@@ -2,26 +2,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class OnboardingState {
   final String? academicLevel;
-  final String? fieldOfStudy;
+  final List<String> fieldsOfStudy;
   final List<String> preferredWorkTypes;
 
   OnboardingState({
     this.academicLevel,
-    this.fieldOfStudy,
+    this.fieldsOfStudy = const [],
     this.preferredWorkTypes = const [],
   });
 
-  bool get isStep1Complete => academicLevel != null && fieldOfStudy != null;
+  bool get isStep1Complete => academicLevel != null && fieldsOfStudy.isNotEmpty;
   bool get isStep2Complete => preferredWorkTypes.isNotEmpty;
 
   OnboardingState copyWith({
     String? academicLevel,
-    String? fieldOfStudy,
+    List<String>? fieldsOfStudy,
     List<String>? preferredWorkTypes,
   }) {
     return OnboardingState(
       academicLevel: academicLevel ?? this.academicLevel,
-      fieldOfStudy: fieldOfStudy ?? this.fieldOfStudy,
+      fieldsOfStudy: fieldsOfStudy ?? this.fieldsOfStudy,
       preferredWorkTypes: preferredWorkTypes ?? this.preferredWorkTypes,
     );
   }
@@ -34,8 +34,14 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     state = state.copyWith(academicLevel: level);
   }
 
-  void setFieldOfStudy(String field) {
-    state = state.copyWith(fieldOfStudy: field);
+  void toggleFieldOfStudy(String field) {
+    final current = List<String>.from(state.fieldsOfStudy);
+    if (current.contains(field)) {
+      current.remove(field);
+    } else {
+      current.add(field);
+    }
+    state = state.copyWith(fieldsOfStudy: current);
   }
 
   void toggleWorkType(String type) {

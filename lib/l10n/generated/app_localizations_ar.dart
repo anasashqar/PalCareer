@@ -33,13 +33,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fieldIt => 'تقنية المعلومات';
 
   @override
-  String get fieldEngineering => 'المشروعات والهندسة';
+  String get fieldEngineering => 'هندسة';
 
   @override
-  String get fieldBusiness => 'إدارة الأعمال';
+  String get fieldBusiness => 'إدارة أعمال';
 
   @override
-  String get fieldAccounting => 'المحاسبة والمالية';
+  String get fieldAccounting => 'محاسبة';
+
+  @override
+  String get fieldEducation => 'تعليم';
+
+  @override
+  String get fieldMarketing => 'تسويق';
+
+  @override
+  String get fieldHealthcare => 'طب وصحة';
+
+  @override
+  String get fieldLaw => 'حقوق';
+
+  @override
+  String get fieldOther => 'أخرى';
 
   @override
   String get onboardingWorkType => 'نوع الدوام المفضل';

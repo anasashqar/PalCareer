@@ -9,6 +9,7 @@ class JobModel {
   final Map<String, String> location;
   final List<String> types; // e.g. full-time, remote
   final DateTime postedAt;
+  final Map<String, String>? description;
   final Map<String, List<String>> requirements;
   final Map<String, List<String>> responsibilities;
   final String applyUrl;
@@ -23,6 +24,7 @@ class JobModel {
     required this.location,
     required this.types,
     required this.postedAt,
+    this.description,
     required this.requirements,
     required this.responsibilities,
     required this.applyUrl,
@@ -43,6 +45,11 @@ class JobModel {
     return location[languageCode] ?? location['en'] ?? 'Unknown Location';
   }
 
+  String getLocalizedDescription(String languageCode) {
+    if (description == null) return '';
+    return description![languageCode] ?? description!['en'] ?? '';
+  }
+
   List<String> getLocalizedRequirements(String languageCode) {
     return requirements[languageCode] ?? requirements['en'] ?? [];
   }
@@ -58,6 +65,7 @@ class JobModel {
     Map<String, String>? location,
     List<String>? types,
     DateTime? postedAt,
+    Map<String, String>? description,
     Map<String, List<String>>? requirements,
     Map<String, List<String>>? responsibilities,
     String? applyUrl,
@@ -70,6 +78,7 @@ class JobModel {
       location: location ?? this.location,
       types: types ?? this.types,
       postedAt: postedAt ?? this.postedAt,
+      description: description ?? this.description,
       requirements: requirements ?? this.requirements,
       responsibilities: responsibilities ?? this.responsibilities,
       applyUrl: applyUrl ?? this.applyUrl,
@@ -85,6 +94,7 @@ class JobModel {
       location: Map<String, String>.from(map['location'] ?? {}),
       types: List<String>.from(map['types'] ?? []),
       postedAt: (map['postedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      description: map['description'] != null ? Map<String, String>.from(map['description']) : null,
       requirements: (map['requirements'] as Map<String, dynamic>?)?.map(
             (key, value) => MapEntry(key, List<String>.from(value)),
           ) ?? {},
@@ -102,6 +112,7 @@ class JobModel {
       'location': location,
       'types': types,
       'postedAt': Timestamp.fromDate(postedAt),
+      'description': description,
       'requirements': requirements,
       'responsibilities': responsibilities,
       'applyUrl': applyUrl,

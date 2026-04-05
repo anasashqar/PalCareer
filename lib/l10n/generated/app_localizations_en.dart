@@ -39,7 +39,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fieldBusiness => 'Business';
 
   @override
-  String get fieldAccounting => 'Accounting & Finance';
+  String get fieldAccounting => 'Accounting';
+
+  @override
+  String get fieldEducation => 'Education';
+
+  @override
+  String get fieldMarketing => 'Marketing';
+
+  @override
+  String get fieldHealthcare => 'Healthcare';
+
+  @override
+  String get fieldLaw => 'Law';
+
+  @override
+  String get fieldOther => 'Other';
 
   @override
   String get onboardingWorkType => 'Preferred Work Type';

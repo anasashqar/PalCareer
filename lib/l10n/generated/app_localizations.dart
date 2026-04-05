@@ -161,8 +161,38 @@ abstract class AppLocalizations {
   /// No description provided for @fieldAccounting.
   ///
   /// In en, this message translates to:
-  /// **'Accounting & Finance'**
+  /// **'Accounting'**
   String get fieldAccounting;
+
+  /// No description provided for @fieldEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get fieldEducation;
+
+  /// No description provided for @fieldMarketing.
+  ///
+  /// In en, this message translates to:
+  /// **'Marketing'**
+  String get fieldMarketing;
+
+  /// No description provided for @fieldHealthcare.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthcare'**
+  String get fieldHealthcare;
+
+  /// No description provided for @fieldLaw.
+  ///
+  /// In en, this message translates to:
+  /// **'Law'**
+  String get fieldLaw;
+
+  /// No description provided for @fieldOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get fieldOther;
 
   /// No description provided for @onboardingWorkType.
   ///
