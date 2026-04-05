@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/models/job_model.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
+
+import '../../../../core/theme/app_colors.dart';
 
 class JobCardWidget extends StatefulWidget {
   final JobModel job;
@@ -21,8 +24,8 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
     super.initState();
     _animController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 150));
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeInOut),
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
+      CurvedAnimation(parent: _animController, curve: Curves.easeInOutCubic),
     );
   }
 
@@ -34,7 +37,6 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
     final langCode = Localizations.localeOf(context).languageCode;
 
@@ -50,20 +52,21 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
         builder: (context, child) => Transform.scale(
           scale: _scaleAnimation.value,
           child: Container(
-            padding: const EdgeInsets.all(20),
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: const EdgeInsets.all(24),
+            margin: const EdgeInsets.only(bottom: 16, left: 24, right: 24),
             decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerLow,
-              borderRadius: BorderRadius.circular(24),
+              color: AppColors.surfaceContainerLowest,
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: AppColors.outlineVariant.withOpacity(0.3), width: 1.5),
               boxShadow: _animController.isAnimating
-                  ? [
+                  ? []
+                  : [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.08),
-                        blurRadius: 30,
+                        color: AppColors.onSurface.withOpacity(0.04),
+                        blurRadius: 24,
                         offset: const Offset(0, 10),
                       )
-                    ]
-                  : null,
+                    ],
             ),
             child: child,
           ),
@@ -78,62 +81,94 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                 Expanded(
                   child: Text(
                     widget.job.getLocalizedTitle(langCode),
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: GoogleFonts.cairo(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.primary,
+                      height: 1.3,
+                    ),
                   ),
                 ),
+                const SizedBox(width: 12),
                 if (widget.job.isPerfectMatch)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     decoration: BoxDecoration(
-                      color: colorScheme.tertiaryContainer,
+                      gradient: const LinearGradient(colors: [Color(0xFFE5A93C), Color(0xFFD4AF37)]),
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                         BoxShadow(color: const Color(0xFFD4AF37).withOpacity(0.4), blurRadius: 8, offset: const Offset(0, 4))
+                      ]
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.star, size: 14, color: colorScheme.onTertiaryContainer),
+                        const Icon(Icons.star_rounded, size: 16, color: Colors.white),
                         const SizedBox(width: 4),
                         Text(
                           l10n.perfectMatchBadge,
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: colorScheme.onTertiaryContainer,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: GoogleFonts.cairo(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
                   )
                 else if (widget.job.isNew)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     decoration: BoxDecoration(
-                      color: colorScheme.secondaryContainer,
+                      color: AppColors.secondary,
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                         BoxShadow(color: AppColors.secondary.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))
+                      ]
                     ),
                     child: Text(
                       l10n.newBadge,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: colorScheme.onSecondaryContainer,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: GoogleFonts.cairo(
+                        color: AppColors.onSecondary,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
               ],
             ),
-            const SizedBox(height: 8),
-            Text(
-              widget.job.company,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
             const SizedBox(height: 16),
+            Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryContainer.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.business_rounded, size: 20, color: AppColors.primary),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    widget.job.company,
+                    style: GoogleFonts.cairo(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          color: AppColors.onSurfaceVariant,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
-                _MetadataChip(icon: Icons.location_on_outlined, label: widget.job.getLocalizedLocation(langCode)),
-                ...widget.job.types.map((t) => _MetadataChip(icon: Icons.work_outline, label: t)), // In real app, localize job types
+                _MetadataChip(icon: Icons.location_on_rounded, label: widget.job.getLocalizedLocation(langCode)),
+                ...widget.job.types.map((t) => _MetadataChip(icon: Icons.access_time_rounded, label: t)), // In real app, localize job types
               ],
             ),
           ],
@@ -152,19 +187,24 @@ class _MetadataChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.outlineVariant.withOpacity(0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
-          const SizedBox(width: 6),
+          Icon(icon, size: 16, color: AppColors.secondary),
+          const SizedBox(width: 8),
           Text(
             label,
-            style: Theme.of(context).textTheme.bodySmall,
+            style: GoogleFonts.cairo(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: AppColors.onSurfaceVariant,
+            ),
           ),
         ],
       ),
