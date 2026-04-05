@@ -97,7 +97,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                 height: 300,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.secondaryContainer.withOpacity(0.05),
+                  color: AppColors.secondaryContainer.withValues(alpha: 0.05),
                 ),
               ),
             ),
@@ -109,7 +109,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                 height: 250,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.tertiary.withOpacity(0.05),
+                  color: AppColors.tertiary.withValues(alpha: 0.05),
                 ),
               ),
             ),
@@ -128,15 +128,15 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                           width: 100,
                           height: 100,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.08),
+                            color: Colors.white.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(32),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               width: 1.5,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.onSurface.withOpacity(0.15),
+                                color: AppColors.onSurface.withValues(alpha: 0.15),
                                 blurRadius: 40,
                                 spreadRadius: 5,
                                 offset: const Offset(0, 15),
@@ -152,7 +152,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.tertiary.withOpacity(0.5),
+                                    color: AppColors.tertiary.withValues(alpha: 0.5),
                                     blurRadius: 20,
                                     offset: const Offset(0, 8),
                                   ),
@@ -193,7 +193,7 @@ class _SplashViewState extends State<SplashView> with SingleTickerProviderStateM
                           style: GoogleFonts.cairo(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
-                            color: AppColors.onPrimary.withOpacity(0.9),
+                            color: AppColors.onPrimary.withValues(alpha: 0.9),
                             letterSpacing: 0.5,
                           ),
                         ),

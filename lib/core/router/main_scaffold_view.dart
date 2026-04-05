@@ -28,7 +28,7 @@ class MainScaffoldView extends StatelessWidget {
             borderRadius: BorderRadius.circular(32),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(0.12),
+                color: AppColors.primary.withValues(alpha: 0.12),
                 blurRadius: 30,
                 offset: const Offset(0, 10),
               ),
@@ -42,10 +42,10 @@ class MainScaffoldView extends StatelessWidget {
                 height: 64,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceContainerLowest.withOpacity(0.85),
+                  color: AppColors.surfaceContainerLowest.withValues(alpha: 0.85),
                   borderRadius: BorderRadius.circular(32),
                   border: Border.all(
-                    color: AppColors.outlineVariant.withOpacity(0.2),
+                    color: AppColors.outlineVariant.withValues(alpha: 0.2),
                     width: 1.5,
                   ),
                 ),
@@ -102,7 +102,7 @@ class _NavBarItem extends StatelessWidget {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(

@@ -101,7 +101,7 @@ class _LoginViewState extends ConsumerState<LoginView> with SingleTickerProvider
                 height: 250,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.secondary.withOpacity(0.04),
+                  color: AppColors.secondary.withValues(alpha: 0.04),
                 ),
               ),
             ),
@@ -128,7 +128,7 @@ class _LoginViewState extends ConsumerState<LoginView> with SingleTickerProvider
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withOpacity(0.3),
+                                color: AppColors.primary.withValues(alpha: 0.3),
                                 blurRadius: 20,
                                 offset: const Offset(0, 8),
                               )
@@ -207,7 +207,7 @@ class _LoginViewState extends ConsumerState<LoginView> with SingleTickerProvider
                           borderRadius: BorderRadius.circular(24.0),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.onSurface.withOpacity(0.08),
+                              color: AppColors.onSurface.withValues(alpha: 0.08),
                               blurRadius: 30,
                               spreadRadius: -5,
                               offset: const Offset(0, 15),
@@ -228,7 +228,7 @@ class _LoginViewState extends ConsumerState<LoginView> with SingleTickerProvider
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(24.0),
                               side: BorderSide(
-                                color: AppColors.outlineVariant.withOpacity(0.3),
+                                color: AppColors.outlineVariant.withValues(alpha: 0.3),
                                 width: 1,
                               ),
                             ),
@@ -273,7 +273,7 @@ class _LoginViewState extends ConsumerState<LoginView> with SingleTickerProvider
                         textAlign: TextAlign.center,
                         style: GoogleFonts.cairo(
                           fontSize: 14,
-                          color: AppColors.onSurfaceVariant.withOpacity(0.8),
+                          color: AppColors.onSurfaceVariant.withValues(alpha: 0.8),
                         ),
                       ),
                     ),

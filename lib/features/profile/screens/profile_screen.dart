@@ -26,16 +26,16 @@ class ProfileScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: AppColors.surfaceContainerLowest,
                 borderRadius: BorderRadius.circular(32),
-                border: Border.all(color: AppColors.outlineVariant.withOpacity(0.3), width: 1.5),
+                border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3), width: 1.5),
                 boxShadow: [
-                  BoxShadow(color: AppColors.primary.withOpacity(0.04), blurRadius: 24, offset: const Offset(0, 10))
+                  BoxShadow(color: AppColors.primary.withValues(alpha: 0.04), blurRadius: 24, offset: const Offset(0, 10))
                 ]
               ),
               child: Row(
                 children: [
                   Container(
-                    width: 64,
-                    height: 64,
+                    width: 56,
+                    height: 56,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [AppColors.primary, AppColors.secondary],
@@ -44,14 +44,14 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
-                         BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 4))
+                         BoxShadow(color: AppColors.primary.withValues(alpha: 0.4), blurRadius: 10, offset: const Offset(0, 4))
                       ]
                     ),
                     alignment: Alignment.center,
                     child: Text(
                       'م', // Initial for Arabic name
                       style: GoogleFonts.cairo(
-                        fontSize: 28,
+                        fontSize: 24,
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
                       ),
@@ -65,7 +65,7 @@ class ProfileScreen extends ConsumerWidget {
                         Text(
                           'مؤمن الفلسطيني', // Mock Arabic User Name
                           style: GoogleFonts.cairo(
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.w800,
                             color: AppColors.onSurface,
                           ),
@@ -74,7 +74,7 @@ class ProfileScreen extends ConsumerWidget {
                         Text(
                           'طالب هندسة حاسوب', // Mock bio
                           style: GoogleFonts.cairo(
-                            fontSize: 15,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: AppColors.onSurfaceVariant,
                           ),
@@ -90,7 +90,7 @@ class ProfileScreen extends ConsumerWidget {
             Text(
               l10n.settingsTitle,
               style: GoogleFonts.cairo(
-                fontSize: 22,
+                fontSize: 18,
                 fontWeight: FontWeight.w800,
                 color: AppColors.onSurface,
               ),
@@ -131,9 +131,9 @@ class ProfileScreen extends ConsumerWidget {
             TextButton(
               onPressed: () => context.go('/login'),
               style: TextButton.styleFrom(
-                backgroundColor: AppColors.errorContainer.withOpacity(0.5),
+                backgroundColor: AppColors.errorContainer.withValues(alpha: 0.5),
                 foregroundColor: AppColors.error,
-                padding: const EdgeInsets.symmetric(vertical: 18),
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
@@ -183,9 +183,9 @@ class _SettingsItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.outlineVariant.withOpacity(0.2)),
+        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
         boxShadow: [
-           BoxShadow(color: AppColors.onSurface.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))
+           BoxShadow(color: AppColors.onSurface.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4))
         ]
       ),
       child: Material(
@@ -198,19 +198,19 @@ class _SettingsItem extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.15),
+                    color: iconColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(icon, color: iconColor, size: 22),
+                  child: Icon(icon, color: iconColor, size: 20),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     title,
                     style: GoogleFonts.cairo(
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: AppColors.onSurface,
                     ),

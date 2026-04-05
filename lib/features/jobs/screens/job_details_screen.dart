@@ -33,10 +33,10 @@ class JobDetailsScreen extends StatelessWidget {
           padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 4),
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.surface.withOpacity(0.8),
+              color: AppColors.surface.withValues(alpha: 0.8),
               shape: BoxShape.circle,
               boxShadow: [
-                 BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))
+                 BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))
               ]
             ),
             child: IconButton(
@@ -54,14 +54,14 @@ class JobDetailsScreen extends StatelessWidget {
             children: [
               // Header Section
               Container(
-                padding: const EdgeInsets.all(28),
+                padding: const EdgeInsets.all(24),
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                   color: AppColors.surfaceContainerLowest,
                   borderRadius: BorderRadius.circular(32),
-                  border: Border.all(color: AppColors.outlineVariant.withOpacity(0.3), width: 1.5),
+                  border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3), width: 1.5),
                   boxShadow: [
-                    BoxShadow(color: AppColors.primary.withOpacity(0.03), blurRadius: 20, offset: const Offset(0, 8))
+                    BoxShadow(color: AppColors.primary.withValues(alpha: 0.03), blurRadius: 20, offset: const Offset(0, 8))
                   ],
                 ),
                 child: Column(
@@ -70,7 +70,7 @@ class JobDetailsScreen extends StatelessWidget {
                     Text(
                       job.getLocalizedTitle(langCode),
                       style: GoogleFonts.cairo(
-                        fontSize: 26,
+                        fontSize: 22,
                         fontWeight: FontWeight.w800,
                         color: AppColors.primary,
                         height: 1.2,
@@ -80,19 +80,19 @@ class JobDetailsScreen extends StatelessWidget {
                     Row(
                       children: [
                         Container(
-                          width: 36,
-                          height: 36,
+                          width: 32,
+                          height: 32,
                           decoration: BoxDecoration(
-                            color: AppColors.primaryContainer.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(10),
+                            color: AppColors.primaryContainer.withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Icon(Icons.business_rounded, size: 18, color: AppColors.primary),
+                          child: const Icon(Icons.business_rounded, size: 16, color: AppColors.primary),
                         ),
                         const SizedBox(width: 12),
                         Text(
                           job.company,
                           style: GoogleFonts.cairo(
-                            fontSize: 18,
+                            fontSize: 15,
                             fontWeight: FontWeight.w700,
                             color: AppColors.onSurfaceVariant,
                           ),
@@ -119,7 +119,7 @@ class JobDetailsScreen extends StatelessWidget {
                 child: Text(
                   l10n.jobRequirements,
                   style: GoogleFonts.cairo(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.w800,
                     color: AppColors.onSurface,
                   ),
@@ -135,7 +135,7 @@ class JobDetailsScreen extends StatelessWidget {
                           margin: const EdgeInsets.only(top: 4),
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: AppColors.secondary.withOpacity(0.15),
+                            color: AppColors.secondary.withValues(alpha: 0.15),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(Icons.check_rounded, size: 14, color: AppColors.secondary),
@@ -145,7 +145,7 @@ class JobDetailsScreen extends StatelessWidget {
                           child: Text(
                             req,
                             style: GoogleFonts.cairo(
-                              fontSize: 15,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: AppColors.onSurfaceVariant,
                               height: 1.6,
@@ -164,7 +164,7 @@ class JobDetailsScreen extends StatelessWidget {
                 child: Text(
                   l10n.jobResponsibilities,
                   style: GoogleFonts.cairo(
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.w800,
                     color: AppColors.onSurface,
                   ),
@@ -180,7 +180,7 @@ class JobDetailsScreen extends StatelessWidget {
                           margin: const EdgeInsets.only(top: 4),
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: AppColors.primaryContainer.withOpacity(0.3),
+                            color: AppColors.primaryContainer.withValues(alpha: 0.3),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(Icons.keyboard_arrow_left_rounded, size: 14, color: AppColors.primary),
@@ -190,7 +190,7 @@ class JobDetailsScreen extends StatelessWidget {
                           child: Text(
                             res,
                             style: GoogleFonts.cairo(
-                              fontSize: 15,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: AppColors.onSurfaceVariant,
                               height: 1.6,
@@ -213,7 +213,7 @@ class JobDetailsScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.3),
+                    color: AppColors.primary.withValues(alpha: 0.3),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   )
@@ -224,7 +224,7 @@ class JobDetailsScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -235,12 +235,12 @@ class JobDetailsScreen extends StatelessWidget {
                     Text(
                       l10n.applyNowBtn,
                       style: GoogleFonts.cairo(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(Icons.send_rounded, size: 20),
+                    const Icon(Icons.send_rounded, size: 18),
                   ],
                 ),
               ),
@@ -261,21 +261,21 @@ class _MetaPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: AppColors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.outlineVariant.withOpacity(0.2)),
+        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: AppColors.primary),
+          Icon(icon, size: 14, color: AppColors.primary),
           const SizedBox(width: 6),
           Text(
             label,
             style: GoogleFonts.cairo(
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: FontWeight.w700,
               color: AppColors.onSurfaceVariant,
             ),

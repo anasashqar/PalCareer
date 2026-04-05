@@ -22,7 +22,7 @@ class NotificationsScreen extends StatelessWidget {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: AppBar(
-              backgroundColor: AppColors.surface.withOpacity(0.8),
+              backgroundColor: AppColors.surface.withValues(alpha: 0.8),
               elevation: 0,
               centerTitle: true,
               leading: IconButton(
@@ -32,7 +32,7 @@ class NotificationsScreen extends StatelessWidget {
               title: Text(
                 l10n.notificationCenter,
                 style: GoogleFonts.cairo(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: AppColors.onSurface,
                 ),
@@ -54,20 +54,20 @@ class NotificationsScreen extends StatelessWidget {
           final isUnread = index < 2; // First two are unread
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: AppColors.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: isUnread 
-                  ? AppColors.primary.withOpacity(0.5) 
-                  : AppColors.outlineVariant.withOpacity(0.2)
+                  ? AppColors.primary.withValues(alpha: 0.5) 
+                  : AppColors.outlineVariant.withValues(alpha: 0.2)
               ),
               boxShadow: [
                 BoxShadow(
                   color: isUnread 
-                    ? AppColors.primary.withOpacity(0.08)
-                    : Colors.black.withOpacity(0.02),
+                    ? AppColors.primary.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.02),
                   blurRadius: 16,
                   offset: const Offset(0, 4),
                 )
@@ -77,15 +77,15 @@ class NotificationsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: isUnread ? AppColors.primary.withOpacity(0.1) : AppColors.surfaceContainerLow.withOpacity(0.5),
+                    color: isUnread ? AppColors.primary.withValues(alpha: 0.1) : AppColors.surfaceContainerLow.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     Icons.notifications_active_rounded,
                     color: isUnread ? AppColors.primary : AppColors.onSurfaceVariant,
-                    size: 24,
+                    size: 20,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -96,7 +96,7 @@ class NotificationsScreen extends StatelessWidget {
                       Text(
                         'وظيفة جديدة: مهندس برمجيات (React)',
                         style: GoogleFonts.cairo(
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: isUnread ? FontWeight.w800 : FontWeight.w600,
                           color: AppColors.onSurface,
                         ),
@@ -105,7 +105,7 @@ class NotificationsScreen extends StatelessWidget {
                       Text(
                         'تم إضافة وظيفة تناسب مهاراتك من قبل شركة TechPal. قدم الآن!',
                         style: GoogleFonts.cairo(
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w500,
                           color: AppColors.onSurfaceVariant,
                         ),
@@ -116,7 +116,7 @@ class NotificationsScreen extends StatelessWidget {
                         style: GoogleFonts.cairo(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.primary.withOpacity(0.8),
+                          color: AppColors.primary.withValues(alpha: 0.8),
                         ),
                       ),
                     ],

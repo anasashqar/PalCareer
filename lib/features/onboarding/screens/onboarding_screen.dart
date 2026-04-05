@@ -86,7 +86,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         height: 8,
                         width: isSelected ? 32 : 8,
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primary : AppColors.outlineVariant.withOpacity(0.5),
+                          color: isSelected ? AppColors.primary : AppColors.outlineVariant.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       );
@@ -104,7 +104,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Text(
                 l10n.onboardingWelcome,
                 style: GoogleFonts.cairo(
-                  fontSize: 32,
+                  fontSize: 26,
                   fontWeight: FontWeight.w800,
                   color: AppColors.primary,
                   height: 1.3,
@@ -214,7 +214,7 @@ class _StepOneWidget extends ConsumerWidget {
             child: ElevatedButton(
               onPressed: state.isStep1Complete ? onNext : null,
               style: _primaryButtonStyle(),
-              child: Text(l10n.nextBtn, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 18)),
+              child: Text(l10n.nextBtn, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16)),
             ),
           ),
           const SizedBox(height: 32),
@@ -290,7 +290,7 @@ class _StepTwoWidgetState extends ConsumerState<_StepTwoWidget> {
               style: _primaryButtonStyle(),
               child: _isLoading 
                 ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                : Text(l10n.saveFinishBtn, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 18)),
+                : Text(l10n.saveFinishBtn, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16)),
             ),
           ),
           const SizedBox(height: 32),
@@ -306,9 +306,9 @@ ButtonStyle _primaryButtonStyle() {
   return ElevatedButton.styleFrom(
     backgroundColor: AppColors.primary,
     foregroundColor: AppColors.onPrimary,
-    padding: const EdgeInsets.symmetric(vertical: 18),
+    padding: const EdgeInsets.symmetric(vertical: 14),
     elevation: 4,
-    shadowColor: AppColors.primary.withOpacity(0.4),
+    shadowColor: AppColors.primary.withValues(alpha: 0.4),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(20),
     ),
@@ -327,19 +327,19 @@ class _SectionHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.15),
-            borderRadius: BorderRadius.circular(16),
+            color: color.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(14),
           ),
-          child: Icon(icon, color: color, size: 28),
+          child: Icon(icon, color: color, size: 22),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 14),
         Expanded(
           child: Text(
             title,
             style: GoogleFonts.cairo(
-              fontSize: 22,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
               color: AppColors.onSurface,
             ),
@@ -370,24 +370,24 @@ class _SelectionCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 14),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.secondary.withOpacity(0.12) : AppColors.surfaceContainerLowest,
+          color: isSelected ? AppColors.secondary.withValues(alpha: 0.12) : AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppColors.secondary : AppColors.outlineVariant.withOpacity(0.3),
+            color: isSelected ? AppColors.secondary : AppColors.outlineVariant.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
             if (!isSelected)
               BoxShadow(
-                color: AppColors.onSurface.withOpacity(0.04),
+                color: AppColors.onSurface.withValues(alpha: 0.04),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               )
             else
                BoxShadow(
-                color: AppColors.secondary.withOpacity(0.15),
+                color: AppColors.secondary.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               )
@@ -398,16 +398,16 @@ class _SelectionCard extends StatelessWidget {
             if (icon != null) ...[
               Icon(
                 icon,
-                size: 36,
-                color: isSelected ? AppColors.secondary : AppColors.onSurfaceVariant.withOpacity(0.6),
+                size: 28,
+                color: isSelected ? AppColors.secondary : AppColors.onSurfaceVariant.withValues(alpha: 0.6),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
             ],
             Text(
               label,
               textAlign: TextAlign.center,
               style: GoogleFonts.cairo(
-                fontSize: 18,
+                fontSize: 15,
                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                 color: isSelected ? AppColors.onSurface : AppColors.onSurfaceVariant,
               ),
@@ -437,18 +437,18 @@ class _TagCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary : AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.outlineVariant.withOpacity(0.5),
+            color: isSelected ? AppColors.primary : AppColors.outlineVariant.withValues(alpha: 0.5),
             width: 1,
           ),
           boxShadow: [
             if (isSelected)
                BoxShadow(
-                color: AppColors.primary.withOpacity(0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 blurRadius: 12,
                 offset: const Offset(0, 6),
               )
@@ -457,7 +457,7 @@ class _TagCard extends StatelessWidget {
         child: Text(
           label,
           style: GoogleFonts.cairo(
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
             color: isSelected ? AppColors.onPrimary : AppColors.onSurfaceVariant,
           ),

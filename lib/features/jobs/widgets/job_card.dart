@@ -52,17 +52,17 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
         builder: (context, child) => Transform.scale(
           scale: _scaleAnimation.value,
           child: Container(
-            padding: const EdgeInsets.all(24),
-            margin: const EdgeInsets.only(bottom: 16, left: 24, right: 24),
+            padding: const EdgeInsets.all(20),
+            margin: const EdgeInsets.only(bottom: 16, left: 20, right: 20),
             decoration: BoxDecoration(
               color: AppColors.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: AppColors.outlineVariant.withOpacity(0.3), width: 1.5),
+              border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3), width: 1.5),
               boxShadow: _animController.isAnimating
                   ? []
                   : [
                       BoxShadow(
-                        color: AppColors.onSurface.withOpacity(0.04),
+                        color: AppColors.onSurface.withValues(alpha: 0.04),
                         blurRadius: 24,
                         offset: const Offset(0, 10),
                       )
@@ -82,7 +82,7 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                   child: Text(
                     widget.job.getLocalizedTitle(langCode),
                     style: GoogleFonts.cairo(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: AppColors.primary,
                       height: 1.3,
@@ -92,25 +92,25 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                 const SizedBox(width: 12),
                 if (widget.job.isPerfectMatch)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(colors: [Color(0xFFE5A93C), Color(0xFFD4AF37)]),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
-                         BoxShadow(color: const Color(0xFFD4AF37).withOpacity(0.4), blurRadius: 8, offset: const Offset(0, 4))
+                         BoxShadow(color: const Color(0xFFD4AF37).withValues(alpha: 0.4), blurRadius: 8, offset: const Offset(0, 4))
                       ]
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.star_rounded, size: 16, color: Colors.white),
+                        const Icon(Icons.star_rounded, size: 14, color: Colors.white),
                         const SizedBox(width: 4),
                         Text(
                           l10n.perfectMatchBadge,
                           style: GoogleFonts.cairo(
                             color: Colors.white,
                             fontWeight: FontWeight.w800,
-                            fontSize: 12,
+                            fontSize: 11,
                           ),
                         ),
                       ],
@@ -118,12 +118,12 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                   )
                 else if (widget.job.isNew)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       color: AppColors.secondary,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
-                         BoxShadow(color: AppColors.secondary.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))
+                         BoxShadow(color: AppColors.secondary.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4))
                       ]
                     ),
                     child: Text(
@@ -131,7 +131,7 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                       style: GoogleFonts.cairo(
                         color: AppColors.onSecondary,
                         fontWeight: FontWeight.w800,
-                        fontSize: 12,
+                        fontSize: 11,
                       ),
                     ),
                   ),
@@ -141,13 +141,13 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
             Row(
               children: [
                 Container(
-                  width: 36,
-                  height: 36,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryContainer.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(10),
+                    color: AppColors.primaryContainer.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.business_rounded, size: 20, color: AppColors.primary),
+                  child: const Icon(Icons.business_rounded, size: 18, color: AppColors.primary),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -155,7 +155,7 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                     widget.job.company,
                     style: GoogleFonts.cairo(
                           fontWeight: FontWeight.w700,
-                          fontSize: 16,
+                          fontSize: 14,
                           color: AppColors.onSurfaceVariant,
                         ),
                   ),
@@ -187,21 +187,21 @@ class _MetadataChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: AppColors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.outlineVariant.withOpacity(0.2)),
+        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: AppColors.secondary),
-          const SizedBox(width: 8),
+          Icon(icon, size: 14, color: AppColors.secondary),
+          const SizedBox(width: 6),
           Text(
             label,
             style: GoogleFonts.cairo(
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: FontWeight.w700,
               color: AppColors.onSurfaceVariant,
             ),

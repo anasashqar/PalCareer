@@ -34,7 +34,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
               floating: true,
               pinned: true,
               elevation: 0,
-              backgroundColor: AppColors.surface.withOpacity(0.95),
+              backgroundColor: AppColors.surface.withValues(alpha: 0.95),
               surfaceTintColor: Colors.transparent,
               expandedHeight: 140,
               actions: [
@@ -44,7 +44,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                     color: AppColors.surfaceContainerLowest,
                     shape: BoxShape.circle,
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 4))
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 4))
                     ],
                   ),
                   child: IconButton(
@@ -194,11 +194,11 @@ class _FilterChip extends StatelessWidget {
         color: isSelected ? AppColors.primary : AppColors.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: isSelected ? AppColors.primary : AppColors.outlineVariant.withOpacity(0.4),
+          color: isSelected ? AppColors.primary : AppColors.outlineVariant.withValues(alpha: 0.4),
           width: 1.2,
         ),
         boxShadow: isSelected 
-            ? [BoxShadow(color: AppColors.primary.withOpacity(0.35), blurRadius: 12, offset: const Offset(0, 6))] 
+            ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.35), blurRadius: 12, offset: const Offset(0, 6))] 
             : [],
       ),
       child: Text(
