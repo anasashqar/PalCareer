@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
+import '../../../core/theme/app_colors.dart';
 import '../providers/onboarding_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -14,12 +16,33 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _pageController = PageController();
+  int _currentPage = 0;
 
   void _nextPage() {
     _pageController.nextPage(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOutCubic,
     );
+  }
+
+  void _previousPage() {
+    _pageController.previousPage(
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOutCubic,
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      final page = _pageController.page?.round() ?? 0;
+      if (page != _currentPage) {
+        setState(() {
+          _currentPage = page;
+        });
+      }
+    });
   }
 
   @override
@@ -33,33 +56,73 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
+      backgroundColor: AppColors.surface,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 32),
-              Text(
-                l10n.onboardingWelcome,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Top Navigation & Progress Indicator
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              child: Row(
+                children: [
+                  AnimatedOpacity(
+                    opacity: _currentPage > 0 ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 200),
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back_rounded, color: AppColors.onSurface),
+                      onPressed: _currentPage > 0 ? _previousPage : null,
                     ),
+                  ),
+                  const Spacer(),
+                  // Animated Page Indicator (Extending Dots)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(2, (index) {
+                      final isSelected = _currentPage == index;
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        height: 8,
+                        width: isSelected ? 32 : 8,
+                        decoration: BoxDecoration(
+                          color: isSelected ? AppColors.primary : AppColors.outlineVariant.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      );
+                    }),
+                  ),
+                  const Spacer(),
+                  const SizedBox(width: 48), // To balance the back button
+                ],
               ),
-              const SizedBox(height: 48),
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _StepOneWidget(onNext: _nextPage),
-                    const _StepTwoWidget(),
-                  ],
+            ),
+            
+            // Header
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+              child: Text(
+                l10n.onboardingWelcome,
+                style: GoogleFonts.cairo(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                  height: 1.3,
                 ),
               ),
-            ],
-          ),
+            ),
+            
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  _StepOneWidget(onNext: _nextPage),
+                  const _StepTwoWidget(),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -77,75 +140,86 @@ class _StepOneWidget extends ConsumerWidget {
     final state = ref.watch(onboardingProvider);
     final notifier = ref.read(onboardingProvider.notifier);
 
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.onboardingAcademic,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _SelectionCard(
-                label: l10n.student,
-                isSelected: state.academicLevel == 'student',
-                onTap: () => notifier.setAcademicLevel('student'),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _SelectionCard(
-                label: l10n.freshGraduate,
-                isSelected: state.academicLevel == 'graduate',
-                onTap: () => notifier.setAcademicLevel('graduate'),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 32),
-        Text(
-          l10n.onboardingField,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: [
-            _TagCard(
-              label: l10n.fieldIt,
-              isSelected: state.fieldOfStudy == 'it',
-              onTap: () => notifier.setFieldOfStudy('it'),
-            ),
-            _TagCard(
-              label: l10n.fieldEngineering,
-              isSelected: state.fieldOfStudy == 'engineering',
-              onTap: () => notifier.setFieldOfStudy('engineering'),
-            ),
-            _TagCard(
-              label: l10n.fieldBusiness,
-              isSelected: state.fieldOfStudy == 'business',
-              onTap: () => notifier.setFieldOfStudy('business'),
-            ),
-            _TagCard(
-              label: l10n.fieldAccounting,
-              isSelected: state.fieldOfStudy == 'accounting',
-              onTap: () => notifier.setFieldOfStudy('accounting'),
-            ),
-          ],
-        ),
-        const Spacer(),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: state.isStep1Complete ? onNext : null,
-            child: Text(l10n.nextBtn),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _SectionHeader(
+            icon: Icons.school_rounded,
+            title: l10n.onboardingAcademic,
+            color: AppColors.secondary,
           ),
-        ),
-      ],
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: _SelectionCard(
+                  label: l10n.student,
+                  icon: Icons.auto_stories_rounded,
+                  isSelected: state.academicLevel == 'student',
+                  onTap: () => notifier.setAcademicLevel('student'),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _SelectionCard(
+                  label: l10n.freshGraduate,
+                  icon: Icons.workspace_premium_rounded,
+                  isSelected: state.academicLevel == 'graduate',
+                  onTap: () => notifier.setAcademicLevel('graduate'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 40),
+          
+          _SectionHeader(
+            icon: Icons.category_rounded,
+            title: l10n.onboardingField,
+            color: AppColors.primary,
+          ),
+          const SizedBox(height: 24),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              _TagCard(
+                label: l10n.fieldIt,
+                isSelected: state.fieldOfStudy == 'it',
+                onTap: () => notifier.setFieldOfStudy('it'),
+              ),
+              _TagCard(
+                label: l10n.fieldEngineering,
+                isSelected: state.fieldOfStudy == 'engineering',
+                onTap: () => notifier.setFieldOfStudy('engineering'),
+              ),
+              _TagCard(
+                label: l10n.fieldBusiness,
+                isSelected: state.fieldOfStudy == 'business',
+                onTap: () => notifier.setFieldOfStudy('business'),
+              ),
+              _TagCard(
+                label: l10n.fieldAccounting,
+                isSelected: state.fieldOfStudy == 'accounting',
+                onTap: () => notifier.setFieldOfStudy('accounting'),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 64),
+          
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: state.isStep1Complete ? onNext : null,
+              style: _primaryButtonStyle(),
+              child: Text(l10n.nextBtn, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 18)),
+            ),
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
     );
   }
 }
@@ -174,43 +248,101 @@ class _StepTwoWidgetState extends ConsumerState<_StepTwoWidget> {
     final state = ref.watch(onboardingProvider);
     final notifier = ref.read(onboardingProvider.notifier);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _SectionHeader(
+            icon: Icons.work_history_rounded,
+            title: l10n.onboardingWorkType,
+            color: AppColors.tertiary,
+          ),
+          const SizedBox(height: 24),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              _TagCard(
+                label: l10n.fullTime,
+                isSelected: state.preferredWorkTypes.contains('full_time'),
+                onTap: () => notifier.toggleWorkType('full_time'),
+              ),
+              _TagCard(
+                label: l10n.partTime,
+                isSelected: state.preferredWorkTypes.contains('part_time'),
+                onTap: () => notifier.toggleWorkType('part_time'),
+              ),
+              _TagCard(
+                label: l10n.remote,
+                isSelected: state.preferredWorkTypes.contains('remote'),
+                onTap: () => notifier.toggleWorkType('remote'),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 80), // To push button down slightly in scroll view
+          
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: state.isStep2Complete && !_isLoading ? _finishOnboarding : null,
+              style: _primaryButtonStyle(),
+              child: _isLoading 
+                ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                : Text(l10n.saveFinishBtn, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 18)),
+            ),
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+}
+
+// Helper Widgets
+
+ButtonStyle _primaryButtonStyle() {
+  return ElevatedButton.styleFrom(
+    backgroundColor: AppColors.primary,
+    foregroundColor: AppColors.onPrimary,
+    padding: const EdgeInsets.symmetric(vertical: 18),
+    elevation: 4,
+    shadowColor: AppColors.primary.withOpacity(0.4),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+  );
+}
+
+class _SectionHeader extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final Color color;
+
+  const _SectionHeader({required this.icon, required this.title, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
       children: [
-        Text(
-          l10n.onboardingWorkType,
-          style: Theme.of(context).textTheme.titleLarge,
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Icon(icon, color: color, size: 28),
         ),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: [
-            _TagCard(
-              label: l10n.fullTime,
-              isSelected: state.preferredWorkTypes.contains('full_time'),
-              onTap: () => notifier.toggleWorkType('full_time'),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Text(
+            title,
+            style: GoogleFonts.cairo(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: AppColors.onSurface,
             ),
-            _TagCard(
-              label: l10n.partTime,
-              isSelected: state.preferredWorkTypes.contains('part_time'),
-              onTap: () => notifier.toggleWorkType('part_time'),
-            ),
-            _TagCard(
-              label: l10n.remote,
-              isSelected: state.preferredWorkTypes.contains('remote'),
-              onTap: () => notifier.toggleWorkType('remote'),
-            ),
-          ],
-        ),
-        const Spacer(),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: state.isStep2Complete && !_isLoading ? _finishOnboarding : null,
-            child: _isLoading 
-              ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-              : Text(l10n.saveFinishBtn),
           ),
         ),
       ],
@@ -220,37 +352,67 @@ class _StepTwoWidgetState extends ConsumerState<_StepTwoWidget> {
 
 class _SelectionCard extends StatelessWidget {
   final String label;
+  final IconData? icon;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _SelectionCard({
     required this.label,
+    this.icon,
     required this.isSelected,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         decoration: BoxDecoration(
-          color: isSelected ? colorScheme.primaryContainer.withOpacity(0.3) : colorScheme.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(16),
+          color: isSelected ? AppColors.secondary.withOpacity(0.12) : AppColors.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? colorScheme.primary : Colors.transparent,
-            width: 2,
+            color: isSelected ? AppColors.secondary : AppColors.outlineVariant.withOpacity(0.3),
+            width: isSelected ? 2 : 1,
           ),
+          boxShadow: [
+            if (!isSelected)
+              BoxShadow(
+                color: AppColors.onSurface.withOpacity(0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+            else
+               BoxShadow(
+                color: AppColors.secondary.withOpacity(0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              )
+          ],
         ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+        child: Column(
+          children: [
+            if (icon != null) ...[
+              Icon(
+                icon,
+                size: 36,
+                color: isSelected ? AppColors.secondary : AppColors.onSurfaceVariant.withOpacity(0.6),
               ),
+              const SizedBox(height: 16),
+            ],
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.cairo(
+                fontSize: 18,
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                color: isSelected ? AppColors.onSurface : AppColors.onSurfaceVariant,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -270,21 +432,35 @@ class _TagCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
         decoration: BoxDecoration(
-          color: isSelected ? colorScheme.primary : colorScheme.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(24),
+          color: isSelected ? AppColors.primary : AppColors.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.outlineVariant.withOpacity(0.5),
+            width: 1,
+          ),
+          boxShadow: [
+            if (isSelected)
+               BoxShadow(
+                color: AppColors.primary.withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              )
+          ],
         ),
         child: Text(
           label,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
-              ),
+          style: GoogleFonts.cairo(
+            fontSize: 16,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+            color: isSelected ? AppColors.onPrimary : AppColors.onSurfaceVariant,
+          ),
         ),
       ),
     );
