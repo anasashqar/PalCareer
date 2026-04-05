@@ -6,7 +6,9 @@ import 'package:palcareer/l10n/generated/app_localizations.dart';
 import '../../../../shared/models/job_model.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
+import '../../bookmarks/providers/bookmarks_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 
 class JobDetailsScreen extends ConsumerWidget {
   final JobModel job;
@@ -78,11 +80,31 @@ class JobDetailsScreen extends ConsumerWidget {
               children: [
                 IconButton(
                   icon: const Icon(Icons.share_rounded, color: AppColors.onSurface, size: 22),
-                  onPressed: () {}, // Add share functional later
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(text: job.applyUrl));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('تم نسخ رابط الوظيفة بنجاح 🎉', style: GoogleFonts.cairo()),
+                        backgroundColor: AppColors.primary,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
                 ),
-                IconButton(
-                  icon: const Icon(Icons.bookmark_border_rounded, color: AppColors.onSurface, size: 22),
-                  onPressed: () {}, // Add bookmark logic later
+                Consumer(
+                  builder: (context, ref, _) {
+                    final isSaved = ref.watch(bookmarksProvider).contains(job.id);
+                    return IconButton(
+                      icon: Icon(
+                        isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded, 
+                        color: isSaved ? AppColors.secondary : AppColors.onSurface, 
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        ref.read(bookmarksProvider.notifier).toggleBookmark(job.id);
+                      },
+                    );
+                  },
                 ),
               ],
             ),
