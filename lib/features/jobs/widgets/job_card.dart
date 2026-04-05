@@ -90,33 +90,7 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                   ),
                 ),
                 const SizedBox(width: 12),
-                if (widget.job.isPerfectMatch)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(colors: [Color(0xFFE5A93C), Color(0xFFD4AF37)]),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                         BoxShadow(color: const Color(0xFFD4AF37).withValues(alpha: 0.4), blurRadius: 8, offset: const Offset(0, 4))
-                      ]
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.star_rounded, size: 14, color: Colors.white),
-                        const SizedBox(width: 4),
-                        Text(
-                          l10n.perfectMatchBadge,
-                          style: GoogleFonts.cairo(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                else if (widget.job.isNew)
+                if (widget.job.isNew)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(

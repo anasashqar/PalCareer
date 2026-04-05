@@ -14,8 +14,8 @@ class JobModel {
   final Map<String, List<String>> responsibilities;
   final String applyUrl;
   
-  // Client-side fields only
-  final bool isPerfectMatch;
+  final String? primarySector;
+  final List<String> subSectors;
 
   const JobModel({
     required this.id,
@@ -28,7 +28,8 @@ class JobModel {
     required this.requirements,
     required this.responsibilities,
     required this.applyUrl,
-    this.isPerfectMatch = false,
+    this.primarySector,
+    this.subSectors = const [],
   });
 
   bool get isNew {
@@ -69,7 +70,8 @@ class JobModel {
     Map<String, List<String>>? requirements,
     Map<String, List<String>>? responsibilities,
     String? applyUrl,
-    bool? isPerfectMatch,
+    String? primarySector,
+    List<String>? subSectors,
   }) {
     return JobModel(
       id: id ?? this.id,
@@ -82,7 +84,8 @@ class JobModel {
       requirements: requirements ?? this.requirements,
       responsibilities: responsibilities ?? this.responsibilities,
       applyUrl: applyUrl ?? this.applyUrl,
-      isPerfectMatch: isPerfectMatch ?? this.isPerfectMatch,
+      primarySector: primarySector ?? this.primarySector,
+      subSectors: subSectors ?? this.subSectors,
     );
   }
 
@@ -102,6 +105,8 @@ class JobModel {
             (key, value) => MapEntry(key, List<String>.from(value)),
           ) ?? {},
       applyUrl: map['applyUrl'] as String? ?? '',
+      primarySector: map['primarySector'] as String?,
+      subSectors: List<String>.from(map['subSectors'] ?? []),
     );
   }
 
@@ -116,6 +121,8 @@ class JobModel {
       'requirements': requirements,
       'responsibilities': responsibilities,
       'applyUrl': applyUrl,
+      'primarySector': primarySector,
+      'subSectors': subSectors,
     };
   }
 }

@@ -18,10 +18,29 @@ class JobsFeedScreen extends ConsumerStatefulWidget {
 class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
   int _selectedFilterIndex = 0;
 
+  String _getLocalizedHeader(String titleId, String langCode) {
+    if (langCode == 'ar') {
+      switch (titleId) {
+        case 'perfect_matches': return '🔥 الأنسب لاختياراتك';
+        case 'sector_matches': return '💡 مقترحات أخرى في مجالك';
+        case 'explore_jobs': return '🌍 استكشف وظائف منوعة';
+        default: return titleId;
+      }
+    } else {
+      switch (titleId) {
+        case 'perfect_matches': return '🔥 Top Matches For You';
+        case 'sector_matches': return '💡 Other in your field';
+        case 'explore_jobs': return '🌍 Explore More Jobs';
+        default: return titleId;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final jobsAsyncValue = ref.watch(jobsProvider);
     final l10n = AppLocalizations.of(context)!;
+    final langCode = Localizations.localeOf(context).languageCode;
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -36,7 +55,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
               elevation: 0,
               backgroundColor: AppColors.surface.withValues(alpha: 0.95),
               surfaceTintColor: Colors.transparent,
-              expandedHeight: 140,
+              expandedHeight: 120,
               actions: [
                 Container(
                   margin: const EdgeInsets.only(right: 16, left: 16),
@@ -70,18 +89,6 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                         letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    jobsAsyncValue.maybeWhen(
-                      data: (jobs) => Text(
-                        '${jobs.length} ${l10n.availableJobs}',
-                        style: GoogleFonts.cairo(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      orElse: () => const SizedBox.shrink(),
-                    ),
                   ],
                 ),
               ),
@@ -91,7 +98,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 child: Row(
                   children: [
                     _FilterChip(
@@ -117,8 +124,8 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
             ),
             
             jobsAsyncValue.when(
-              data: (jobs) {
-                if (jobs.isEmpty) {
+              data: (groups) {
+                if (groups.isEmpty) {
                   return SliverFillRemaining(
                     child: Center(
                       child: Text(
@@ -131,33 +138,70 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                     ),
                   );
                 }
-                return SliverPadding(
-                  padding: const EdgeInsets.only(bottom: 120), // Padding to clear the floating bottom nav
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final job = jobs[index];
-                        return TweenAnimationBuilder<double>(
-                          tween: Tween(begin: 0.0, end: 1.0),
-                          duration: Duration(milliseconds: 400 + (index * 80).clamp(0, 600)),
-                          curve: Curves.easeOutCubic,
-                          builder: (context, value, child) {
-                            return Opacity(
-                              opacity: value,
-                              child: Transform.translate(
-                                offset: Offset(0, 40 * (1 - value)),
-                                child: child,
+                
+                return SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, groupIndex) {
+                      final group = groups[groupIndex];
+                      
+                      // For the very last group, add bottom padding
+                      final isLastGroup = groupIndex == groups.length - 1;
+                      
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Group Header
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+                            child: Text(
+                              _getLocalizedHeader(group.titleId, langCode),
+                              style: GoogleFonts.cairo(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                color: group.titleId == 'perfect_matches' ? AppColors.secondary : AppColors.onSurface,
+                              ),
+                            ),
+                          ),
+                          
+                          // Jobs List in this group
+                          ...group.jobs.asMap().entries.map((entry) {
+                            final jobIndex = entry.key;
+                            final job = entry.value;
+                            
+                            // Calculate global index for animation delay roughly
+                            int globalIndex = jobIndex;
+                            for (var i = 0; i < groupIndex; i++) {
+                              globalIndex += groups[i].jobs.length;
+                            }
+                            
+                            return TweenAnimationBuilder<double>(
+                              // Add a distinct key per job so the widget tree animates them correctly
+                              key: ValueKey(job.id),
+                              tween: Tween(begin: 0.0, end: 1.0),
+                              duration: Duration(milliseconds: 400 + (globalIndex * 80).clamp(0, 600)),
+                              curve: Curves.easeOutCubic,
+                              builder: (context, value, child) {
+                                return Opacity(
+                                  opacity: value,
+                                  child: Transform.translate(
+                                    offset: Offset(0, 40 * (1 - value)),
+                                    child: child,
+                                  ),
+                                );
+                              },
+                              child: JobCardWidget(
+                                job: job,
+                                onTap: () => context.push('/job-details', extra: job),
                               ),
                             );
-                          },
-                          child: JobCardWidget(
-                            job: job,
-                            onTap: () => context.push('/job-details', extra: job),
-                          ),
-                        );
-                      },
-                      childCount: jobs.length,
-                    ),
+                          }),
+                          
+                          if (isLastGroup)
+                            const SizedBox(height: 120), // Bottom padding for navbar
+                        ],
+                      );
+                    },
+                    childCount: groups.length,
                   ),
                 );
               },
