@@ -13,6 +13,11 @@
 - **Market**: Palestine 🇵🇸
 - **Languages**: Arabic (primary) + English — auto-detected from device locale
 - **Current Phase**: V1 MVP
+- **Current Status**: UI Mockups complete (all screens built with mock data). Next: Firebase integration.
+
+> ⚠️ **ملاحظة التطوير:** جميع الشاشات مبنية حالياً بواجهات كاملة وبيانات وهمية (Mock).
+> الـ `AuthRepository` يستخدم `MockAuthRepository`، والوظائف تُجلب من `FutureProvider` ببيانات ثابتة.
+> الخطوة التالية هي استبدال كل Mock بربط Firebase حقيقي.
 
 ---
 
@@ -137,11 +142,12 @@ Text('تقدم الآن')
 
 - **Design Source**: The UI/UX is designed in **Stitch** (Project ID: `4938486804408641289`).
 - **Design System**: "The Civic Curator" focusing on an editorial, high-end feel (Deep Sea #004655, Teal Horizon #0E7C7B).
-- Visual identity is defined in `core/theme/app_theme.dart`
-- All colors must come from `AppTheme` — never use raw `Color(0xFF...)` in widgets
-- Use Material 3 design system (`useMaterial3: true`)
-- Bottom Navigation Bar: **2 tabs only** — Home + Profile
-- `BottomNavigationBar` must persist across all main screens
+- Visual identity is defined in `core/theme/app_theme.dart` ✅ (مُنفَّذ)
+- Color constants are in `core/theme/app_colors.dart` ✅ (مُنفَّذ)
+- All colors must come from `AppTheme` / `AppColors` — never use raw `Color(0xFF...)` in widgets
+- Use Material 3 design system (`useMaterial3: true`) ✅ (مُنفَّذ)
+- Bottom Navigation Bar: **2 tabs only** — Home + Profile ✅ (مُنفَّذ في `main_scaffold_view.dart`)
+- `BottomNavigationBar` must persist across all main screens ✅ (مُنفَّذ عبر `StatefulShellRoute`)
 
 ---
 

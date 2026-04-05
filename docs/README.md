@@ -34,16 +34,18 @@ Instead of searching through dozens of irrelevant listings, PalCareer learns you
 
 ## 🏗️ Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | Flutter (Android — minSdk 21) |
-| State Management | Riverpod |
-| Auth | Firebase Authentication (Google Sign-In) |
-| Database | Cloud Firestore |
-| Push Notifications | Firebase Cloud Messaging (FCM) |
-| Backend Logic | Firebase Cloud Functions (Node.js) |
-| Local Storage | Hive |
-| i18n | Flutter Localizations |
+| Layer | Technology | Status |
+|-------|------------|--------|
+| Frontend | Flutter (Android — minSdk 21) | ✅ Active |
+| State Management | Riverpod | ✅ Active |
+| Navigation | GoRouter (StatefulShellRoute) | ✅ Active |
+| Auth | Firebase Authentication (Google Sign-In) | 🔲 Mock only |
+| Database | Cloud Firestore | 🔲 Not connected |
+| Push Notifications | Firebase Cloud Messaging (FCM) | 🔲 Not started |
+| Backend Logic | Firebase Cloud Functions (Node.js) | 🔲 Not started |
+| Local Storage | Hive | 🔲 Not started |
+| i18n | Flutter Localizations (AR/EN) | 🟡 Partial |
+| Design | Stitch (UI/UX) | ✅ Done |
 
 ---
 
@@ -51,21 +53,38 @@ Instead of searching through dozens of irrelevant listings, PalCareer learns you
 
 ```
 lib/
-├── core/                    # Shared utilities, constants, theme
-│   ├── constants/
-│   ├── theme/
-│   └── utils/
+├── core/
+│   ├── constants/           # app_colors, app_strings, firestore_keys (فارغ)
+│   ├── router/              # app_router.dart + main_scaffold_view.dart ✅
+│   ├── theme/               # app_colors.dart + app_theme.dart ✅
+│   └── utils/               # (فارغ)
 ├── features/
-│   ├── auth/                # Login, splash, session management
-│   ├── onboarding/          # Field selection, preferences
-│   ├── jobs/                # Feed, filters, job detail
-│   ├── notifications/       # FCM handling, notification center
-│   └── profile/             # User profile, settings, edit
-├── shared/                  # Reusable widgets, models, services
-│   ├── models/
-│   ├── services/
-│   └── widgets/
-└── main.dart
+│   ├── auth/
+│   │   ├── data/            # auth_service.dart (فارغ)
+│   │   ├── providers/       # auth_provider.dart ✅
+│   │   ├── repositories/    # auth_repository.dart (Mock) ✅
+│   │   ├── screens/         # login_screen.dart, splash_screen.dart
+│   │   └── views/           # splash_view.dart ✅, login_view.dart ✅
+│   ├── onboarding/
+│   │   ├── providers/       # onboarding_provider.dart ✅
+│   │   └── screens/         # onboarding_screen.dart ✅
+│   ├── jobs/
+│   │   ├── providers/       # jobs_provider.dart (Mock Data) ✅
+│   │   ├── screens/         # jobs_feed_screen.dart ✅, job_details_screen.dart ✅
+│   │   └── widgets/         # job_card.dart ✅
+│   ├── notifications/
+│   │   └── screens/         # notifications_screen.dart (UI فقط) ✅
+│   └── profile/
+│       └── screens/         # profile_screen.dart (UI فقط) ✅
+├── shared/
+│   ├── models/              # user_model.dart ✅, job_model.dart ✅
+│   ├── services/            # firestore_service.dart (فارغ), fcm_service.dart (فارغ)
+│   └── widgets/             # (فارغ)
+├── l10n/
+│   ├── app_ar.arb ✅
+│   ├── app_en.arb ✅
+│   └── generated/ ✅
+└── main.dart ✅
 ```
 
 ---
@@ -105,21 +124,30 @@ lib/
 
 ## 🚦 Project Status
 
-| Area | Status | Notes |
-|------|--------|-------|
-| Auth (Google Sign-In) | 🟡 In progress | UI/Mock Built |
-| Splash Screen | ✅ Done | |
-| Onboarding | 🔲 Not started | |
-| Jobs Feed | 🔲 Not started | |
-| Job Detail | 🔲 Not started | |
-| Push Notifications | 🔲 Not started | |
-| Notification Center | 🔲 Not started | |
-| Profile & Settings | 🔲 Not started | |
-| i18n (AR/EN) | 🔲 Not started | |
-| Cloud Functions | 🔲 Not started | |
-| Firebase Security Rules | 🔲 Not started | |
+| Area | Status | Details |
+|------|--------|---------|
+| Project Setup (Flutter + deps) | ✅ Done | pubspec.yaml + folder structure |
+| Design System / Theme | ✅ Done | The Civic Curator theme applied |
+| Navigation / Routing | ✅ Done | GoRouter + StatefulShellRoute |
+| Splash Screen | ✅ Done (UI) | Animation + auto-navigate (no smart routing yet) |
+| Login Screen | ✅ Done (UI) | Google button + Mock Auth |
+| Onboarding (2 steps) | ✅ Done (UI) | Field + level + work type selection |
+| Jobs Feed | ✅ Done (UI) | Mock data, job cards with badges |
+| Job Detail | ✅ Done (UI) | Requirements + responsibilities + apply button |
+| Notification Center | 🟡 UI only | Basic screen, no real data |
+| Profile & Settings | 🟡 UI only | Basic screen, no real data |
+| Data Models | ✅ Done | UserModel + JobModel with Firestore conversion |
+| i18n (AR/EN) | 🟡 Partial | ARB files created, some hardcoded strings remain |
+| Firebase Auth (real) | 🔲 Not started | MockAuthRepository in use |
+| Firestore Integration | 🔲 Not started | Services files empty |
+| Push Notifications (FCM) | 🔲 Not started | — |
+| Cloud Functions | 🔲 Not started | — |
+| Hive (local storage) | 🔲 Not started | — |
+| Firebase Security Rules | 🔲 Not started | — |
+| Error Handling / Edge Cases | 🔲 Not started | — |
+| APK Build & Distribution | 🔲 Not started | — |
 
-> 🔲 Not started &nbsp;|&nbsp; 🟡 In progress &nbsp;|&nbsp; ✅ Done
+> 🔲 Not started &nbsp;|&nbsp; 🟡 Partial / UI only &nbsp;|&nbsp; ✅ Done
 
 ---
 
@@ -144,7 +172,7 @@ The visual designs and user interfaces are built and managed in **Stitch**.
 
 | File | Description |
 |------|-------------|
-| [`FEATURES.md`](./FEATURES.md) | Full feature list for V1 and V2 |
+| [`FEATURES.md`](./FEATURES.md) | Full feature list with progress tracking |
 | [`USERS.md`](./USERS.md) | Target users and their journeys |
 | [`CLAUDE.md`](./CLAUDE.md) | Project rules and coding conventions |
 | [`PRD_Jobs_App.md`](./PRD_Jobs_App.md) | Full Product Requirements Document |

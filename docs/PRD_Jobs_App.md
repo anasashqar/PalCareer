@@ -323,47 +323,49 @@ exports.notifyMatchingUsers = functions.firestore
 
 ## 6. خطة العمل (أسبوع واحد)
 
-### اليوم 1 — Setup & Auth
-- [ ] إنشاء مشروع Flutter جديد
-- [ ] ربط Firebase (Authentication, Firestore, FCM)
-- [ ] شاشة Splash + توجيه المستخدم
-- [ ] شاشة تسجيل الدخول بـ Google
+> **📌 آخر تحديث: 5 أبريل 2026**
+> المرحلة الأولى (UI + البنية التحتية) مكتملة. جميع الشاشات مبنية كـ Mock.
+> المطلوب الآن: ربط Firebase الحقيقي.
+
+### ✅ مرحلة 1 — UI + Infrastructure (مكتملة)
+- [x] إنشاء مشروع Flutter مع هيكل Feature-First
+- [x] إعداد pubspec.yaml بجميع الحزم المطلوبة
+- [x] نظام التصميم (Theme — The Civic Curator)
+- [x] GoRouter + StatefulShellRoute (Bottom Navigation)
+- [x] شاشة Splash مع أنيميشن
+- [x] شاشة تسجيل الدخول بـ Google (Mock UI)
+- [x] شاشة Onboarding (خطوتين) مع Provider
+- [x] الشاشة الرئيسية + JobCard + بيانات وهمية
+- [x] شاشة تفاصيل الوظيفة كاملة
+- [x] شاشة مركز الإشعارات (UI أساسي)
+- [x] شاشة الملف الشخصي (UI أساسي)
+- [x] Data Models (UserModel + JobModel)
+- [x] i18n: ملفات ARB + Generated Localizations (جزئي)
+
+### 🔲 مرحلة 2 — Firebase Integration (لم تبدأ)
+- [ ] ربط Firebase (`Firebase.initializeApp()`)
+- [ ] Firebase Auth الحقيقي (استبدال MockAuthRepository)
 - [ ] حفظ بيانات المستخدم الجديد في Firestore
+- [ ] حفظ بيانات Onboarding في Firestore
+- [ ] جلب الوظائف من Firestore (استبدال Mock Data)
+- [ ] التوجيه الذكي في Splash Screen
+- [ ] شريط الفلاتر الأفقي + عداد الوظائف الديناميكي
+- [ ] `url_launcher` لزر "تقدم الآن"
+- [ ] تعديل الملف الشخصي + حفظ في Firestore
 
-### اليوم 2 — Onboarding
-- [ ] بناء 3 شاشات Onboarding
-- [ ] حفظ إجابات المستخدم في Firestore (`fields`, `educationLevel`, `preferredJobTypes`)
-- [ ] التعامل مع حالة "مستخدم مكمل Onboarding من قبل"
-
-### اليوم 3 — Jobs List
-- [ ] قراءة الوظائف من Firestore (StreamBuilder)
-- [ ] بناء بطاقة الوظيفة (JobCard Widget)
-- [ ] الشاشة الرئيسية مع قائمة الوظائف
-- [ ] منطق تمييز بطاقة التطابق التام (شارة "يناسبك")
-- [ ] عداد الوظائف الديناميكي في شاشة تسجيل الدخول
-
-### اليوم 4 — Filters + Job Details + Profile
-- [ ] شريط الفلاتر الأفقي (بالتخصص ونوع الدوام)
-- [ ] شاشة تفاصيل الوظيفة (المسمى + المتطلبات + المسؤوليات + زر التقديم)
-- [ ] زر "تقدم الآن" يفتح الرابط (url_launcher)
-- [ ] شاشة الملف الشخصي (تعديل التخصص ونوع الدوام)
-- [ ] حفظ تعديلات الملف في Firestore وإعادة فلترة الوظائف
-
-### اليوم 5 — Notifications
+### 🔲 مرحلة 3 — Notifications (لم تبدأ)
 - [ ] إعداد FCM في Flutter (foreground + background + terminated)
 - [ ] حفظ FCM Token في Firestore عند كل تسجيل دخول
 - [ ] كتابة Cloud Function للـ matching وإرسال الإشعار
-- [ ] شاشة مركز الإشعارات (سجل محلي بـ Hive أو SharedPreferences)
+- [ ] شاشة مركز الإشعارات الفعلية (سجل محلي بـ Hive)
 - [ ] منطق "مقروء / غير مقروء" وفتح تفاصيل الوظيفة عند الضغط
 - [ ] اختبار الإشعار end-to-end
 
-### اليوم 6 — Testing & Polish
+### 🔲 مرحلة 4 — Testing & Launch (لم تبدأ)
 - [ ] اختبار كامل على جهاز حقيقي
 - [ ] معالجة الحالات الاستثنائية (لا إنترنت، لا وظائف، إلخ)
-- [ ] تحسين الـ UI (ألوان، خطوط، Padding)
+- [ ] ترجمة جميع النصوص المتبقية
 - [ ] إضافة بيانات تجريبية (5–10 وظائف)
-
-### اليوم 7 — Launch Prep
 - [ ] توليد APK للاختبار (flutter build apk --release)
 - [ ] مراجعة Firebase Security Rules
 - [ ] توزيع على مجموعة تجريبية عبر Firebase App Distribution

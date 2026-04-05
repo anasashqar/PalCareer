@@ -1,99 +1,156 @@
 # FEATURES.md — PalCareer
 > وثيقة الميزات الرسمية للمشروع  
-> آخر تحديث: أبريل 2026
+> آخر تحديث: 5 أبريل 2026
 
 ---
 
-## ✅ المرحلة الأولى (V1) — ما سيُبنى الآن
+## 📊 ملخص التقدم
 
-### 🔐 المصادقة (Authentication)
-- [ ] تسجيل الدخول بـ Google (Firebase Auth — Google Provider)
-- [ ] حفظ بيانات المستخدم الجديد تلقائياً في Firestore عند أول دخول
-- [ ] تجديد الجلسة تلقائياً (Persistent Auth State)
-- [ ] تسجيل الخروج
+| المجال | الحالة | النسبة |
+|--------|--------|--------|
+| البنية التحتية والأساسيات | ✅ مكتمل | 100% |
+| واجهات المستخدم (UI Screens) | ✅ مكتمل (Mock) | 100% |
+| نظام التصميم (Theme) | ✅ مكتمل | 100% |
+| تعدد اللغات (i18n) | 🟡 جزئي | 60% |
+| ربط Firebase (Auth + Firestore) | 🔲 لم يبدأ | 0% |
+| الإشعارات (FCM + Cloud Functions) | 🔲 لم يبدأ | 0% |
+| التخزين المحلي (Hive) | 🔲 لم يبدأ | 0% |
+| الاختبار والإطلاق | 🔲 لم يبدأ | 0% |
 
----
-
-### 🚀 الـ Onboarding (خطوتان)
-- [ ] اختيار التخصص/المجال (9 خيارات، اختيار متعدد)
-  - تقنية المعلومات, هندسة, إدارة أعمال, محاسبة, تعليم, تسويق, طب وصحة, حقوق, أخرى
-- [ ] اختيار المستوى التعليمي (طالب / خريج جديد)
-- [ ] اختيار نوع الدوام المفضل (كامل / جزئي / عن بُعد — اختيار متعدد)
-- [ ] حفظ بيانات الـ Onboarding في Firestore
-- [ ] التحقق من اكتمال الـ Onboarding عند كل دخول (توجيه ذكي)
+> **التقدم الإجمالي ≈ 35–40%** — كل الشاشات مبنية كـ UI مع بيانات وهمية (Mock)، والمطلوب الآن ربطها بـ Firebase.
 
 ---
 
-### 🏠 الشاشة الرئيسية (Jobs Feed)
-- [ ] عرض الوظائف المخصصة بناءً على اهتمامات المستخدم (Firestore Query)
-- [ ] ترتيب الوظائف من الأحدث إلى الأقدم
-- [ ] شارة "يناسبك" للوظائف ذات التطابق التام (أول القائمة + تمييز بصري)
-- [ ] شارة "جديد" تلقائياً للوظائف المنشورة خلال 3 أيام (محسوبة في Flutter)
-- [ ] شريط فلاتر أفقي قابل للتمرير (بالتخصص + نوع الدوام)
-- [ ] عداد ديناميكي لعدد الوظائف الإجمالي (يُجلب من Firestore — لا رقم ثابت)
-- [ ] عرض حالة "لا توجد وظائف مطابقة" عند عدم وجود نتائج
+## ✅ ما تم إنجازه
 
----
+### 🏗️ البنية التحتية (Infrastructure)
+- [x] إنشاء مشروع Flutter مع هيكل Feature-First
+- [x] إعداد `pubspec.yaml` بجميع الحزم المطلوبة
+- [x] نظام التنقل بـ GoRouter مع جميع المسارات (`/`, `/login`, `/onboarding`, `/home`, `/profile`, `/job-details`, `/notifications`)
+- [x] `StatefulShellRoute` لـ Bottom Navigation (Home + Profile)
+- [x] `MainScaffoldView` مع BottomNavigationBar (تبويبان)
+- [x] Riverpod كـ State Management (ProviderScope في main.dart)
 
-### 📄 تفاصيل الوظيفة
-- [ ] المسمى الوظيفي + الشركة + الموقع + نوع الدوام
-- [ ] تاريخ النشر
-- [ ] قسم المتطلبات (قائمة نقاط)
-- [ ] قسم المسؤوليات (قائمة نقاط)
-- [ ] زر "تقدم الآن" → يفتح رابط التقديم في المتصفح الخارجي (`url_launcher`)
+### 🎨 نظام التصميم (Design System — "The Civic Curator")
+- [x] `AppColors` — الألوان الأساسية (Deep Sea #004655, Teal Horizon #0E7C7B, Gold #D4AF37)
+- [x] `AppTheme.lightTheme` — Material 3 مع Google Fonts
+- [x] تطبيق التصميم عبر `MaterialApp.router`
 
----
-
-### 🔔 الإشعارات (Push Notifications)
-- [ ] إرسال FCM عند نشر وظيفة جديدة تُطابق اهتمامات المستخدم
-- [ ] نص الإشعار: "وظيفة جديدة: [الاسم] في [الشركة]"
-- [ ] الضغط على الإشعار يفتح تفاصيل الوظيفة مباشرة
-- [ ] Cloud Function تُشغَّل عند `onCreate` في `jobs/`
-- [ ] دعم الإشعار في الحالات الثلاث: Foreground / Background / Terminated
-- [ ] حفظ FCM Token في Firestore عند كل دخول وتحديثه تلقائياً
-
----
-
-### 🗂️ مركز الإشعارات (Notification Center)
-- [ ] عرض سجل الإشعارات الواردة (مرتبة من الأحدث)
-- [ ] تمييز الإشعارات غير المقروءة بصرياً
-- [ ] الضغط على إشعار → فتح تفاصيل الوظيفة + تحديد كـ "مقروء"
-- [ ] التخزين محلياً على الجهاز (Hive)
-
----
-
-### 👤 الملف الشخصي
-- [ ] صورة المستخدم واسمه من Google Account
-- [ ] وصف مهني مُولَّد تلقائياً من بيانات الـ Onboarding
-- [ ] تعديل التخصص ونوع الدوام المفضل مع حفظ التغييرات في Firestore
-- [ ] إعدادات الإشعارات (تفعيل/تعطيل)
-- [ ] صفحة "عن التطبيق" مع رقم الإصدار (مقروء من `pubspec.yaml`)
-- [ ] تسجيل الخروج (ملون باللون الأحمر)
-
----
-
-### 🌍 تعدد اللغات (i18n)
-- [ ] دعم العربية والإنجليزية
-- [ ] اكتشاف اللغة تلقائياً من إعدادات الهاتف
-- [ ] حقول الوظائف النصية مخزّنة كـ Map: `{ "ar": "...", "en": "..." }`
-- [ ] دعم RTL العربية و LTR الإنجليزية
-
----
+### 🌍 تعدد اللغات (i18n) — جزئي
+- [x] ملفات `app_ar.arb` و `app_en.arb` مع مفاتيح أساسية
+- [x] ملفات الترجمة المُولَّدة (`AppLocalizations`)
+- [x] إعداد `localizationsDelegates` و `supportedLocales` في main.dart
+- [x] اللغة الافتراضية: العربية
+- [ ] ⬅️ **لم يكتمل**: اكتشاف اللغة تلقائياً من إعدادات الهاتف (حالياً hardcoded `Locale('ar')`)
+- [ ] ⬅️ **لم يكتمل**: بعض الشاشات تحتوي نصوصاً مباشرة غير مترجمة
 
 ### 📱 شاشة Splash
-- [ ] عرض الشعار واسم التطبيق لمدة 2 ثانية
-- [ ] توجيه ذكي بناءً على حالة المستخدم:
-  - غير مسجّل → شاشة الدخول
-  - مسجّل + Onboarding غير مكتمل → شاشة الـ Onboarding
-  - مسجّل + Onboarding مكتمل → الشاشة الرئيسية
+- [x] عرض الشعار واسم التطبيق مع أنيميشن
+- [x] `SplashView` مع انتقال آلي بعد تأخير
+- [ ] ⬅️ التوجيه الذكي (حالياً ينتقل دائماً لـ Login — بحاجة لربط Firebase Auth)
+
+### 🔐 شاشة تسجيل الدخول (Login)
+- [x] واجهة كاملة: شعار + عنوان + وصف + زر Google Sign-In
+- [x] `AuthProvider` + `AuthNotifier` (StateNotifier)
+- [x] `AuthRepository` (Abstract) + `MockAuthRepository`
+- [x] حالة التحميل (Loading state) في الزر
+- [ ] ⬅️ ربط Firebase Auth الحقيقي (العمل الحالي mock فقط)
+- [ ] ⬅️ عداد الوظائف الديناميكي من Firestore (غير موجود بعد)
+- [ ] ⬅️ حفظ بيانات المستخدم الجديد في Firestore
+
+### 🚀 شاشة الـ Onboarding
+- [x] واجهة خطوتين كاملة مع PageView
+- [x] الخطوة 1: اختيار التخصص (9 خيارات، اختيار متعدد، Chips)
+- [x] الخطوة 2: اختيار المستوى التعليمي + نوع الدوام المفضل
+- [x] `OnboardingProvider` + `OnboardingNotifier` (StateNotifier)
+- [x] التحقق من اكتمال كل خطوة قبل الانتقال
+- [ ] ⬅️ حفظ بيانات الـ Onboarding في Firestore
+- [ ] ⬅️ التحقق من اكتمال الـ Onboarding عند كل دخول
+
+### 🏠 الشاشة الرئيسية (Jobs Feed)
+- [x] واجهة عرض الوظائف مع بيانات وهمية (3 وظائف mock)
+- [x] `JobsFeedScreen` مع قائمة وظائف
+- [x] `JobCard` widget كامل (اسم الوظيفة + الشركة + الموقع + نوع الدوام + التاريخ)
+- [x] `JobsProvider` (FutureProvider) مع mock data
+- [x] شارة "يناسبك" للوظائف ذات التطابق التام
+- [x] شارة "جديد" تلقائية (< 3 أيام)
+- [ ] ⬅️ جلب الوظائف من Firestore (حالياً بيانات وهمية)
+- [ ] ⬅️ شريط فلاتر أفقي قابل للتمرير
+- [ ] ⬅️ عداد ديناميكي لعدد الوظائف
+- [ ] ⬅️ حالة "لا توجد وظائف مطابقة" (Empty State)
+
+### 📄 تفاصيل الوظيفة
+- [x] `JobDetailsScreen` كاملة (المسمى + الشركة + الموقع + النوع + التاريخ)
+- [x] قسم المتطلبات (قائمة نقاط)
+- [x] قسم المسؤوليات (قائمة نقاط)
+- [x] زر "تقدم الآن" ثابت أسفل الشاشة
+- [ ] ⬅️ ربط `url_launcher` فعلياً لفتح رابط التقديم
+
+### 🗂️ مركز الإشعارات
+- [x] `NotificationsScreen` مع واجهة أساسية
+- [ ] ⬅️ عرض سجل الإشعارات الفعلي
+- [ ] ⬅️ تمييز المقروء/غير المقروء
+- [ ] ⬅️ الضغط يفتح تفاصيل الوظيفة
+- [ ] ⬅️ التخزين المحلي بـ Hive
+
+### 👤 الملف الشخصي
+- [x] `ProfileScreen` مع واجهة كاملة
+- [ ] ⬅️ صورة المستخدم واسمه من Google Account (حالياً placeholder)
+- [ ] ⬅️ وصف مهني مُولَّد من Onboarding
+- [ ] ⬅️ تعديل التخصص ونوع الدوام + حفظ في Firestore
+- [ ] ⬅️ إعدادات الإشعارات
+- [ ] ⬅️ صفحة "عن التطبيق" مع رقم الإصدار
+- [ ] ⬅️ تسجيل الخروج الفعلي
+
+### 📦 الموديلات (Data Models)
+- [x] `UserModel` — مع `copyWith` وتحويل Firestore
+- [x] `JobModel` — مع حقول ثنائية اللغة (`Map<String, dynamic>`)
+
+### 🗂️ ملفات فارغة (مُعدّة ولم تُملأ بعد)
+- `core/constants/app_colors.dart` (فارغ — الألوان في `theme/app_colors.dart`)
+- `core/constants/app_strings.dart` (فارغ)
+- `core/constants/firestore_keys.dart` (فارغ)
+- `features/auth/data/auth_service.dart` (فارغ)
+- `features/auth/screens/login_screen.dart` (فارغ — المستخدم هو `views/login_view.dart`)
+- `shared/services/firestore_service.dart` (فارغ)
+- `shared/services/fcm_service.dart` (فارغ)
 
 ---
 
-### ⚠️ الحالات الاستثنائية
-- [ ] عدم وجود اتصال بالإنترنت → رسالة واضحة للمستخدم
-- [ ] انتهاء الجلسة → إعادة التوجيه لشاشة الدخول
-- [ ] لا توجد وظائف مطابقة → شاشة Empty State
-- [ ] تحديث FCM Token تلقائياً عند انتهاء صلاحيته
+## 🔲 ما تبقى للمرحلة الأولى (V1)
+
+### المرحلة التالية أ: ربط Firebase (أولوية قصوى)
+- [ ] إعداد `Firebase.initializeApp()` في main.dart
+- [ ] تنفيذ `FirebaseAuthRepository` الحقيقي (بدل MockAuthRepository)
+- [ ] ربط Google Sign-In فعلياً
+- [ ] حفظ بيانات المستخدم الجديد في Firestore عند أول دخول
+- [ ] تجديد الجلسة تلقائياً (Persistent Auth State)
+- [ ] تنفيذ `FirestoreService` لجلب/حفظ البيانات
+- [ ] ملء `firestore_keys.dart` بثوابت أسماء الحقول
+- [ ] التوجيه الذكي في Splash (مسجّل؟ Onboarding مكتمل؟)
+- [ ] حفظ بيانات Onboarding في Firestore
+- [ ] جلب الوظائف من Firestore (بدل Mock Data)
+- [ ] شريط الفلاتر في الشاشة الرئيسية
+- [ ] ربط `url_launcher` لزر "تقدم الآن"
+- [ ] تسجيل الخروج الفعلي
+
+### المرحلة التالية ب: الإشعارات
+- [ ] إعداد FCM في Flutter
+- [ ] حفظ FCM Token في Firestore عند كل دخول
+- [ ] Cloud Function: `notifyMatchingUsers` عند `onCreate` في `jobs/`
+- [ ] دعم الإشعار: Foreground / Background / Terminated
+- [ ] شاشة مركز الإشعارات الفعلية
+- [ ] التخزين المحلي بـ Hive (سجل الإشعارات)
+- [ ] Deep link: الضغط على الإشعار → تفاصيل الوظيفة
+
+### المرحلة التالية ج: التلميع والإطلاق
+- [ ] اكتشاف اللغة تلقائياً من إعدادات الهاتف
+- [ ] ترجمة جميع النصوص المتبقية
+- [ ] الحالات الاستثنائية (لا إنترنت، انتهاء جلسة، Empty State)
+- [ ] Firebase Security Rules
+- [ ] اختبار شامل على جهاز حقيقي
+- [ ] توليد APK للاختبار
+- [ ] توزيع تجريبي عبر Firebase App Distribution
 
 ---
 
@@ -119,15 +176,16 @@
 
 ## 🏗️ الـ Stack التقني
 
-| الطبقة | التقنية |
-|--------|---------|
-| Frontend | Flutter (Android — API 21+) |
-| State Management | Riverpod |
-| Auth | Firebase Authentication (Google) |
-| Database | Cloud Firestore |
-| Notifications | Firebase Cloud Messaging (FCM) |
-| Backend Logic | Firebase Cloud Functions (Node.js) |
-| Local Storage | Hive (لسجل الإشعارات) |
-| i18n | Flutter Localizations (`flutter_localizations`) |
-| Open Links | `url_launcher` |
-| Hosting | لا يلزم (كل شيء في Firebase) |
+| الطبقة | التقنية | الحالة |
+|--------|---------|--------|
+| Frontend | Flutter (Android — API 21+) | ✅ مُعدّ |
+| State Management | Riverpod | ✅ مُفعّل |
+| Navigation | GoRouter | ✅ مُفعّل |
+| Auth | Firebase Authentication (Google) | 🔲 Mock فقط |
+| Database | Cloud Firestore | 🔲 غير مربوط |
+| Notifications | Firebase Cloud Messaging (FCM) | 🔲 غير مُعدّ |
+| Backend Logic | Firebase Cloud Functions (Node.js) | 🔲 غير مكتوب |
+| Local Storage | Hive (لسجل الإشعارات) | 🔲 غير مُعدّ |
+| i18n | Flutter Localizations (`flutter_localizations`) | 🟡 جزئي |
+| Open Links | `url_launcher` | 🔲 غير مربوط |
+| Hosting | لا يلزم (كل شيء في Firebase) | — |
