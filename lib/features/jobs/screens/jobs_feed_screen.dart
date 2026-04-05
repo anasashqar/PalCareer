@@ -16,7 +16,6 @@ class JobsFeedScreen extends ConsumerStatefulWidget {
 }
 
 class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
-  int _selectedFilterIndex = 0;
 
   String _getLocalizedHeader(String titleId, String langCode) {
     if (langCode == 'ar') {
@@ -94,35 +93,6 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
               ),
             ),
             
-            SliverToBoxAdapter(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                child: Row(
-                  children: [
-                    _FilterChip(
-                      label: l10n.fieldIt, 
-                      isSelected: _selectedFilterIndex == 0,
-                      onTap: () => setState(() => _selectedFilterIndex = 0),
-                    ),
-                    const SizedBox(width: 8),
-                    _FilterChip(
-                      label: l10n.remote, 
-                      isSelected: _selectedFilterIndex == 1,
-                      onTap: () => setState(() => _selectedFilterIndex = 1),
-                    ),
-                    const SizedBox(width: 8),
-                    _FilterChip(
-                      label: l10n.fullTime, 
-                      isSelected: _selectedFilterIndex == 2,
-                      onTap: () => setState(() => _selectedFilterIndex = 2),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            
             jobsAsyncValue.when(
               data: (groups) {
                 if (groups.isEmpty) {
@@ -174,11 +144,13 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                               globalIndex += groups[i].jobs.length;
                             }
                             
+                            final delayMs = (400 + globalIndex * 80).clamp(0, 600).toInt();
+                            
                             return TweenAnimationBuilder<double>(
                               // Add a distinct key per job so the widget tree animates them correctly
                               key: ValueKey(job.id),
                               tween: Tween(begin: 0.0, end: 1.0),
-                              duration: Duration(milliseconds: 400 + (globalIndex * 80).clamp(0, 600)),
+                              duration: Duration(milliseconds: delayMs),
                               curve: Curves.easeOutCubic,
                               builder: (context, value, child) {
                                 return Opacity(
@@ -216,43 +188,5 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
         ),
       ),
     );
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _FilterChip({required this.label, required this.isSelected, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutCubic,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-      decoration: BoxDecoration(
-        color: isSelected ? AppColors.primary : AppColors.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: isSelected ? AppColors.primary : AppColors.outlineVariant.withValues(alpha: 0.4),
-          width: 1.2,
-        ),
-        boxShadow: isSelected 
-            ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.35), blurRadius: 12, offset: const Offset(0, 6))] 
-            : [],
-      ),
-      child: Text(
-        label,
-        style: GoogleFonts.cairo(
-          fontSize: 13,
-          fontWeight: FontWeight.w700,
-          color: isSelected ? AppColors.onPrimary : AppColors.onSurfaceVariant,
-        ),
-      ),
-    )); // Closed AnimatedContainer and GestureDetector properly
   }
 }

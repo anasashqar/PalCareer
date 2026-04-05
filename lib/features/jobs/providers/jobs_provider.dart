@@ -3,151 +3,218 @@ import '../../../shared/models/job_model.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 
 class JobGroup {
-  final String titleId; // Used for translation key conceptually
+  final String titleId;
   final List<JobModel> jobs;
 
   JobGroup(this.titleId, this.jobs);
 }
 
 final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
-  // To simulate the matching algorithm, we watch the onboarding state
   final obState = ref.watch(onboardingProvider);
   
-  await Future.delayed(const Duration(seconds: 1)); // Mock network delay
+  await Future.delayed(const Duration(milliseconds: 800)); // Mock network delay
   
-  // 1. Mock Data Pool
   final allJobs = [
+    // ---------------- IT SECTOR ----------------
     JobModel(
       id: 'job_1',
-      title: {'en': 'Senior Flutter Developer', 'ar': 'مطور تطبيقات Flutter'},
-      company: 'TechMakers',
-      location: {'en': 'Ramallah, Palestine', 'ar': 'رام الله، فلسطين'},
-      types: ['full_time', 'remote'],
-      postedAt: DateTime.now().subtract(const Duration(hours: 5)),
+      title: {'en': 'Senior Flutter Developer', 'ar': 'مطور تطبيقات Flutter أول'},
+      company: 'TechMakers', location: {'en': 'Ramallah', 'ar': 'رام الله، المنطقة التكنولوجية'},
+      types: ['full_time', 'remote'], postedAt: DateTime.now().subtract(const Duration(hours: 5)),
       description: {
-        'en': 'We are looking for a highly skilled Flutter Developer.',
-        'ar': 'نحن نبحث عن مطور فلتر موهوب للانضمام لفريقنا.',
+        'en': 'We are looking for a highly skilled Flutter Developer to build our next generation apps.',
+        'ar': 'نحن نبحث عن مطور فلتر موهوب للانضمام لشركة TechMakers. نحن نقوم ببناء تطبيقات الجيل القادم لقطاع التكنولوجيا المالية (FinTech) وسيكون دورك محورياً في قيادة تطوير واجهات المستخدم عالية الأداء وضمان تجربة مستخدم سلسة جداً.',
       },
       requirements: {
-        'en': ['3+ years Flutter', 'State management'],
-        'ar': ['خبرة 3 سنوات', 'إدارة الحالة']
+        'en': ['3+ years in Flutter', 'State management (Riverpod/Bloc)', 'CI/CD experience'],
+        'ar': ['خبرة لا تقل عن 3 سنوات في بناء تطبيقات ببيئة Flutter.', 'إتقان تام لإدارة حالة التطبيقات (State Management) يفضل Riverpod أو Bloc.', 'خبرة سابقة في دمج منصات Firebase و REST APIs.', 'القدرة على العمل في بيئة Agile متسارعة.'],
       },
       responsibilities: {
-        'en': ['Build UI', 'Optimize performance'],
-        'ar': ['بناء الواجهات', 'تحسين الأداء']
+        'en': ['UI/UX: Build clean interfaces', 'Performance: Optimize apps for 60fps'],
+        'ar': ['هندسة الواجهات: بناء شاشات عالية الدقة التزاماً بنظام التصميم (Figma).', 'تحسين الأداء: مراقبة أداء التطبيق وحل مشكلات الجانك لضمان سلاسة بمعدل 60FPS.', 'تدريب الفريق: توجيه وإرشاد المطورين المبتدئين في الفريق.', 'تطوير النظم: المساهمة في تطوير هيكلية البيانات وإعداد بنية النظام الأساسية.'],
       },
-      applyUrl: 'https://example.com/apply1',
-      primarySector: 'it',
-      subSectors: ['it_mobile', 'it_software'],
+      applyUrl: 'https://example.com/apply', primarySector: 'it', subSectors: ['mobile_dev'],
     ),
     JobModel(
       id: 'job_2',
-      title: {'en': 'Backend Node.js Developer', 'ar': 'مطور خلفيات Node.js'},
-      company: 'Pioneers Tech',
-      location: {'en': 'Nablus, Palestine', 'ar': 'نابلس، فلسطين'},
-      types: ['full_time'],
-      postedAt: DateTime.now().subtract(const Duration(days: 2)),
-      description: {
-        'en': 'Looking for a Backend Developer.',
-        'ar': 'نبحث عن مطور خلفيات مبدع.',
-      },
-      requirements: {
-        'en': ['Node.js', 'MongoDB', 'AWS'],
-        'ar': ['Node.js', 'MongoDB', 'AWS']
-      },
-      responsibilities: {
-        'en': ['Design APIs'],
-        'ar': ['تصميم الـ APIs']
-      },
-      applyUrl: 'https://example.com/apply2',
-      primarySector: 'it',
-      subSectors: ['it_software'],
+      title: {'en': 'Backend Node.js Engineer', 'ar': 'مهندس خلفيات Node.js'},
+      company: 'Pioneers Tech', location: {'en': 'Nablus', 'ar': 'نابلس'},
+      types: ['full_time'], postedAt: DateTime.now().subtract(const Duration(days: 1)),
+      description: {'en': 'Server-side logic and database integration.', 'ar': 'بناء وتطوير خدمات سحابية تتحمل ضغط العمل العالي باستخدام Node.js وقواعد بيانات MongoDB.'},
+      requirements: {'en': ['Node.js', 'MongoDB', 'AWS'], 'ar': ['خبرة معمقة في Node.js', 'تصميم قواعد بيانات MongoDB', 'التعامل مع AWS']},
+      responsibilities: {'en': ['API: Design architecture'], 'ar': ['بناء الأنظمة: تصميم وهندسة RESTful APIs بكفاءة.', 'الأمن السيبراني: تأمين البيانات ومنع الاختراقات.']},
+      applyUrl: '', primarySector: 'it', subSectors: ['software_dev', 'web_dev'],
     ),
     JobModel(
       id: 'job_3',
-      title: {'en': 'Clinical Nurse', 'ar': 'ممرض/ة في عيادة'},
-      company: 'Care Center',
-      location: {'en': 'Ramallah', 'ar': 'رام الله'},
-      types: ['full_time'],
-      postedAt: DateTime.now().subtract(const Duration(days: 4)),
-      description: {
-        'en': 'Seeking a registered nurse.',
-        'ar': 'مطلوب ممرض مسجل للعمل في عيادة طبية.',
-      },
-      requirements: {
-        'en': ['Nursing degree'],
-        'ar': ['شهادة في التمريض']
-      },
-      responsibilities: {
-        'en': ['Patient care'],
-        'ar': ['رعاية المرضى']
-      },
-      applyUrl: 'https://example.com/apply3',
-      primarySector: 'health',
-      subSectors: ['health_nursing'],
+      title: {'en': 'UI/UX Designer', 'ar': 'مصمم واجهات وتجربة مستخدم (UI/UX)'},
+      company: 'AppStudio', location: {'en': 'Remote', 'ar': 'عن بُعد'},
+      types: ['part_time'], postedAt: DateTime.now().subtract(const Duration(days: 2)),
+      description: {'en': 'Creative designer for modern apps.', 'ar': 'نحن نبحث عن مصمم شغوف بتحليل رحلات المستخدمين، لترجمة الأفكار لحلول بصرية تبهر العملاء.'},
+      requirements: {'en': ['Figma'], 'ar': ['إتقان Figma بدرجة احترافية', 'فهم مسبق لـ Material 3 Design', 'محفظة أعمال قوية']},
+      responsibilities: {'en': ['Wireframing: Draft user flows'], 'ar': ['رسم مسارات المستخدمين: تبسيط تجربة التطبيق لتكون بديهية.', 'أنظمة التصميم: بناء Design System موحد ليستخدمه فريق البرمجة.']},
+      applyUrl: '', primarySector: 'it', subSectors: ['design_ux'],
     ),
     JobModel(
       id: 'job_4',
-      title: {'en': 'Marketing Manager', 'ar': 'مدير/ة تسويق'},
-      company: 'GrowthHub',
-      location: {'en': 'Remote', 'ar': 'عن بُعد'},
-      types: ['part_time', 'remote'],
-      postedAt: DateTime.now().subtract(const Duration(days: 5)),
-      description: {
-        'en': 'Remote marketing role.',
-        'ar': 'وظيفة عن بعد لإدارة الحملات المكتوبة.',
-      },
-      requirements: {
-        'en': ['Marketing EXP'],
-        'ar': ['خبرة في التسويق']
-      },
-      responsibilities: {
-        'en': ['Campaigns'],
-        'ar': ['إدارة الحملات']
-      },
-      applyUrl: 'https://example.com/apply4',
-      primarySector: 'business',
-      subSectors: ['bz_marketing'],
+      title: {'en': 'Data Analyst', 'ar': 'محلل بيانات'},
+      company: 'DataMind', location: {'en': 'Hebron', 'ar': 'الخليل'},
+      types: ['full_time'], postedAt: DateTime.now().subtract(const Duration(hours: 12)),
+      description: {'en':'Parse data sets.','ar': 'تحليل جداول البيانات الضخمة للمساعدة في اتخاذ القرارات الإدارية.'},
+      requirements: {'en': ['Python'], 'ar': ['بايثون وتحليل البيانات', 'إجادة SQL']}, 
+      responsibilities: {'en': ['Reports: Build dashboards'], 'ar': ['التقارير الإحصائية: بناء لوحات تحكم ديناميكية.', 'تحليل السوق: استخراج الاتجاهات بناءً على البيانات.']},
+      applyUrl: '', primarySector: 'it', subSectors: ['data_ai'],
     ),
     JobModel(
       id: 'job_5',
-      title: {'en': 'Civil Engineer', 'ar': 'مهندس/ة مدني'},
-      company: 'BuildCo',
-      location: {'en': 'Hebron', 'ar': 'الخليل'},
-      types: ['full_time'],
-      postedAt: DateTime.now().subtract(const Duration(days: 1)),
+      title: {'en': 'Cyber Security Expert', 'ar': 'خبير أمن سيبراني'},
+      company: 'SafeNet', location: {'en': 'Ramallah', 'ar': 'رام الله'},
+      types: ['full_time'], postedAt: DateTime.now().subtract(const Duration(days: 3)),
+      description: {'en':'Secure networks.','ar':'تأمين الشبكات والأنظمة الداخلية للشركة وضمان حمايتها من هجمات التصيد والاختراقات.'},
+      requirements: {'en': ['Cisco'], 'ar': ['Cisco CCNA/CCNP', 'Pen testing']}, 
+      responsibilities: {'en': ['Testing: Pen testing'], 'ar': ['فحص الثغرات: عمل Penetration Testing بشكل دوري.', 'التدريب: توعية الموظفين أمنياً.']},
+      applyUrl: '', primarySector: 'it', subSectors: ['networks'],
+    ),
+
+    // ---------------- MEDICINE SECTOR ----------------
+    JobModel(
+      id: 'job_6',
+      title: {'en': 'General Practitioner (GP)', 'ar': 'طبيب عام'},
+      company: 'Al-Shifa Hospital', location: {'en': 'Gaza', 'ar': 'غزة'},
+      types: ['full_time'], postedAt: DateTime.now().subtract(const Duration(hours: 2)),
+      description: {'en':'Provide general care.','ar': 'تقديم الاستشارات الطبية العامة والتشخيص الأولي للمرضى ضمن قسم الطوارئ والعيادات.'},
+      requirements: {'en': ['MBBS', 'License'], 'ar': ['شهادة بكالوريوس طب وجراحة', 'مزاولة مهنة سارية المفعول']}, 
+      responsibilities: {'en': ['Diagnosis: Treat patients'], 'ar': ['التشخيص المبدئي: فحص ومعالجة المرضى يومياً.', 'تحويل الحالات: توجيه المريض للعيادة التخصصية المناسبة.']},
+      applyUrl: '', primarySector: 'medicine', subSectors: ['general_medicine'],
+    ),
+    JobModel(
+      id: 'job_7',
+      title: {'en': 'Registered Nurse', 'ar': 'ممرض/ة مسجل/ة'},
+      company: 'Care Center', location: {'en': 'Nablus', 'ar': 'نابلس'},
+      types: ['full_time', 'part_time'], postedAt: DateTime.now().subtract(const Duration(hours: 20)),
+      description: {'en':'Care duties.','ar': 'توفير رعاية تمريضية ممتازة في وحدة العناية المركزية والعيادات الخارجية.'},
+      requirements: {'en': ['Nursing degree'], 'ar': ['شهادة دبلوم أو بكالوريوس تمريض', 'تحمل ضغط العمل بنظام الشفتات']}, 
+      responsibilities: {'en': ['Monitoring: Vitals'], 'ar': ['مراقبة العلامات الحيوية: متابعة المرضى بشكل دوري على مدار الشفت.', 'إعطاء الأدوية: الالتزام بالجدول العلاجي للمريض بدقة.']},
+      applyUrl: '', primarySector: 'medicine', subSectors: ['nursing'],
+    ),
+    JobModel(
+      id: 'job_8',
+      title: {'en': 'Pharmacist', 'ar': 'صيدلاني/ة'},
+      company: 'HealthPlus Pharmacy', location: {'en': 'Ramallah', 'ar': 'رام الله'},
+      types: ['full_time'], postedAt: DateTime.now().subtract(const Duration(days: 4)),
+       description: {'en':'Distribute meds.','ar': 'صرف الأدوية للمرضى وتقديم الإرشادات الصيدلانية، مع إدارة مخزون الصيدلية.'},
+      requirements: {'en': ['Pharmacy degree'], 'ar': ['بكالوريوس في الصيدلة', 'معرفة ممتازة بالأدوية وبدائلها']}, 
+      responsibilities: {'en': ['Dispensing: Prescriptions'], 'ar': ['صرف الوصفات: التأكد من مطابقة الوصفات الطبية بدقة.', 'الجرد المالي: الاهتمام بطلبيات وجرد المخزون الطبي.']},
+      applyUrl: '', primarySector: 'medicine', subSectors: ['pharmacy'],
+    ),
+    JobModel(
+      id: 'job_9',
+      title: {'en': 'Dentist', 'ar': 'طبيب أسنان (أخصائي جراحة وتقويم)'},
+      company: 'Smile Clinic', location: {'en': 'Bethlehem', 'ar': 'بيت لحم'},
+      types: ['part_time'], postedAt: DateTime.now().subtract(const Duration(hours: 1)),
       description: {
-        'en': 'Required civil engineer.',
-        'ar': 'مطلوب مهندس مدني لموقع بناء.',
+        'en': 'Experienced dentist required for part-time shift.',
+        'ar': 'عيادة Smile Clinic تبحث عن طبيب أسنان بخبرة لا تقل عن 5 سنوات في الجراحة التجميلية لطب الأسنان وزراعتها، الدوام جزئي ومناسب للعمل الخاص. العيادة مجهزة بأحدث آلات الـ X-Ray السنية والتكنولوجيا الألمانية المتقدمة.',
       },
       requirements: {
-        'en': ['Engineering degree'],
-        'ar': ['بكالوريوس هندسة']
-      },
+         'en': ['Dentistry'],
+         'ar': ['شهادة بكالوريوس في جراحة الفم والأسنان.', 'حاصل على شهادة بورد في زراعة الأسنان أو ما يعادلها.', 'خبرة سابقة لا تقل عن 5 سنوات في عيادات معتمدة.', 'مهارات تواصل عالية جداً مع المراجعين.']
+      }, 
       responsibilities: {
-        'en': ['Site management'],
-        'ar': ['إدارة الموقع']
+         'en': ['Surgery: Perform operations'], 
+         'ar': ['العمليات الجراحية: التركيبات السنية وزراعة الأسنان باحترافية عالية.', 'الفحص السريري: تقديم استشارات وتحديد الخطط العلاجية المتكاملة للمرضى.', 'التوثيق المكتبي: إبقاء سجلات المرضى محدثة ومكتملة بشكل يومي.', 'مكافحة العدوى: التأكد التام من نظافة وتعقيم بيئة العيادة.']
       },
-      applyUrl: 'https://example.com/apply5',
-      primarySector: 'engineering',
-      subSectors: ['eng_civil'],
+      applyUrl: '', primarySector: 'medicine', subSectors: ['dentistry'],
+    ),
+
+    // ---------------- ENGINEERING SECTOR ----------------
+    JobModel(
+      id: 'job_10',
+      title: {'en': 'Civil Engineer (Site Manager)', 'ar': 'مهندس مدني (مدير موقع)'},
+      company: 'BuildCo', location: {'en': 'Jenin', 'ar': 'جنين'},
+      types: ['full_time'], postedAt: DateTime.now().subtract(const Duration(hours: 8)),
+      description: {'en':'Site management','ar': 'الإشراف على تشييد المباني الكبرى والمجمعات التجارية في قلب المدينة.'},
+      requirements: {'en': ['Civil Eng'], 'ar': ['هندسة مدنية خبرة 4 سنوات', 'إجادة AutoCad']}, 
+      responsibilities: {'en': ['Site Work: Oversight'], 'ar': ['الإشراف الهندسي: إدارة العمال والمشرفين في الموقع يومياً.', 'متابعة المشتريات: فحص مطابقة المواد لمواصفات البناء.']},
+      applyUrl: '', primarySector: 'engineering', subSectors: ['civil'],
+    ),
+    JobModel(
+      id: 'job_11',
+      title: {'en': 'Architectural Designer', 'ar': 'مهندس/ة معماري/ة'},
+      company: 'Modern Homes', location: {'en': 'Ramallah', 'ar': 'رام الله'},
+      types: ['full_time'], postedAt: DateTime.now().subtract(const Duration(days: 2)),
+      description: {'en':'Design houses','ar': 'تصميم المخططات المعمارية والديكور الداخلي لفلل سكنية حديثة.'},
+      requirements: {'en': ['Architecture'], 'ar': ['خبرة في 3D Max والتصميم المعماري']}, 
+      responsibilities: {'en': ['Planning: Draw'], 'ar': ['المخططات: بناء تصاميم هندسية وتوزيع الفراغات.', 'الإخراج البصري: إنشاء ريندر 3D واقعي ليراه العميل.']},
+      applyUrl: '', primarySector: 'engineering', subSectors: ['architecture'],
+    ),
+    JobModel(
+      id: 'job_12',
+      title: {'en': 'Electrical Engineer', 'ar': 'مهندس كهربائي'},
+      company: 'PowerGrid', location: {'en': 'Hebron', 'ar': 'الخليل'},
+      types: ['full_time'], postedAt: DateTime.now().subtract(const Duration(days: 3)),
+       description: {'en':'Power grid design','ar': 'تصميم وتنفيذ أنظمة كهرباء الجهد المنخفض والمنازل الذكية.'},
+      requirements: {'en': ['Electrical Exp'], 'ar': ['خبرة تمديدات ولوحات طاقة شمسية']}, 
+      responsibilities: {'en': ['wiring: cables'], 'ar': ['التمديدات: الإشراف على مقاولي الكهرباء.', 'دراسات الأحمال: حساب مقاطع الكابلات وأنظمة التحويل.']},
+      applyUrl: '', primarySector: 'engineering', subSectors: ['electrical'],
+    ),
+
+    // ---------------- BUSINESS SECTOR ----------------
+    JobModel(
+      id: 'job_13',
+      title: {'en': 'Digital Marketing Specialist', 'ar': 'أخصائي تسويق رقمي'},
+      company: 'GrowthHub', location: {'en': 'Remote', 'ar': 'عن بُعد'},
+      types: ['remote'], postedAt: DateTime.now().subtract(const Duration(hours: 1)),
+       description: {'en':'Online ads','ar': 'تسويق وإطلاق حملات إعلانية مدفوعة وإدارة ميزانيات السوشيال ميديا.'},
+      requirements: {'en': ['Marketing'], 'ar': ['خبرة في Meta Ads و Google Ads']}, 
+      responsibilities: {'en': ['Campaigns: Run ads'], 'ar': ['الحملات: إطلاق وتحسين إعلانات السوشيال ميديا يومياً.', 'كتابة المحتوى: توجيه كتاب وصناع المحتوى.']},
+      applyUrl: '', primarySector: 'business', subSectors: ['marketing'],
+    ),
+    JobModel(
+      id: 'job_14',
+      title: {'en': 'Senior Accountant', 'ar': 'محاسب أول'},
+      company: 'PalBank', location: {'en': 'Ramallah', 'ar': 'رام الله'},
+      types: ['full_time'], postedAt: DateTime.now().subtract(const Duration(days: 4)),
+       description: {'en':'Auditing','ar': 'وظيفة في المقر الرئيسي للبنك لرصد الحركات المالية والتدقيق الداخلي.'},
+      requirements: {'en': ['Accounting'], 'ar': ['محاسبة', 'برنامج الشامل']}, 
+      responsibilities: {'en': ['Auditing: Books'], 'ar': ['التدقيق المالي: إعداد القوائم المالية الشهرية.', 'متابعة البنوك: عمليات التسوية والمطابقة.']},
+      applyUrl: '', primarySector: 'business', subSectors: ['accounting'],
+    ),
+    JobModel(
+      id: 'job_15',
+      title: {'en': 'HR Director', 'ar': 'مدير الموارد البشرية'},
+      company: 'MegaTech', location: {'en': 'Nablus', 'ar': 'نابلس'},
+      types: ['full_time'], postedAt: DateTime.now().subtract(const Duration(days: 6)),
+      description: {'en':'Manage employees','ar': 'قيادة موظفي الشركة والإشراف على عمليات التوظيف والتقييم.'},
+      requirements: {'en': ['HR'], 'ar': ['شهادة متقدمة في الموارد البشرية']}, 
+      responsibilities: {'en': ['Recruitment: Hiring'], 'ar': ['التوظيف: إجراء المقابلات واختيار الكفاءات.', 'بيئة العمل: السهر على راحة وإنتاجية الموظفين.']},
+      applyUrl: '', primarySector: 'business', subSectors: ['hr'],
+    ),
+    
+    // ---------------- EDUCATION SECTOR ----------------
+    JobModel(
+      id: 'job_16',
+      title: {'en': 'English Teacher', 'ar': 'مدرس/ة لغة إنجليزية'},
+      company: 'Excellence Academy', location: {'en': 'Jerusalem', 'ar': 'القدس'},
+      types: ['full_time'], postedAt: DateTime.now().subtract(const Duration(hours: 18)),
+       description: {'en':'Teaching','ar': 'تدريس الأطفال والمرحلة الأساسية بطرق تفاعلية حديثة.'},
+      requirements: {'en': ['Teaching'], 'ar': ['تدريس']}, 
+      responsibilities: {'en': ['Classes: Teach'], 'ar': ['التدريس: إعطاء الحصص للطلبة.', 'التقييم: تصحيح أوراق العمل وإعداد الامتحانات.']},
+      applyUrl: '', primarySector: 'education', subSectors: ['teaching'],
     ),
   ];
 
-  // 2. The Matching Algorithm (Waterfall)
   final perfectMatches = <JobModel>[];
   final sectorMatches = <JobModel>[];
   final exploreMore = <JobModel>[];
 
   if (obState.selectedSector == null) {
-    // If user has no preferences (e.g. guest), return all in one list
     return [JobGroup('explore_jobs', allJobs)];
   }
 
   for (final job in allJobs) {
     bool isPerfect = false;
     
-    // Check intersection of sub-sectors
     for (final userSub in obState.fieldsOfStudy) {
       if (job.subSectors.contains(userSub)) {
         isPerfect = true;
@@ -167,13 +234,15 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
   final List<JobGroup> groups = [];
   
   if (perfectMatches.isNotEmpty) {
-    groups.add(JobGroup('perfect_matches', perfectMatches)); // 🔥 الأنسب لك
+    groups.add(JobGroup('perfect_matches', perfectMatches));
   }
   if (sectorMatches.isNotEmpty) {
-    groups.add(JobGroup('sector_matches', sectorMatches)); // مقترحات في مجالك
+    groups.add(JobGroup('sector_matches', sectorMatches));
   }
+  
   if (exploreMore.isNotEmpty) {
-    groups.add(JobGroup('explore_jobs', exploreMore)); // استكشف المزيد
+    exploreMore.shuffle(); 
+    groups.add(JobGroup('explore_jobs', exploreMore));
   }
 
   return groups;
