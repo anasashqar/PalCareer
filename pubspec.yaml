@@ -1,0 +1,47 @@
+name: palcareer
+description: "PalCareer — وظائف فلسطين"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.6.1
+
+  # Navigation
+  go_router: ^15.1.2
+
+  # Firebase
+  firebase_core: ^3.13.0
+  firebase_auth: ^5.5.4
+  cloud_firestore: ^5.6.8
+  firebase_messaging: ^15.2.6
+
+  # Local Storage
+  hive_flutter: ^1.1.0
+
+  # Auth
+  google_sign_in: ^6.3.0
+
+  # Utilities
+  url_launcher: ^6.3.1
+  package_info_plus: ^8.3.0
+  cached_network_image: ^3.4.1
+  intl: any
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
