@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
@@ -28,15 +29,13 @@ class PalCareerApp extends StatelessWidget {
       routerConfig: appRouter,
       
       // i18n support setup
-      localizationsDelegates: const [
+      localizationsDelegates: [
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('ar'), // Arabic
-        Locale('en'), // English
-      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       // Default to Arabic
       locale: const Locale('ar'),
     );
