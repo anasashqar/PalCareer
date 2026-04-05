@@ -46,6 +46,37 @@ class JobModel {
     return location[languageCode] ?? location['en'] ?? 'Unknown Location';
   }
 
+  List<String> getLocalizedTypes(String languageCode) {
+    if (languageCode == 'ar') {
+      return types.map((type) {
+        switch (type.toLowerCase()) {
+          case 'full_time':
+          case 'full-time':
+            return 'دوام كامل';
+          case 'part_time':
+          case 'part-time':
+            return 'دوام جزئي';
+          case 'remote':
+            return 'عن بُعد';
+          case 'freelance':
+            return 'عمل حر';
+          case 'contract':
+            return 'عقد';
+          case 'internship':
+            return 'تدريب';
+          default:
+            return type;
+        }
+      }).toList();
+    }
+    // Format for English
+    return types.map((type) {
+        final words = type.replaceAll('_', ' ').replaceAll('-', ' ').split(' ');
+        if (words.isEmpty) return type;
+        return words.map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '').join(' ');
+    }).toList();
+  }
+
   String getLocalizedDescription(String languageCode) {
     if (description == null) return '';
     return description![languageCode] ?? description!['en'] ?? '';

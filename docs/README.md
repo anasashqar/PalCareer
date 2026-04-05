@@ -89,65 +89,9 @@ lib/
 
 ---
 
-## 🗄️ Firestore Structure
-
-```
-/users/{userId}
-    name: String
-    email: String
-    photoUrl: String
-    fields: Array<String>            // ["it", "engineering", ...]
-    educationLevel: String           // "student" | "graduate"
-    preferredJobTypes: Array<String> // ["full_time", "part_time", "remote"]
-    fcmToken: String
-    onboardingCompleted: Boolean
-    createdAt: Timestamp
-
-/jobs/{jobId}
-    title: { ar: String, en: String }
-    company: String
-    location: String
-    jobType: String                  // "full_time" | "part_time" | "remote"
-    level: String                    // "مبتدئ" | "متوسط" | "أول"
-    skills: Array<String>
-    applyLink: String
-    description: { ar: String, en: String }
-    requirements: { ar: Array<String>, en: Array<String> }
-    responsibilities: { ar: Array<Map>, en: Array<Map> }
-    fields: Array<String>
-    publishedAt: Timestamp
-    isActive: Boolean
-    // companyLogo: String           // V2
-```
-
----
-
 ## 🚦 Project Status
 
-| Area | Status | Details |
-|------|--------|---------|
-| Project Setup (Flutter + deps) | ✅ Done | pubspec.yaml + folder structure |
-| Design System / Theme | ✅ Done | The Civic Curator theme applied |
-| Navigation / Routing | ✅ Done | GoRouter + StatefulShellRoute |
-| Splash Screen | ✅ Done (UI) | Animation + auto-navigate (no smart routing yet) |
-| Login Screen | ✅ Done (UI) | Google button + Mock Auth |
-| Onboarding (2 steps) | ✅ Done (UI) | Field + level + work type selection |
-| Jobs Feed | ✅ Done (UI) | Mock data, job cards with badges |
-| Job Detail | ✅ Done (UI) | Requirements + responsibilities + apply button |
-| Notification Center | 🟡 UI only | Basic screen, no real data |
-| Profile & Settings | 🟡 UI only | Basic screen, no real data |
-| Data Models | ✅ Done | UserModel + JobModel with Firestore conversion |
-| i18n (AR/EN) | 🟡 Partial | ARB files created, some hardcoded strings remain |
-| Firebase Auth (real) | 🔲 Not started | MockAuthRepository in use |
-| Firestore Integration | 🔲 Not started | Services files empty |
-| Push Notifications (FCM) | 🔲 Not started | — |
-| Cloud Functions | 🔲 Not started | — |
-| Hive (local storage) | 🔲 Not started | — |
-| Firebase Security Rules | 🔲 Not started | — |
-| Error Handling / Edge Cases | 🔲 Not started | — |
-| APK Build & Distribution | 🔲 Not started | — |
-
-> 🔲 Not started &nbsp;|&nbsp; 🟡 Partial / UI only &nbsp;|&nbsp; ✅ Done
+For detailed feature tracking and current project status, please refer to the [`FEATURES.md`](./FEATURES.md) document.
 
 ---
 

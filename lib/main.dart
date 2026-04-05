@@ -5,6 +5,7 @@ import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
+import 'core/providers/settings_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,11 +18,13 @@ void main() {
   );
 }
 
-class PalCareerApp extends StatelessWidget {
+class PalCareerApp extends ConsumerWidget {
   const PalCareerApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+
     return MaterialApp.router(
       title: 'PalCareer',
       debugShowCheckedModeBanner: false,
@@ -29,15 +32,14 @@ class PalCareerApp extends StatelessWidget {
       routerConfig: appRouter,
       
       // i18n support setup
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
-      // Default to Arabic
-      locale: const Locale('ar'),
+      locale: locale,
     );
   }
 }

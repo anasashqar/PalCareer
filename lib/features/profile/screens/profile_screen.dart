@@ -5,6 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/providers/settings_provider.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../onboarding/providers/onboarding_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -12,6 +15,9 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final pushEnabled = ref.watch(pushNotificationsProvider);
+    final currentLocale = ref.watch(localeProvider);
+    final obState = ref.watch(onboardingProvider);
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -63,7 +69,7 @@ class ProfileScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'مؤمن الفلسطيني', // Mock Arabic User Name
+                          'مستخدم تجريبي', // Mock Arabic User Name
                           style: GoogleFonts.cairo(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
@@ -72,7 +78,9 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'طالب هندسة حاسوب', // Mock bio
+                          obState.academicLevel != null && obState.selectedSector != null 
+                              ? '${obState.academicLevel} في ${obState.selectedSector}'
+                              : 'مكتشف وظائف فلسطين',
                           style: GoogleFonts.cairo(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -103,33 +111,58 @@ class ProfileScreen extends ConsumerWidget {
               title: l10n.pushNotificationsToggle,
               iconColor: const Color(0xFFE5A93C),
               trailing: Switch(
-                value: true, // Mock value
+                value: pushEnabled,
                 activeColor: Colors.white,
                 activeTrackColor: AppColors.primary,
                 inactiveTrackColor: AppColors.surfaceContainerLow,
                 inactiveThumbColor: AppColors.onSurfaceVariant,
-                onChanged: (val) {},
+                onChanged: (val) {
+                  ref.read(pushNotificationsProvider.notifier).state = val;
+                },
               ),
             ),
             const SizedBox(height: 12),
             _SettingsItem(
               icon: Icons.language_rounded,
-              title: "تغيير اللغة (Language)",
+              title: "تغيير اللغة (${currentLocale.languageCode == 'ar' ? 'English' : 'عربي'})",
               iconColor: AppColors.secondary,
-              onTap: () {}, // For future implementation
+              onTap: () {
+                final isAr = currentLocale.languageCode == 'ar';
+                ref.read(localeProvider.notifier).state = Locale(isAr ? 'en' : 'ar');
+              },
             ),
             const SizedBox(height: 12),
             _SettingsItem(
               icon: Icons.info_outline_rounded,
               title: l10n.aboutApp,
               iconColor: AppColors.primary,
-              onTap: () {},
+              onTap: () {
+                showAboutDialog(
+                  context: context,
+                  applicationName: 'PalCareer\nوظائف فلسطين',
+                  applicationVersion: '1.0.0+1',
+                  applicationIcon: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12)
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    child: const Icon(Icons.work_rounded, color: AppColors.primary, size: 40)
+                  ),
+                  applicationLegalese: '© 2026 PalCareer Team.\nتم التطوير من أجل مساعدة الشباب الفلسطيني في إيجاد فرص عمل بكفاءة وسهولة.',
+                );
+              },
             ),
             const SizedBox(height: 48),
 
             // Logout Button
             TextButton(
-              onPressed: () => context.go('/login'),
+              onPressed: () async {
+                await ref.read(authNotifierProvider.notifier).signOut();
+                if (context.mounted) {
+                  context.go('/login');
+                }
+              },
               style: TextButton.styleFrom(
                 backgroundColor: AppColors.errorContainer.withValues(alpha: 0.5),
                 foregroundColor: AppColors.error,
