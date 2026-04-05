@@ -7,6 +7,7 @@ class UserModel {
   final String email;
   final String? photoUrl;
   final String? academicLevel;
+  final String? primarySector;
   final List<String> specialties;
   final List<String> workTypes;
   final String? fcmToken;
@@ -18,6 +19,7 @@ class UserModel {
     required this.email,
     this.photoUrl,
     this.academicLevel,
+    this.primarySector,
     this.specialties = const [],
     this.workTypes = const [],
     this.fcmToken,
@@ -30,6 +32,7 @@ class UserModel {
     String? email,
     String? photoUrl,
     String? academicLevel,
+    String? primarySector,
     List<String>? specialties,
     List<String>? workTypes,
     String? fcmToken,
@@ -41,6 +44,7 @@ class UserModel {
       email: email ?? this.email,
       photoUrl: photoUrl ?? this.photoUrl,
       academicLevel: academicLevel ?? this.academicLevel,
+      primarySector: primarySector ?? this.primarySector,
       specialties: specialties ?? this.specialties,
       workTypes: workTypes ?? this.workTypes,
       fcmToken: fcmToken ?? this.fcmToken,
@@ -55,6 +59,7 @@ class UserModel {
       email: map['email'] as String? ?? '',
       photoUrl: map['photoUrl'] as String?,
       academicLevel: map['academicLevel'] as String?,
+      primarySector: map['primarySector'] as String?,
       specialties: List<String>.from(map['specialties'] ?? []),
       workTypes: List<String>.from(map['workTypes'] ?? []),
       fcmToken: map['fcmToken'] as String?,
@@ -68,6 +73,7 @@ class UserModel {
       'email': email,
       'photoUrl': photoUrl,
       'academicLevel': academicLevel,
+      'primarySector': primarySector,
       'specialties': specialties,
       'workTypes': workTypes,
       'fcmToken': fcmToken,

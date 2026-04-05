@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../shared/models/career_taxonomy.dart';
 import '../providers/onboarding_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -53,8 +54,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -75,10 +74,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     ),
                   ),
                   const Spacer(),
-                  // Animated Page Indicator (Extending Dots)
+                  // Animated Page Indicator (3 Steps now)
                   Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: List.generate(2, (index) {
+                    children: List.generate(3, (index) {
                       final isSelected = _currentPage == index;
                       return AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
@@ -93,22 +92,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     }),
                   ),
                   const Spacer(),
-                  const SizedBox(width: 48), // To balance the back button
+                  const SizedBox(width: 48), // Spacer to balance back button
                 ],
-              ),
-            ),
-            
-            // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-              child: Text(
-                l10n.onboardingWelcome,
-                style: GoogleFonts.cairo(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.primary,
-                  height: 1.3,
-                ),
               ),
             ),
             
@@ -117,8 +102,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  _StepOneWidget(onNext: _nextPage),
-                  const _StepTwoWidget(),
+                  _StepOneSector(onNext: _nextPage),
+                  _StepTwoSpecialization(onNext: _nextPage),
+                  const _StepThreePreferences(),
                 ],
               ),
             ),
@@ -129,120 +115,62 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 }
 
-class _StepOneWidget extends ConsumerWidget {
+// -----------------------------------------------------------------------------
+// Step 1: Main Sector
+// -----------------------------------------------------------------------------
+class _StepOneSector extends ConsumerWidget {
   final VoidCallback onNext;
 
-  const _StepOneWidget({required this.onNext});
+  const _StepOneSector({required this.onNext});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(onboardingProvider);
     final notifier = ref.read(onboardingProvider.notifier);
+    final langCode = Localizations.localeOf(context).languageCode;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionHeader(
-            icon: Icons.school_rounded,
-            title: l10n.onboardingAcademic,
-            color: AppColors.secondary,
+          Text(
+            langCode == 'ar' ? 'ما هو قطاعك المهني؟' : 'What is your career sector?', // dynamic if no l10n entry
+            style: GoogleFonts.cairo(
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              color: AppColors.primary,
+              height: 1.3,
+            ),
           ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: _SelectionCard(
-                  label: l10n.student,
-                  icon: Icons.auto_stories_rounded,
-                  isSelected: state.academicLevel == 'student',
-                  onTap: () => notifier.setAcademicLevel('student'),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _SelectionCard(
-                  label: l10n.freshGraduate,
-                  icon: Icons.workspace_premium_rounded,
-                  isSelected: state.academicLevel == 'graduate',
-                  onTap: () => notifier.setAcademicLevel('graduate'),
-                ),
-              ),
-            ],
+          const SizedBox(height: 8),
+          Text(
+            langCode == 'ar' 
+                ? 'اختر مجالك الرئيسي لنقوم بتخصيص باقي الخيارات.' 
+                : 'Select your main field to customize your experience.',
+            style: GoogleFonts.cairo(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.onSurfaceVariant,
+            ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 32),
           
-          _SectionHeader(
-            icon: Icons.category_rounded,
-            title: l10n.onboardingField,
-            color: AppColors.primary,
-          ),
-          const SizedBox(height: 24),
-          GridView.count(
-            crossAxisCount: 3,
+          ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 0.85,
-            children: [
-              _FieldCard(
-                label: l10n.fieldIt,
-                icon: Icons.computer_rounded,
-                isSelected: state.fieldsOfStudy.contains('it'),
-                onTap: () => notifier.toggleFieldOfStudy('it'),
-              ),
-              _FieldCard(
-                label: l10n.fieldEngineering,
-                icon: Icons.architecture_rounded,
-                isSelected: state.fieldsOfStudy.contains('engineering'),
-                onTap: () => notifier.toggleFieldOfStudy('engineering'),
-              ),
-              _FieldCard(
-                label: l10n.fieldBusiness,
-                icon: Icons.business_center_rounded,
-                isSelected: state.fieldsOfStudy.contains('business'),
-                onTap: () => notifier.toggleFieldOfStudy('business'),
-              ),
-              _FieldCard(
-                label: l10n.fieldAccounting,
-                icon: Icons.account_balance_wallet_rounded,
-                isSelected: state.fieldsOfStudy.contains('accounting'),
-                onTap: () => notifier.toggleFieldOfStudy('accounting'),
-              ),
-              _FieldCard(
-                label: l10n.fieldEducation,
-                icon: Icons.school_rounded,
-                isSelected: state.fieldsOfStudy.contains('education'),
-                onTap: () => notifier.toggleFieldOfStudy('education'),
-              ),
-              _FieldCard(
-                label: l10n.fieldMarketing,
-                icon: Icons.campaign_rounded,
-                isSelected: state.fieldsOfStudy.contains('marketing'),
-                onTap: () => notifier.toggleFieldOfStudy('marketing'),
-              ),
-              _FieldCard(
-                label: l10n.fieldHealthcare,
-                icon: Icons.health_and_safety_rounded,
-                isSelected: state.fieldsOfStudy.contains('healthcare'),
-                onTap: () => notifier.toggleFieldOfStudy('healthcare'),
-              ),
-              _FieldCard(
-                label: l10n.fieldLaw,
-                icon: Icons.gavel_rounded,
-                isSelected: state.fieldsOfStudy.contains('law'),
-                onTap: () => notifier.toggleFieldOfStudy('law'),
-              ),
-              _FieldCard(
-                label: l10n.fieldOther,
-                icon: Icons.more_horiz_rounded,
-                isSelected: state.fieldsOfStudy.contains('other'),
-                onTap: () => notifier.toggleFieldOfStudy('other'),
-              ),
-            ],
+            itemCount: CareerTaxonomy.sectors.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            itemBuilder: (context, index) {
+              final sector = CareerTaxonomy.sectors[index];
+              return _SelectionCard(
+                label: sector.getLocalizedName(langCode),
+                icon: sector.icon,
+                isSelected: state.selectedSector == sector.id,
+                onTap: () => notifier.setSector(sector.id),
+              );
+            },
           ),
           
           const SizedBox(height: 64),
@@ -262,14 +190,100 @@ class _StepOneWidget extends ConsumerWidget {
   }
 }
 
-class _StepTwoWidget extends ConsumerStatefulWidget {
-  const _StepTwoWidget();
+// -----------------------------------------------------------------------------
+// Step 2: Specializations
+// -----------------------------------------------------------------------------
+class _StepTwoSpecialization extends ConsumerWidget {
+  final VoidCallback onNext;
+
+  const _StepTwoSpecialization({required this.onNext});
 
   @override
-  ConsumerState<_StepTwoWidget> createState() => _StepTwoWidgetState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final state = ref.watch(onboardingProvider);
+    final notifier = ref.read(onboardingProvider.notifier);
+    final langCode = Localizations.localeOf(context).languageCode;
+
+    final subSectors = state.selectedSector != null 
+        ? CareerTaxonomy.getSubSectors(state.selectedSector!) 
+        : <TaxonomyItem>[];
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            langCode == 'ar' ? 'أين تجد نفسك تحديداً؟' : 'Where do you specialize?',
+            style: GoogleFonts.cairo(
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              color: AppColors.primary,
+              height: 1.3,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            langCode == 'ar' 
+                ? 'يمكنك اختيار أكثر من تخصص لتنويع فرصك.' 
+                : 'You can select multiple specializations.',
+            style: GoogleFonts.cairo(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 32),
+          
+          if (subSectors.isEmpty)
+             Text(
+               langCode == 'ar' ? 'لا يوجد تخصصات متوفرة لهذا القطاع حالياً.' : 'No specializations available.',
+               style: GoogleFonts.cairo(color: AppColors.error),
+             )
+          else
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: subSectors.map((sub) {
+                final isSelected = state.fieldsOfStudy.contains(sub.id);
+                return _TagCard(
+                  label: sub.getLocalizedName(langCode),
+                  isSelected: isSelected,
+                  onTap: () => notifier.toggleFieldOfStudy(sub.id),
+                );
+              }).toList(),
+            ),
+          
+          const SizedBox(height: 64),
+          
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: state.isStep2Complete ? onNext : null,
+              style: _primaryButtonStyle(),
+              child: Text(l10n.nextBtn, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16)),
+            ),
+          ),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
 }
 
-class _StepTwoWidgetState extends ConsumerState<_StepTwoWidget> {
+
+// -----------------------------------------------------------------------------
+// Step 3: Preferences & Level
+// -----------------------------------------------------------------------------
+class _StepThreePreferences extends ConsumerStatefulWidget {
+  const _StepThreePreferences();
+
+  @override
+  ConsumerState<_StepThreePreferences> createState() => _StepThreePreferencesState();
+}
+
+class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
   bool _isLoading = false;
 
   void _finishOnboarding() async {
@@ -285,18 +299,69 @@ class _StepTwoWidgetState extends ConsumerState<_StepTwoWidget> {
     final l10n = AppLocalizations.of(context)!;
     final state = ref.watch(onboardingProvider);
     final notifier = ref.read(onboardingProvider.notifier);
+    final langCode = Localizations.localeOf(context).languageCode;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            langCode == 'ar' ? 'الخطوة الأخيرة!' : 'Final Step!',
+            style: GoogleFonts.cairo(
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              color: AppColors.primary,
+              height: 1.3,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            langCode == 'ar' 
+                ? 'أخبرنا عن مستواك وتفضيلات العمل لتصلك الفرص المناسبة.' 
+                : 'Share your level and work preferences.',
+            style: GoogleFonts.cairo(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 32),
+          
+          _SectionHeader(
+            icon: Icons.school_rounded,
+            title: l10n.onboardingAcademic,
+            color: AppColors.secondary,
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _SelectionCardSimple(
+                  label: l10n.student,
+                  isSelected: state.academicLevel == 'student',
+                  onTap: () => notifier.setAcademicLevel('student'),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _SelectionCardSimple(
+                  label: l10n.freshGraduate,
+                  isSelected: state.academicLevel == 'graduate',
+                  onTap: () => notifier.setAcademicLevel('graduate'),
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: 40),
+          
           _SectionHeader(
             icon: Icons.work_history_rounded,
             title: l10n.onboardingWorkType,
             color: AppColors.tertiary,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           Wrap(
             spacing: 12,
             runSpacing: 12,
@@ -319,12 +384,12 @@ class _StepTwoWidgetState extends ConsumerState<_StepTwoWidget> {
             ],
           ),
           
-          const SizedBox(height: 80), // To push button down slightly in scroll view
+          const SizedBox(height: 64),
           
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: state.isStep2Complete && !_isLoading ? _finishOnboarding : null,
+              onPressed: state.isStep3Complete && !_isLoading ? _finishOnboarding : null,
               style: _primaryButtonStyle(),
               child: _isLoading 
                 ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
@@ -338,7 +403,10 @@ class _StepTwoWidgetState extends ConsumerState<_StepTwoWidget> {
   }
 }
 
+
+// -----------------------------------------------------------------------------
 // Helper Widgets
+// -----------------------------------------------------------------------------
 
 ButtonStyle _primaryButtonStyle() {
   return ElevatedButton.styleFrom(
@@ -365,19 +433,19 @@ class _SectionHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: color, size: 22),
+          child: Icon(icon, color: color, size: 20),
         ),
         const SizedBox(width: 14),
         Expanded(
           child: Text(
             title,
             style: GoogleFonts.cairo(
-              fontSize: 18,
+              fontSize: 17,
               fontWeight: FontWeight.bold,
               color: AppColors.onSurface,
             ),
@@ -408,7 +476,7 @@ class _SelectionCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 14),
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.secondary.withValues(alpha: 0.12) : AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(20),
@@ -431,26 +499,83 @@ class _SelectionCard extends StatelessWidget {
               )
           ],
         ),
-        child: Column(
+        child: Row(
           children: [
             if (icon != null) ...[
-              Icon(
-                icon,
-                size: 28,
-                color: isSelected ? AppColors.secondary : AppColors.onSurfaceVariant.withValues(alpha: 0.6),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppColors.secondary.withValues(alpha: 0.2) : AppColors.surfaceContainerLow,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  size: 24,
+                  color: isSelected ? AppColors.secondary : AppColors.onSurfaceVariant.withValues(alpha: 0.6),
+                ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(width: 16),
             ],
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
-                fontSize: 15,
-                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                color: isSelected ? AppColors.onSurface : AppColors.onSurfaceVariant,
+            Expanded(
+              child: Text(
+                label,
+                style: GoogleFonts.cairo(
+                  fontSize: 16,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                  color: isSelected ? AppColors.onSurface : AppColors.onSurfaceVariant,
+                ),
               ),
             ),
+            if (isSelected) 
+              const Icon(Icons.check_circle_rounded, color: AppColors.secondary, size: 24),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SelectionCardSimple extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _SelectionCardSimple({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.secondary.withValues(alpha: 0.12) : AppColors.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppColors.secondary : AppColors.outlineVariant.withValues(alpha: 0.3),
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.onSurface.withValues(alpha: 0.04),
+              blurRadius: 10, offset: const Offset(0, 4),
+            )
+          ],
+        ),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.cairo(
+            fontSize: 14,
+            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+            color: isSelected ? AppColors.onSurface : AppColors.onSurfaceVariant,
+          ),
         ),
       ),
     );
@@ -475,7 +600,7 @@ class _TagCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary : AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(30),
@@ -490,6 +615,11 @@ class _TagCard extends StatelessWidget {
                 blurRadius: 12,
                 offset: const Offset(0, 6),
               )
+            else
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.02),
+                blurRadius: 4, offset: const Offset(0, 2),
+              )
           ],
         ),
         child: Text(
@@ -499,81 +629,6 @@ class _TagCard extends StatelessWidget {
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
             color: isSelected ? AppColors.onPrimary : AppColors.onSurfaceVariant,
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _FieldCard extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _FieldCard({
-    required this.label,
-    required this.icon,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : AppColors.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.outlineVariant.withValues(alpha: 0.3),
-            width: isSelected ? 2 : 1,
-          ),
-          boxShadow: [
-            if (!isSelected)
-              BoxShadow(
-                color: AppColors.onSurface.withValues(alpha: 0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              )
-            else
-               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              )
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-             AnimatedSwitcher(
-              duration: const Duration(milliseconds: 200),
-              child: Icon(
-                isSelected ? Icons.check_circle_rounded : icon,
-                key: ValueKey<bool>(isSelected),
-                size: 28,
-                color: isSelected ? AppColors.onPrimary : AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.cairo(
-                fontSize: 12,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                color: isSelected ? AppColors.onPrimary : AppColors.onSurfaceVariant,
-                height: 1.3,
-              ),
-            ),
-          ],
         ),
       ),
     );

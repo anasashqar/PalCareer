@@ -1,25 +1,30 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class OnboardingState {
+  final String? selectedSector;
   final String? academicLevel;
   final List<String> fieldsOfStudy;
   final List<String> preferredWorkTypes;
 
   OnboardingState({
+    this.selectedSector,
     this.academicLevel,
     this.fieldsOfStudy = const [],
     this.preferredWorkTypes = const [],
   });
 
-  bool get isStep1Complete => academicLevel != null && fieldsOfStudy.isNotEmpty;
-  bool get isStep2Complete => preferredWorkTypes.isNotEmpty;
+  bool get isStep1Complete => selectedSector != null;
+  bool get isStep2Complete => fieldsOfStudy.isNotEmpty;
+  bool get isStep3Complete => academicLevel != null && preferredWorkTypes.isNotEmpty;
 
   OnboardingState copyWith({
+    String? selectedSector,
     String? academicLevel,
     List<String>? fieldsOfStudy,
     List<String>? preferredWorkTypes,
   }) {
     return OnboardingState(
+      selectedSector: selectedSector ?? this.selectedSector,
       academicLevel: academicLevel ?? this.academicLevel,
       fieldsOfStudy: fieldsOfStudy ?? this.fieldsOfStudy,
       preferredWorkTypes: preferredWorkTypes ?? this.preferredWorkTypes,
@@ -29,6 +34,12 @@ class OnboardingState {
 
 class OnboardingNotifier extends StateNotifier<OnboardingState> {
   OnboardingNotifier() : super(OnboardingState());
+
+  void setSector(String sector) {
+    if (state.selectedSector != sector) {
+      state = state.copyWith(selectedSector: sector, fieldsOfStudy: []);
+    }
+  }
 
   void setAcademicLevel(String level) {
     state = state.copyWith(academicLevel: level);

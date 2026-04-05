@@ -17,15 +17,15 @@ class AppColors {
   static const Color tertiaryContainer = Color(0xFFCCA830);
   static const Color tertiaryFixed = Color(0xFFFFE088);
 
-  static const Color background = Color(0xFFF8F9FA);
-  static const Color onBackground = Color(0xFF191C1D);
+  static const Color background = Color(0xFFEFF5F6); // Very light Deep Sea tint
+  static const Color onBackground = Color(0xFF001F25); // Deep Teal text
 
-  static const Color surface = Color(0xFFF8F9FA);
-  static const Color surfaceContainerLow = Color(0xFFF3F4F5);
-  static const Color surfaceContainerLowest = Color(0xFFFFFFFF);
-  static const Color surfaceBright = Color(0xFFF8F9FA); // Usually same as surface but for overlays
-  static const Color onSurface = Color(0xFF191C1D);
-  static const Color onSurfaceVariant = Color(0xFF3F484C);
+  static const Color surface = Color(0xFFEFF5F6);
+  static const Color surfaceContainerLow = Color(0xFFE3EFF1); // Slightly darker for pills/containers
+  static const Color surfaceContainerLowest = Color(0xFFFFFFFF); // Keep white for cards
+  static const Color surfaceBright = Color(0xFFEFF5F6); 
+  static const Color onSurface = Color(0xFF001F25);
+  static const Color onSurfaceVariant = Color(0xFF3A4B4F);
 
   static const Color error = Color(0xFFBA1A1A);
   static const Color errorContainer = Color(0xFFFFDAD6);

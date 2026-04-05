@@ -56,7 +56,7 @@ class NotificationsScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.surfaceContainerLowest, // matching the whitish background
+      backgroundColor: AppColors.surface, // Apply the light tinted background
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
