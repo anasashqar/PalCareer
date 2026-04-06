@@ -43,3 +43,21 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Environment variables
+.env
+*.env
+
+# Firebase config (prevent leaking sensitive IDs if needed project-wise)
+google-services.json
+GoogleService-Info.plist
+
+# iOS / macOS build directories
+**/Pods/
+**/.symlinks/
+.generated/
+
+# Code Generation
+# Uncomment if using build_runner and prefer not tracking generated files
+# *.g.dart
+# *.freezed.dart
