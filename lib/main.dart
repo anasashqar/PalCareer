@@ -60,7 +60,7 @@ class PalCareerApp extends ConsumerWidget {
       title: 'PalCareer',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme(themeConfig),
-      routerConfig: appRouter,
+      routerConfig: ref.watch(appRouterProvider),
 
       // i18n support setup
       localizationsDelegates: [

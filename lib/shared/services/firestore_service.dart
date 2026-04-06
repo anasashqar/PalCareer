@@ -15,7 +15,10 @@ class FirestoreService {
     Map<String, dynamic> data,
   ) async {
     try {
-      await _firestore.collection(collectionPath).doc(documentId).set(data);
+      await _firestore
+          .collection(collectionPath)
+          .doc(documentId)
+          .set(data, SetOptions(merge: true));
     } on FirebaseException catch (e) {
       debugPrint('Firestore Error [addDocument]: ${e.message}');
       throw _handleFirebaseException(e);

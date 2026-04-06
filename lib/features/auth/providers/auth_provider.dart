@@ -57,6 +57,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
               currentUser.uid,
               userModel.toMap(),
             );
+          } else {
+            // Update the existing profile to ensure it is not stale
+            await _firestoreService.addDocument(
+              FirestoreKeys.usersContent,
+              currentUser.uid,
+              {
+                'displayName': currentUser.displayName ?? 'مستخدم',
+                if (currentUser.photoURL != null) 'photoUrl': currentUser.photoURL,
+              },
+            );
           }
         } catch (e) {
           debugPrint('Could not initialize user profile: $e');

@@ -97,24 +97,27 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
         throw Exception('غير مصرح لك للقيام بهذه العملية.');
       }
 
-      final userModel = UserModel(
-        uid: currentUser.uid,
-        displayName: currentUser.displayName ?? 'مستخدم',
-        email: currentUser.email ?? '',
-        photoUrl: currentUser.photoURL,
-        educationLevelId: state.academicLevel,
-        preferredCategoryIds: state.selectedSector != null
+      final Map<String, dynamic> updateData = {
+        'displayName': currentUser.displayName ?? 'مستخدم',
+        'email': currentUser.email ?? '',
+        if (currentUser.photoURL != null) 'photoUrl': currentUser.photoURL,
+        'educationLevelId': state.academicLevel,
+        'preferredCategoryIds': state.selectedSector != null
             ? [state.selectedSector!]
             : [],
-        preferredSubCategoryIds: state.fieldsOfStudy,
-        preferredJobTypes: state.preferredWorkTypes,
-      );
+        'preferredSubCategoryIds': state.fieldsOfStudy,
+        'preferredJobTypes': state.preferredWorkTypes,
+      };
 
       await _firestoreService.addDocument(
         FirestoreKeys.usersContent,
         currentUser.uid,
-        userModel.toMap(),
+        updateData,
       );
+
+      // Re-fetch or safely merge profile data locally instead of fully replacing it,
+      // but for simplicity, we keep the previous local user update behavior for now.
+      final userModel = UserModel.fromMap(updateData, currentUser.uid);
 
       if (state.selectedSector != null) {
         FirebaseMessagingService().updateSectorSubscription(
