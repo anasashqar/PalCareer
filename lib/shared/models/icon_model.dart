@@ -37,9 +37,6 @@ class IconModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'flutterIdentifier': flutterIdentifier,
-    };
+    return {'name': name, 'flutterIdentifier': flutterIdentifier};
   }
 }

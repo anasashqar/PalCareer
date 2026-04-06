@@ -45,7 +45,8 @@ class UserModel {
       photoUrl: photoUrl ?? this.photoUrl,
       educationLevelId: educationLevelId ?? this.educationLevelId,
       preferredCategoryIds: preferredCategoryIds ?? this.preferredCategoryIds,
-      preferredSubCategoryIds: preferredSubCategoryIds ?? this.preferredSubCategoryIds,
+      preferredSubCategoryIds:
+          preferredSubCategoryIds ?? this.preferredSubCategoryIds,
       preferredJobTypes: preferredJobTypes ?? this.preferredJobTypes,
       fcmToken: fcmToken ?? this.fcmToken,
       pushEnabled: pushEnabled ?? this.pushEnabled,
@@ -59,8 +60,12 @@ class UserModel {
       email: map['email'] as String? ?? '',
       photoUrl: map['photoUrl'] as String?,
       educationLevelId: map['educationLevelId'] as String?,
-      preferredCategoryIds: List<String>.from(map['preferredCategoryIds'] ?? []),
-      preferredSubCategoryIds: List<String>.from(map['preferredSubCategoryIds'] ?? []),
+      preferredCategoryIds: List<String>.from(
+        map['preferredCategoryIds'] ?? [],
+      ),
+      preferredSubCategoryIds: List<String>.from(
+        map['preferredSubCategoryIds'] ?? [],
+      ),
       preferredJobTypes: List<String>.from(map['preferredJobTypes'] ?? []),
       fcmToken: map['fcmToken'] as String?,
       pushEnabled: map['pushEnabled'] as bool? ?? true,

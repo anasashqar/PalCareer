@@ -42,10 +42,6 @@ class SubCategoryModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'categoryId': categoryId,
-      'name': name,
-      'isActive': isActive,
-    };
+    return {'categoryId': categoryId, 'name': name, 'isActive': isActive};
   }
 }

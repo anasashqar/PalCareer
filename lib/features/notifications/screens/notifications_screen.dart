@@ -98,14 +98,18 @@ class _NotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Generate a simple first letter for the logo
-    final String companyInitial = company.isNotEmpty ? company.substring(0, 1).toUpperCase() : 'C';
+    final String companyInitial = company.isNotEmpty
+        ? company.substring(0, 1).toUpperCase()
+        : 'C';
 
     return InkWell(
       onTap: () {
         // Handle navigation to job details
       },
       child: Container(
-        color: isUnread ? AppColors.secondary.withValues(alpha: 0.08) : Colors.transparent,
+        color: isUnread
+            ? AppColors.secondary.withValues(alpha: 0.08)
+            : Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +117,9 @@ class _NotificationTile extends StatelessWidget {
             // Circular Avatar for company
             CircleAvatar(
               radius: 26,
-              backgroundColor: AppColors.primaryContainer.withValues(alpha: 0.4),
+              backgroundColor: AppColors.primaryContainer.withValues(
+                alpha: 0.4,
+              ),
               child: Text(
                 companyInitial,
                 style: GoogleFonts.cairo(
@@ -157,7 +163,9 @@ class _NotificationTile extends StatelessWidget {
                     time,
                     style: GoogleFonts.cairo(
                       fontSize: 13,
-                      color: isUnread ? AppColors.primary : AppColors.onSurfaceVariant,
+                      color: isUnread
+                          ? AppColors.primary
+                          : AppColors.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

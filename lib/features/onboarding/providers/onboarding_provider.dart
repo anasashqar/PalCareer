@@ -24,7 +24,8 @@ class OnboardingState {
 
   bool get isStep1Complete => selectedSector != null;
   bool get isStep2Complete => fieldsOfStudy.isNotEmpty;
-  bool get isStep3Complete => academicLevel != null && preferredWorkTypes.isNotEmpty;
+  bool get isStep3Complete =>
+      academicLevel != null && preferredWorkTypes.isNotEmpty;
 
   OnboardingState copyWith({
     String? selectedSector,
@@ -49,7 +50,8 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
   final FirestoreService _firestoreService;
   final AuthRepository _authRepository;
 
-  OnboardingNotifier(this._firestoreService, this._authRepository) : super(OnboardingState());
+  OnboardingNotifier(this._firestoreService, this._authRepository)
+    : super(OnboardingState());
 
   void setSector(String sector) {
     if (state.selectedSector != sector) {
@@ -81,12 +83,22 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     state = state.copyWith(preferredWorkTypes: current);
   }
 
+  void loadProfile(Map<String, dynamic> data) {
+    final categoryIds = List<String>.from(data['preferredCategoryIds'] ?? []);
+    state = state.copyWith(
+      selectedSector: categoryIds.isNotEmpty ? categoryIds.first : null,
+      fieldsOfStudy: List<String>.from(data['preferredSubCategoryIds'] ?? []),
+      preferredWorkTypes: List<String>.from(data['preferredJobTypes'] ?? []),
+      academicLevel: data['educationLevelId'],
+    );
+  }
+
   Future<void> saveAndComplete() async {
     state = state.copyWith(isLoading: true, error: null);
-    
+
     try {
       final User? currentUser = _authRepository.currentUser;
-      
+
       if (currentUser == null) {
         throw Exception('غير مصرح لك للقيام بهذه العملية.');
       }
@@ -97,14 +109,16 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
         email: currentUser.email ?? '',
         photoUrl: currentUser.photoURL,
         educationLevelId: state.academicLevel,
-        preferredCategoryIds: state.selectedSector != null ? [state.selectedSector!] : [],
+        preferredCategoryIds: state.selectedSector != null
+            ? [state.selectedSector!]
+            : [],
         preferredSubCategoryIds: state.fieldsOfStudy,
         preferredJobTypes: state.preferredWorkTypes,
       );
 
       await _firestoreService.addDocument(
-        FirestoreKeys.usersContent, 
-        currentUser.uid, 
+        FirestoreKeys.usersContent,
+        currentUser.uid,
         userModel.toMap(),
       );
 
@@ -118,9 +132,10 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
   }
 }
 
-final onboardingProvider = StateNotifierProvider<OnboardingNotifier, OnboardingState>((ref) {
-  return OnboardingNotifier(
-    ref.watch(firestoreServiceProvider),
-    ref.watch(authRepositoryProvider),
-  );
-});
+final onboardingProvider =
+    StateNotifierProvider<OnboardingNotifier, OnboardingState>((ref) {
+      return OnboardingNotifier(
+        ref.watch(firestoreServiceProvider),
+        ref.watch(authRepositoryProvider),
+      );
+    });

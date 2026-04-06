@@ -42,10 +42,6 @@ class EducationLevelModel {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'order': order,
-      'isActive': isActive,
-    };
+    return {'name': name, 'order': order, 'isActive': isActive};
   }
 }

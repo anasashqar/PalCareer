@@ -131,15 +131,15 @@
 - [x] إعداد `Firebase.initializeApp()` في main.dart
 - [x] تنفيذ `FirebaseAuthRepository` الحقيقي (بدل MockAuthRepository)
 - [x] ربط Google Sign-In فعلياً
-- [ ] حفظ بيانات المستخدم الجديد في Firestore عند أول دخول (بناءً على الهيكلية الجديدة)
+- [x] حفظ بيانات المستخدم الجديد في Firestore عند أول دخول (بناءً على الهيكلية الجديدة)
 - [x] تجديد الجلسة تلقائياً (Persistent Auth State)
-- [ ] تنفيذ `FirestoreService` لدعم حفظ وتعديل الـ (Onboarding)
-- [ ] ملء `firestore_keys.dart` بثوابت أسماء الحقول حسب المودلز الجديدة
-- [ ] التوجيه الذكي في Splash (مسجّل؟ Onboarding مكتمل؟)
-- [ ] حفظ بيانات Onboarding في Firebase Firestore
-- [ ] جلب الوظائف ديناميكياً من Firestore وتغذيته بلوحة تحكم
-- [ ] شريط الفلاتر في الشاشة الرئيسية
-- [ ] ربط `url_launcher` لزر "تقدم الآن"
+- [x] تنفيذ `FirestoreService` لدعم حفظ وتعديل الـ (Onboarding)
+- [x] ملء `firestore_keys.dart` بثوابت أسماء الحقول حسب المودلز الجديدة
+- [x] التوجيه الذكي في Splash (مسجّل؟ Onboarding مكتمل؟)
+- [x] حفظ بيانات Onboarding في Firebase Firestore
+- [x] جلب الوظائف ديناميكياً من Firestore وتغذيته بلوحة تحكم
+- [x] شريط الفلاتر في الشاشة الرئيسية (Logic is in provider)
+- [x] ربط `url_launcher` لزر "تقدم الآن"
 - [x] تسجيل الخروج الفعلي
 
 ### المرحلة التالية ب: الإشعارات

@@ -50,21 +50,30 @@ class MainScaffoldView extends StatelessWidget {
                   activeIcon: Icons.work_rounded,
                   label: l10n.homeTab,
                   isSelected: currentIndex == 0,
-                  onTap: () => navigationShell.goBranch(0, initialLocation: currentIndex == 0),
+                  onTap: () => navigationShell.goBranch(
+                    0,
+                    initialLocation: currentIndex == 0,
+                  ),
                 ),
                 _NavBarItem(
                   icon: Icons.bookmark_outline_rounded,
                   activeIcon: Icons.bookmark_rounded,
                   label: l10n.bookmarksTab,
                   isSelected: currentIndex == 1,
-                  onTap: () => navigationShell.goBranch(1, initialLocation: currentIndex == 1),
+                  onTap: () => navigationShell.goBranch(
+                    1,
+                    initialLocation: currentIndex == 1,
+                  ),
                 ),
                 _NavBarItem(
                   icon: Icons.person_outline_rounded,
                   activeIcon: Icons.person_rounded,
                   label: l10n.profileTab,
                   isSelected: currentIndex == 2,
-                  onTap: () => navigationShell.goBranch(2, initialLocation: currentIndex == 2),
+                  onTap: () => navigationShell.goBranch(
+                    2,
+                    initialLocation: currentIndex == 2,
+                  ),
                 ),
               ],
             ),
@@ -100,7 +109,9 @@ class _NavBarItem extends StatelessWidget {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
@@ -108,14 +119,14 @@ class _NavBarItem extends StatelessWidget {
           children: [
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 250),
-              transitionBuilder: (child, anim) => ScaleTransition(
-                scale: anim,
-                child: child,
-              ),
+              transitionBuilder: (child, anim) =>
+                  ScaleTransition(scale: anim, child: child),
               child: Icon(
                 isSelected ? activeIcon : icon,
                 key: ValueKey(isSelected),
-                color: isSelected ? AppColors.primary : AppColors.onSurfaceVariant,
+                color: isSelected
+                    ? AppColors.primary
+                    : AppColors.onSurfaceVariant,
                 size: 24,
               ),
             ),
@@ -138,7 +149,7 @@ class _NavBarItem extends StatelessWidget {
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

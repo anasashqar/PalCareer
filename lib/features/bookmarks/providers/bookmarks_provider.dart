@@ -16,6 +16,8 @@ class BookmarksNotifier extends StateNotifier<Set<String>> {
   }
 }
 
-final bookmarksProvider = StateNotifierProvider<BookmarksNotifier, Set<String>>((ref) {
-  return BookmarksNotifier();
-});
+final bookmarksProvider = StateNotifierProvider<BookmarksNotifier, Set<String>>(
+  (ref) {
+    return BookmarksNotifier();
+  },
+);

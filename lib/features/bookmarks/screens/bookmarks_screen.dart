@@ -42,14 +42,20 @@ class BookmarksScreen extends ConsumerWidget {
           for (var j in allJobs) {
             uniqueJobs[j.id] = j;
           }
-          final savedJobs = uniqueJobs.values.where((j) => savedJobIds.contains(j.id)).toList();
+          final savedJobs = uniqueJobs.values
+              .where((j) => savedJobIds.contains(j.id))
+              .toList();
 
           if (savedJobs.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.bookmark_border_rounded, size: 80, color: AppColors.outlineVariant.withValues(alpha: 0.5)),
+                  Icon(
+                    Icons.bookmark_border_rounded,
+                    size: 80,
+                    color: AppColors.outlineVariant.withValues(alpha: 0.5),
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     "لم تقم بحفظ أي وظيفة بعد",
@@ -58,7 +64,7 @@ class BookmarksScreen extends ConsumerWidget {
                       color: AppColors.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                     ),
-                  )
+                  ),
                 ],
               ),
             );
@@ -77,8 +83,12 @@ class BookmarksScreen extends ConsumerWidget {
             },
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.primary)),
-        error: (err, stack) => Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+        error: (err, stack) => Center(
+          child: Text('Error: $err', style: const TextStyle(color: Colors.red)),
+        ),
       ),
     );
   }

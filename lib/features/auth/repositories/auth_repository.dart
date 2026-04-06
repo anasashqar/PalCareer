@@ -32,8 +32,9 @@ class FirebaseAuthRepository implements AuthRepository {
       }
 
       // Prompt user to select Google Account (For Android/iOS)
-      final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate();
-      
+      final GoogleSignInAccount? googleUser = await _googleSignIn
+          .authenticate();
+
       // User cancelled the login flow
       if (googleUser == null) {
         throw Exception('تم إلغاء عملية تسجيل الدخول.');
@@ -41,9 +42,12 @@ class FirebaseAuthRepository implements AuthRepository {
 
       // Obtain the identity details (idToken)
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-      
+
       // Request authorization to get the accessToken
-      final authResult = await googleUser.authorizationClient.authorizeScopes(['email', 'profile']);
+      final authResult = await googleUser.authorizationClient.authorizeScopes([
+        'email',
+        'profile',
+      ]);
 
       // Create a new credential
       final AuthCredential credential = GoogleAuthProvider.credential(
@@ -53,21 +57,31 @@ class FirebaseAuthRepository implements AuthRepository {
 
       // Sign in to Firebase with the credential
       return await _firebaseAuth.signInWithCredential(credential);
-      
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
       if (e.toString().contains('تم إلغاء')) {
-         rethrow;
+        rethrow;
       }
-      throw Exception('حدث خطأ أثناء الاتصال بجوجل. تأكد من اتصالك بالإنترنت ($e)');
+      throw Exception(
+        'حدث خطأ أثناء الاتصال بجوجل. تأكد من اتصالك بالإنترنت ($e)',
+      );
     }
   }
 
   @override
   Future<void> signOut() async {
     try {
-      await _googleSignIn.signOut();
+      try {
+        await _googleSignIn.disconnect();
+      } catch (_) {
+        await _googleSignIn.signOut();
+      }
+    } catch (_) {
+      // Ignore Google Sign In errors, we just want to clear Firebase Auth
+    }
+    
+    try {
       await _firebaseAuth.signOut();
     } catch (e) {
       throw Exception('فشل تسجيل الخروج. حاول مرة أخرى.');
@@ -83,13 +97,12 @@ class FirebaseAuthRepository implements AuthRepository {
       case 'invalid-credential':
         return Exception('بيانات الاعتماد غير صالحة أو منتهية.');
       default:
-         return Exception('حدث خطأ في المصادقة: ${error.message}');
+        return Exception('حدث خطأ في المصادقة: ${error.message}');
     }
   }
 }
 
 // Global Provider for the Repository
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return FirebaseAuthRepository(FirebaseAuth.instance, GoogleSignIn.instance); 
+  return FirebaseAuthRepository(FirebaseAuth.instance, GoogleSignIn.instance);
 });
-

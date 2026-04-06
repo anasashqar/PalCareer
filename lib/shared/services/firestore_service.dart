@@ -9,7 +9,11 @@ final firestoreServiceProvider = Provider<FirestoreService>((ref) {
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> addDocument(String collectionPath, String documentId, Map<String, dynamic> data) async {
+  Future<void> addDocument(
+    String collectionPath,
+    String documentId,
+    Map<String, dynamic> data,
+  ) async {
     try {
       await _firestore.collection(collectionPath).doc(documentId).set(data);
     } on FirebaseException catch (e) {
@@ -21,7 +25,11 @@ class FirestoreService {
     }
   }
 
-  Future<void> updateDocument(String collectionPath, String documentId, Map<String, dynamic> data) async {
+  Future<void> updateDocument(
+    String collectionPath,
+    String documentId,
+    Map<String, dynamic> data,
+  ) async {
     try {
       await _firestore.collection(collectionPath).doc(documentId).update(data);
     } on FirebaseException catch (e) {
@@ -32,7 +40,10 @@ class FirestoreService {
     }
   }
 
-  Future<DocumentSnapshot> getDocument(String collectionPath, String documentId) async {
+  Future<DocumentSnapshot> getDocument(
+    String collectionPath,
+    String documentId,
+  ) async {
     try {
       return await _firestore.collection(collectionPath).doc(documentId).get();
     } on FirebaseException catch (e) {
@@ -53,7 +64,9 @@ class FirestoreService {
       case 'permission-denied':
         return Exception('ليس لديك صلاحية للوصول إلى هذه البيانات.');
       case 'unavailable':
-        return Exception('الخدمة غير متوفرة حالياً، ربما بسبب انقطاع الإنترنت.');
+        return Exception(
+          'الخدمة غير متوفرة حالياً، ربما بسبب انقطاع الإنترنت.',
+        );
       case 'not-found':
         return Exception('المستند المطلوب غير موجود في قاعدة البيانات.');
       default:

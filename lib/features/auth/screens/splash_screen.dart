@@ -2,15 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../repositories/auth_repository.dart';
+import '../../../shared/services/firestore_service.dart';
+import '../../../core/constants/firestore_keys.dart';
+import '../../onboarding/providers/onboarding_provider.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends ConsumerState<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _logoScaleAnimation;
   late final Animation<double> _titleFadeAnimation;
@@ -53,13 +59,43 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       ),
     );
 
-    _controller.forward().then((_) {
-      // Delay before navigating
-      Future.delayed(const Duration(milliseconds: 800), () {
+    _controller.forward().then((_) async {
+      // Delay for UX to show animation fully
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      final user = ref.read(authRepositoryProvider).currentUser;
+      if (user == null) {
+        if (mounted) context.go('/login');
+        return;
+      }
+
+      try {
+        final firestoreService = ref.read(firestoreServiceProvider);
+        final doc = await firestoreService.getDocument(
+          FirestoreKeys.usersContent,
+          user.uid,
+        );
+
         if (mounted) {
-          context.go('/login');
+          if (doc.exists && doc.data() != null) {
+            final data = doc.data() as Map<String, dynamic>;
+            final preferredCategories = List<String>.from(
+              data['preferredCategoryIds'] ?? [],
+            );
+            if (preferredCategories.isNotEmpty) {
+              ref.read(onboardingProvider.notifier).loadProfile(data);
+              context.go('/home');
+            } else {
+              context.go('/onboarding');
+            }
+          } else {
+            // User has no document yet
+            context.go('/onboarding');
+          }
         }
-      });
+      } catch (e) {
+        if (mounted) context.go('/login'); // Fallback on error
+      }
     });
   }
 
@@ -88,7 +124,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         ),
         child: Stack(
           children: [
-            // Abstract Background Shapes 
+            // Abstract Background Shapes
             Positioned(
               top: -100,
               left: -100,
@@ -136,11 +172,13 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.onSurface.withValues(alpha: 0.15),
+                                color: AppColors.onSurface.withValues(
+                                  alpha: 0.15,
+                                ),
                                 blurRadius: 40,
                                 spreadRadius: 5,
                                 offset: const Offset(0, 15),
-                              )
+                              ),
                             ],
                           ),
                           child: Center(
@@ -152,7 +190,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.tertiary.withValues(alpha: 0.5),
+                                    color: AppColors.tertiary.withValues(
+                                      alpha: 0.5,
+                                    ),
                                     blurRadius: 20,
                                     offset: const Offset(0, 8),
                                   ),

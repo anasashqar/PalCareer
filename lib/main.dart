@@ -13,7 +13,7 @@ import 'package:palcareer/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -22,12 +22,8 @@ void main() async {
   } catch (e) {
     debugPrint('Firebase/GoogleSignIn initialization error = $e');
   }
-  
-  runApp(
-    const ProviderScope(
-      child: PalCareerApp(),
-    ),
-  );
+
+  runApp(const ProviderScope(child: PalCareerApp()));
 }
 
 class PalCareerApp extends ConsumerWidget {
@@ -42,7 +38,7 @@ class PalCareerApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       routerConfig: appRouter,
-      
+
       // i18n support setup
       localizationsDelegates: const [
         AppLocalizations.delegate,

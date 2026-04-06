@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,40 +10,38 @@ import '../../../../core/providers/settings_provider.dart';
 import '../../../../core/utils/app_toast.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
+import '../../../../core/utils/firebase_seeder.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Watch auth notifier so profile screen triggers rebuild on login/out
+    ref.watch(authNotifierProvider);
+
     final l10n = AppLocalizations.of(context)!;
     final pushEnabled = ref.watch(pushNotificationsProvider);
     final currentLocale = ref.watch(localeProvider);
-    final userName = ref.watch(userNameProvider);
+
+    final authUser = FirebaseAuth.instance.currentUser;
+    final String userName = authUser?.displayName ?? ref.watch(userNameProvider);
+    final String? photoUrl = authUser?.photoURL;
+
     final obState = ref.watch(onboardingProvider);
 
     void showEditProfileSheet() {
       final nameController = TextEditingController(text: userName);
-      String? tempLevel = obState.academicLevel;
-      String? tempSector = obState.selectedSector;
-      
-      final isAr = currentLocale.languageCode == 'ar';
-      
-      final List<String> levels = [
-        isAr ? 'طالب' : 'Student',
-        isAr ? 'خريج جديد' : 'Fresh Graduate',
-      ];
-      final List<String> sectors = [
-        'تقنية المعلومات', 'هندسة', 'إدارة أعمال', 'محاسبة', 'تعليم', 'طب وصحة', 'أخرى'
-      ];
-
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (ctx) {
           return Padding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(ctx).viewInsets.bottom,
+            ),
             child: Container(
               padding: const EdgeInsets.all(32),
               decoration: const BoxDecoration(
@@ -64,7 +63,11 @@ class ProfileScreen extends ConsumerWidget {
                   const SizedBox(height: 24),
                   Text(
                     "تحديث البيانات",
-                    style: GoogleFonts.cairo(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.onSurface),
+                    style: GoogleFonts.cairo(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.onSurface,
+                    ),
                   ),
                   const SizedBox(height: 32),
                   // Name Field
@@ -72,62 +75,97 @@ class ProfileScreen extends ConsumerWidget {
                     controller: nameController,
                     decoration: InputDecoration(
                       labelText: "الاسم الكامل",
-                      prefixIcon: const Icon(Icons.person_rounded, color: AppColors.primary),
+                      prefixIcon: const Icon(
+                        Icons.person_rounded,
+                        color: AppColors.primary,
+                      ),
                       labelStyle: GoogleFonts.cairo(color: AppColors.outline),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primary,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  // Academic Level
-                  DropdownButtonFormField<String>(
-                    value: tempLevel != null && levels.contains(tempLevel) ? tempLevel : null,
-                    decoration: InputDecoration(
-                      labelText: "المستوى الأكاديمي",
-                      prefixIcon: const Icon(Icons.school_rounded, color: AppColors.secondary),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                  const SizedBox(height: 16),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryContainer.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
                     ),
-                    items: levels.map((l) => DropdownMenuItem(value: l, child: Text(l, style: GoogleFonts.cairo()))).toList(),
-                    onChanged: (val) => tempLevel = val,
-                  ),
-                  const SizedBox(height: 20),
-                  // Sector
-                  DropdownButtonFormField<String>(
-                    value: tempSector != null && sectors.contains(tempSector) ? tempSector : null,
-                    decoration: InputDecoration(
-                      labelText: "مجال الاهتمام (التوجه)",
-                      prefixIcon: const Icon(Icons.workspaces_rounded, color: AppColors.primary),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                    child: Column(
+                      children: [
+                        Text(
+                          "لتغيير تخصصك واهتماماتك الوظيفية بدقة عالية، يرجى الاستعانة بمرشد المسار المهني",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.cairo(fontSize: 14, color: AppColors.onSurfaceVariant, fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(ctx);
+                            context.push('/onboarding');
+                          },
+                          icon: const Icon(Icons.tune_rounded, size: 18),
+                          label: Text("إعادة ضبط المسار المهني", style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                        ),
+                      ],
                     ),
-                    items: sectors.map((s) => DropdownMenuItem(value: s, child: Text(s, style: GoogleFonts.cairo()))).toList(),
-                    onChanged: (val) => tempSector = val,
                   ),
+
                   const SizedBox(height: 40),
                   SizedBox(
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (nameController.text.isNotEmpty) {
-                          ref.read(userNameProvider.notifier).state = nameController.text;
+                          ref.read(userNameProvider.notifier).state =
+                              nameController.text;
+                          await authUser?.updateDisplayName(
+                            nameController.text,
+                          );
                         }
-                        if (tempSector != null) ref.read(onboardingProvider.notifier).setSector(tempSector!);
-                        if (tempLevel != null) ref.read(onboardingProvider.notifier).setAcademicLevel(tempLevel!);
-                        
-                        Navigator.pop(ctx);
-                        
-                        // Interactive Feedback!
-                        AppToast.showSuccess(context, "تم حفظ وتحديث ملفك الشخصي بنجاح 🚀");
+
+                        if (ctx.mounted) {
+                          Navigator.pop(ctx);
+                          // Interactive Feedback!
+                          if (context.mounted) {
+                            AppToast.showSuccess(
+                              context,
+                              "تم حفظ وتحديث ملفك الشخصي بنجاح 🚀",
+                            );
+                          }
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                      child: Text("حفظ التغييرات", style: GoogleFonts.cairo(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
+                      child: Text(
+                        "حفظ التغييرات",
+                        style: GoogleFonts.cairo(
+                          fontSize: 18,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -138,12 +176,26 @@ class ProfileScreen extends ConsumerWidget {
       );
     }
 
-    final subtitle = obState.academicLevel != null && obState.selectedSector != null 
-        ? '${obState.academicLevel} في ${obState.selectedSector}'
+    final String? sectorLocalized = obState.selectedSector != null
+        ? CareerTaxonomy.sectors
+            .firstWhere((s) => s.id == obState.selectedSector,
+                orElse: () => CareerTaxonomy.sectors.first)
+            .getLocalizedName(currentLocale.languageCode)
+        : null;
+
+    final String? levelLocalized = obState.academicLevel == 'student'
+        ? (currentLocale.languageCode == 'ar' ? 'طالب' : 'Student')
+        : (obState.academicLevel == 'graduate'
+            ? (currentLocale.languageCode == 'ar' ? 'خريج جديد' : 'Fresh Graduate')
+            : null);
+
+    final subtitle = levelLocalized != null && sectorLocalized != null
+        ? '$levelLocalized في $sectorLocalized'
         : 'مكتشف وظائف فلسطين';
 
     return Scaffold(
-      backgroundColor: AppColors.surfaceContainerLowest, // Lighter, cleaner background
+      backgroundColor:
+          AppColors.surfaceContainerLowest, // Lighter, cleaner background
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -161,23 +213,28 @@ class ProfileScreen extends ConsumerWidget {
                       height: 100,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: const LinearGradient(
-                          colors: [AppColors.primary, AppColors.secondary],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: AppColors.primary,
                         boxShadow: [
-                          BoxShadow(color: AppColors.primary.withValues(alpha: 0.3), blurRadius: 24, offset: const Offset(0, 10))
-                        ]
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.3),
+                            blurRadius: 24,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
                       ),
                       alignment: Alignment.center,
-                      child: Text(
-                        userName.isNotEmpty ? userName.substring(0, 1) : 'م',
-                        style: GoogleFonts.cairo(
-                          fontSize: 40,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                        ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(50),
+                        child: photoUrl != null && photoUrl.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: photoUrl,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const CircularProgressIndicator(color: Colors.white),
+                                errorWidget: (context, url, error) => _buildFallbackAvatar(userName),
+                              )
+                            : _buildFallbackAvatar(userName),
                       ),
                     ),
                     Positioned(
@@ -190,12 +247,24 @@ class ProfileScreen extends ConsumerWidget {
                           decoration: BoxDecoration(
                             color: AppColors.surface,
                             shape: BoxShape.circle,
-                            border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
+                            border: Border.all(
+                              color: AppColors.outlineVariant.withValues(
+                                alpha: 0.2,
+                              ),
+                            ),
                             boxShadow: [
-                               BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 4))
-                            ]
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.05),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          child: const Icon(Icons.edit_rounded, color: AppColors.primary, size: 18),
+                          child: const Icon(
+                            Icons.edit_rounded,
+                            color: AppColors.primary,
+                            size: 18,
+                          ),
                         ),
                       ),
                     ),
@@ -212,11 +281,16 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.secondary.withValues(alpha: 0.2)),
+                    border: Border.all(
+                      color: AppColors.secondary.withValues(alpha: 0.2),
+                    ),
                   ),
                   child: Text(
                     subtitle,
@@ -231,17 +305,27 @@ class ProfileScreen extends ConsumerWidget {
                 TextButton.icon(
                   onPressed: showEditProfileSheet,
                   icon: const Icon(Icons.tune_rounded, size: 20),
-                  label: Text("تعديل التوجه والبيانات", style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                  label: Text(
+                    "تعديل التوجه والبيانات",
+                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
+                  ),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.primary,
-                    backgroundColor: AppColors.primaryContainer.withValues(alpha: 0.3),
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    backgroundColor: AppColors.primaryContainer.withValues(
+                      alpha: 0.3,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 48),
 
             Text(
@@ -259,10 +343,16 @@ class ProfileScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 borderRadius: BorderRadius.circular(28),
-                border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
+                border: Border.all(
+                  color: AppColors.outlineVariant.withValues(alpha: 0.2),
+                ),
                 boxShadow: [
-                   BoxShadow(color: AppColors.onSurface.withValues(alpha: 0.03), blurRadius: 20, offset: const Offset(0, 10))
-                ]
+                  BoxShadow(
+                    color: AppColors.onSurface.withValues(alpha: 0.03),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(28),
@@ -285,12 +375,23 @@ class ProfileScreen extends ConsumerWidget {
                               bool? granted = await showDialog<bool>(
                                 context: context,
                                 builder: (ctx) => AlertDialog(
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(24),
+                                  ),
                                   title: Row(
                                     children: [
-                                      const Icon(Icons.notifications_active_rounded, color: AppColors.primary),
+                                      const Icon(
+                                        Icons.notifications_active_rounded,
+                                        color: AppColors.primary,
+                                      ),
                                       const SizedBox(width: 8),
-                                      Text("السماح بالإشعارات؟", style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold)),
+                                      Text(
+                                        "السماح بالإشعارات؟",
+                                        style: GoogleFonts.cairo(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   content: Text(
@@ -299,46 +400,88 @@ class ProfileScreen extends ConsumerWidget {
                                   ),
                                   actions: [
                                     TextButton(
-                                      onPressed: () => Navigator.pop(ctx, false),
-                                      child: Text("رفض", style: GoogleFonts.cairo(color: AppColors.error)),
+                                      onPressed: () =>
+                                          Navigator.pop(ctx, false),
+                                      child: Text(
+                                        "رفض",
+                                        style: GoogleFonts.cairo(
+                                          color: AppColors.error,
+                                        ),
+                                      ),
                                     ),
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.primary,
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
                                       ),
                                       onPressed: () => Navigator.pop(ctx, true),
-                                      child: Text("سماح", style: GoogleFonts.cairo(color: Colors.white)),
+                                      child: Text(
+                                        "سماح",
+                                        style: GoogleFonts.cairo(
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
                               );
-                              
+
                               if (granted == true) {
-                                ref.read(pushNotificationsProvider.notifier).state = true;
+                                ref
+                                        .read(
+                                          pushNotificationsProvider.notifier,
+                                        )
+                                        .state =
+                                    true;
                                 if (context.mounted) {
-                                  AppToast.showSuccess(context, 'تم تفعيل الإشعارات بنجاح 🎉');
+                                  AppToast.showSuccess(
+                                    context,
+                                    'تم تفعيل الإشعارات بنجاح 🎉',
+                                  );
                                 }
                               }
                             } else {
-                              ref.read(pushNotificationsProvider.notifier).state = false;
+                              ref
+                                      .read(pushNotificationsProvider.notifier)
+                                      .state =
+                                  false;
                             }
                           },
                         ),
                       ),
                     ),
-                    Divider(height: 1, indent: 64, endIndent: 20, color: AppColors.outlineVariant.withValues(alpha: 0.15)),
+                    Divider(
+                      height: 1,
+                      indent: 64,
+                      endIndent: 20,
+                      color: AppColors.outlineVariant.withValues(alpha: 0.15),
+                    ),
                     _SettingsItemLine(
                       icon: Icons.language_rounded,
-                      title: "تغيير اللغة (${currentLocale.languageCode == 'ar' ? 'English' : 'عربي'})",
+                      title:
+                          "تغيير اللغة (${currentLocale.languageCode == 'ar' ? 'English' : 'عربي'})",
                       iconColor: AppColors.secondary,
                       onTap: () {
                         final isAr = currentLocale.languageCode == 'ar';
-                        ref.read(localeProvider.notifier).state = Locale(isAr ? 'en' : 'ar');
-                        AppToast.showInfo(context, 'تم طلاء التطبيق بلغة جديدة 🌍');
+                        ref.read(localeProvider.notifier).state = Locale(
+                          isAr ? 'en' : 'ar',
+                        );
+                        AppToast.showInfo(
+                          context,
+                          'تم طلاء التطبيق بلغة جديدة 🌍',
+                        );
                       },
                     ),
-                    Divider(height: 1, indent: 64, endIndent: 20, color: AppColors.outlineVariant.withValues(alpha: 0.15)),
+                    Divider(
+                      height: 1,
+                      indent: 64,
+                      endIndent: 20,
+                      color: AppColors.outlineVariant.withValues(alpha: 0.15),
+                    ),
                     _SettingsItemLine(
                       icon: Icons.info_outline_rounded,
                       title: l10n.aboutApp,
@@ -351,33 +494,78 @@ class ProfileScreen extends ConsumerWidget {
                           applicationIcon: Container(
                             decoration: BoxDecoration(
                               color: AppColors.primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(16)
+                              borderRadius: BorderRadius.circular(16),
                             ),
                             padding: const EdgeInsets.all(16),
-                            child: const Icon(Icons.work_rounded, color: AppColors.primary, size: 40)
+                            child: const Icon(
+                              Icons.work_rounded,
+                              color: AppColors.primary,
+                              size: 40,
+                            ),
                           ),
-                          applicationLegalese: '© 2026 PalCareer Team.\nتم التطوير من أجل مساعدة الشباب الفلسطيني في إيجاد فرص عمل بكفاءة وسهولة.',
+                          applicationLegalese:
+                              '© 2026 PalCareer Team.\nتم التطوير من أجل مساعدة الشباب الفلسطيني في إيجاد فرص عمل بكفاءة وسهولة.',
                         );
+                      },
+                    ),
+                    Divider(
+                      height: 1,
+                      indent: 64,
+                      endIndent: 20,
+                      color: AppColors.outlineVariant.withValues(alpha: 0.15),
+                    ),
+                    _SettingsItemLine(
+                      icon: Icons.cloud_upload_rounded,
+                      title: "رفع بيانات وهمية للوظائف",
+                      iconColor: AppColors.error,
+                      onTap: () async {
+                        try {
+                          AppToast.showInfo(
+                            context,
+                            'بدأ جلب ورفع الوظائف للسحابة...',
+                          );
+                          await FirebaseSeeder.seedJobs();
+                          if (context.mounted) {
+                            AppToast.showSuccess(
+                              context,
+                              'تمت العملية بنجاح! السحابة الآن محدثة. ☁️',
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            AppToast.showError(
+                              context,
+                              'فشل الرفع يرجى المحاولة مرة أخرى.',
+                            );
+                          }
+                        }
                       },
                     ),
                   ],
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 48),
 
             // Logout Button
             TextButton(
               onPressed: () async {
-                await ref.read(authNotifierProvider.notifier).signOut();
-                if (context.mounted) {
+                try {
+                  // Forcibly navigate immediately to stop any rebuild loops
                   context.go('/login');
                   AppToast.showInfo(context, 'تم تسجيل الخروج بنجاح 👋');
+                  
+                  // Then process the signout blindly in background
+                  await ref.read(authNotifierProvider.notifier).signOut();
+                } catch (e) {
+                  debugPrint('Logout error: $e');
                 }
               },
               style: TextButton.styleFrom(
-                backgroundColor: AppColors.errorContainer.withValues(alpha: 0.4),
+                backgroundColor: AppColors.errorContainer.withValues(
+                  alpha: 0.4,
+                ),
                 foregroundColor: AppColors.error,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -401,6 +589,29 @@ class ProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallbackAvatar(String userName) {
+    return Container(
+      width: 100,
+      height: 100,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppColors.primary, AppColors.secondary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        userName.isNotEmpty ? userName.substring(0, 1) : 'م',
+        style: GoogleFonts.cairo(
+          fontSize: 40,
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
         ),
       ),
     );
@@ -451,10 +662,14 @@ class _SettingsItemLine extends StatelessWidget {
                   ),
                 ),
               ),
-              if (trailing != null) 
+              if (trailing != null)
                 trailing!
               else
-                const Icon(Icons.keyboard_arrow_left_rounded, color: AppColors.onSurfaceVariant, size: 20),
+                const Icon(
+                  Icons.keyboard_arrow_left_rounded,
+                  color: AppColors.onSurfaceVariant,
+                  size: 20,
+                ),
             ],
           ),
         ),

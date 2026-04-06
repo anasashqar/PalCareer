@@ -62,14 +62,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           children: [
             // Top Navigation & Progress Indicator
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
+              ),
               child: Row(
                 children: [
                   AnimatedOpacity(
                     opacity: _currentPage > 0 ? 1.0 : 0.0,
                     duration: const Duration(milliseconds: 200),
                     child: IconButton(
-                      icon: const Icon(Icons.arrow_back_rounded, color: AppColors.onSurface),
+                      icon: const Icon(
+                        Icons.arrow_back_rounded,
+                        color: AppColors.onSurface,
+                      ),
                       onPressed: _currentPage > 0 ? _previousPage : null,
                     ),
                   ),
@@ -85,7 +91,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         height: 8,
                         width: isSelected ? 32 : 8,
                         decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primary : AppColors.outlineVariant.withValues(alpha: 0.5),
+                          color: isSelected
+                              ? AppColors.primary
+                              : AppColors.outlineVariant.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       );
@@ -96,7 +104,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ],
               ),
             ),
-            
+
             Expanded(
               child: PageView(
                 controller: _pageController,
@@ -136,7 +144,9 @@ class _StepOneSector extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            langCode == 'ar' ? 'ما هو قطاعك المهني؟' : 'What is your career sector?', // dynamic if no l10n entry
+            langCode == 'ar'
+                ? 'ما هو قطاعك المهني؟'
+                : 'What is your career sector?', // dynamic if no l10n entry
             style: GoogleFonts.cairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
@@ -146,8 +156,8 @@ class _StepOneSector extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            langCode == 'ar' 
-                ? 'اختر مجالك الرئيسي لنقوم بتخصيص باقي الخيارات.' 
+            langCode == 'ar'
+                ? 'اختر مجالك الرئيسي لنقوم بتخصيص باقي الخيارات.'
                 : 'Select your main field to customize your experience.',
             style: GoogleFonts.cairo(
               fontSize: 16,
@@ -156,7 +166,7 @@ class _StepOneSector extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 32),
-          
+
           ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -172,15 +182,21 @@ class _StepOneSector extends ConsumerWidget {
               );
             },
           ),
-          
+
           const SizedBox(height: 64),
-          
+
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: state.isStep1Complete ? onNext : null,
               style: _primaryButtonStyle(),
-              child: Text(l10n.nextBtn, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16)),
+              child: Text(
+                l10n.nextBtn,
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 32),
@@ -205,8 +221,8 @@ class _StepTwoSpecialization extends ConsumerWidget {
     final notifier = ref.read(onboardingProvider.notifier);
     final langCode = Localizations.localeOf(context).languageCode;
 
-    final subSectors = state.selectedSector != null 
-        ? CareerTaxonomy.getSubSectors(state.selectedSector!) 
+    final subSectors = state.selectedSector != null
+        ? CareerTaxonomy.getSubSectors(state.selectedSector!)
         : <TaxonomyItem>[];
 
     return SingleChildScrollView(
@@ -215,7 +231,9 @@ class _StepTwoSpecialization extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            langCode == 'ar' ? 'أين تجد نفسك تحديداً؟' : 'Where do you specialize?',
+            langCode == 'ar'
+                ? 'أين تجد نفسك تحديداً؟'
+                : 'Where do you specialize?',
             style: GoogleFonts.cairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
@@ -225,8 +243,8 @@ class _StepTwoSpecialization extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            langCode == 'ar' 
-                ? 'يمكنك اختيار أكثر من تخصص لتنويع فرصك.' 
+            langCode == 'ar'
+                ? 'يمكنك اختيار أكثر من تخصص لتنويع فرصك.'
                 : 'You can select multiple specializations.',
             style: GoogleFonts.cairo(
               fontSize: 16,
@@ -235,12 +253,14 @@ class _StepTwoSpecialization extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 32),
-          
+
           if (subSectors.isEmpty)
-             Text(
-               langCode == 'ar' ? 'لا يوجد تخصصات متوفرة لهذا القطاع حالياً.' : 'No specializations available.',
-               style: GoogleFonts.cairo(color: AppColors.error),
-             )
+            Text(
+              langCode == 'ar'
+                  ? 'لا يوجد تخصصات متوفرة لهذا القطاع حالياً.'
+                  : 'No specializations available.',
+              style: GoogleFonts.cairo(color: AppColors.error),
+            )
           else
             Wrap(
               spacing: 12,
@@ -254,15 +274,21 @@ class _StepTwoSpecialization extends ConsumerWidget {
                 );
               }).toList(),
             ),
-          
+
           const SizedBox(height: 64),
-          
+
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: state.isStep2Complete ? onNext : null,
               style: _primaryButtonStyle(),
-              child: Text(l10n.nextBtn, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16)),
+              child: Text(
+                l10n.nextBtn,
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 32),
@@ -272,7 +298,6 @@ class _StepTwoSpecialization extends ConsumerWidget {
   }
 }
 
-
 // -----------------------------------------------------------------------------
 // Step 3: Preferences & Level
 // -----------------------------------------------------------------------------
@@ -280,7 +305,8 @@ class _StepThreePreferences extends ConsumerStatefulWidget {
   const _StepThreePreferences();
 
   @override
-  ConsumerState<_StepThreePreferences> createState() => _StepThreePreferencesState();
+  ConsumerState<_StepThreePreferences> createState() =>
+      _StepThreePreferencesState();
 }
 
 class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
@@ -317,8 +343,8 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
           ),
           const SizedBox(height: 8),
           Text(
-            langCode == 'ar' 
-                ? 'أخبرنا عن مستواك وتفضيلات العمل لتصلك الفرص المناسبة.' 
+            langCode == 'ar'
+                ? 'أخبرنا عن مستواك وتفضيلات العمل لتصلك الفرص المناسبة.'
                 : 'Share your level and work preferences.',
             style: GoogleFonts.cairo(
               fontSize: 16,
@@ -327,7 +353,7 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
             ),
           ),
           const SizedBox(height: 32),
-          
+
           _SectionHeader(
             icon: Icons.school_rounded,
             title: l10n.onboardingAcademic,
@@ -353,9 +379,9 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 40),
-          
+
           _SectionHeader(
             icon: Icons.work_history_rounded,
             title: l10n.onboardingWorkType,
@@ -383,17 +409,32 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
               ),
             ],
           ),
-          
+
           const SizedBox(height: 64),
-          
+
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: state.isStep3Complete && !_isLoading ? _finishOnboarding : null,
+              onPressed: state.isStep3Complete && !_isLoading
+                  ? _finishOnboarding
+                  : null,
               style: _primaryButtonStyle(),
-              child: _isLoading 
-                ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                : Text(l10n.saveFinishBtn, style: GoogleFonts.cairo(fontWeight: FontWeight.bold, fontSize: 16)),
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Text(
+                      l10n.saveFinishBtn,
+                      style: GoogleFonts.cairo(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
             ),
           ),
           const SizedBox(height: 32),
@@ -402,7 +443,6 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
     );
   }
 }
-
 
 // -----------------------------------------------------------------------------
 // Helper Widgets
@@ -415,9 +455,7 @@ ButtonStyle _primaryButtonStyle() {
     padding: const EdgeInsets.symmetric(vertical: 14),
     elevation: 4,
     shadowColor: AppColors.primary.withValues(alpha: 0.4),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
   );
 }
 
@@ -426,7 +464,11 @@ class _SectionHeader extends StatelessWidget {
   final String title;
   final Color color;
 
-  const _SectionHeader({required this.icon, required this.title, required this.color});
+  const _SectionHeader({
+    required this.icon,
+    required this.title,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -478,10 +520,14 @@ class _SelectionCard extends StatelessWidget {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.secondary.withValues(alpha: 0.12) : AppColors.surfaceContainerLowest,
+          color: isSelected
+              ? AppColors.secondary.withValues(alpha: 0.12)
+              : AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppColors.secondary : AppColors.outlineVariant.withValues(alpha: 0.3),
+            color: isSelected
+                ? AppColors.secondary
+                : AppColors.outlineVariant.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
@@ -492,11 +538,11 @@ class _SelectionCard extends StatelessWidget {
                 offset: const Offset(0, 4),
               )
             else
-               BoxShadow(
+              BoxShadow(
                 color: AppColors.secondary.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
-              )
+              ),
           ],
         ),
         child: Row(
@@ -505,13 +551,17 @@ class _SelectionCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.secondary.withValues(alpha: 0.2) : AppColors.surfaceContainerLow,
+                  color: isSelected
+                      ? AppColors.secondary.withValues(alpha: 0.2)
+                      : AppColors.surfaceContainerLow,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   icon,
                   size: 24,
-                  color: isSelected ? AppColors.secondary : AppColors.onSurfaceVariant.withValues(alpha: 0.6),
+                  color: isSelected
+                      ? AppColors.secondary
+                      : AppColors.onSurfaceVariant.withValues(alpha: 0.6),
                 ),
               ),
               const SizedBox(width: 16),
@@ -522,12 +572,18 @@ class _SelectionCard extends StatelessWidget {
                 style: GoogleFonts.cairo(
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                  color: isSelected ? AppColors.onSurface : AppColors.onSurfaceVariant,
+                  color: isSelected
+                      ? AppColors.onSurface
+                      : AppColors.onSurfaceVariant,
                 ),
               ),
             ),
-            if (isSelected) 
-              const Icon(Icons.check_circle_rounded, color: AppColors.secondary, size: 24),
+            if (isSelected)
+              const Icon(
+                Icons.check_circle_rounded,
+                color: AppColors.secondary,
+                size: 24,
+              ),
           ],
         ),
       ),
@@ -555,17 +611,22 @@ class _SelectionCardSimple extends StatelessWidget {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.secondary.withValues(alpha: 0.12) : AppColors.surfaceContainerLowest,
+          color: isSelected
+              ? AppColors.secondary.withValues(alpha: 0.12)
+              : AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppColors.secondary : AppColors.outlineVariant.withValues(alpha: 0.3),
+            color: isSelected
+                ? AppColors.secondary
+                : AppColors.outlineVariant.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
               color: AppColors.onSurface.withValues(alpha: 0.04),
-              blurRadius: 10, offset: const Offset(0, 4),
-            )
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
           ],
         ),
         child: Text(
@@ -574,7 +635,9 @@ class _SelectionCardSimple extends StatelessWidget {
           style: GoogleFonts.cairo(
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-            color: isSelected ? AppColors.onSurface : AppColors.onSurfaceVariant,
+            color: isSelected
+                ? AppColors.onSurface
+                : AppColors.onSurfaceVariant,
           ),
         ),
       ),
@@ -602,15 +665,19 @@ class _TagCard extends StatelessWidget {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : AppColors.surfaceContainerLowest,
+          color: isSelected
+              ? AppColors.primary
+              : AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.outlineVariant.withValues(alpha: 0.5),
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.outlineVariant.withValues(alpha: 0.5),
             width: 1,
           ),
           boxShadow: [
             if (isSelected)
-               BoxShadow(
+              BoxShadow(
                 color: AppColors.primary.withValues(alpha: 0.3),
                 blurRadius: 12,
                 offset: const Offset(0, 6),
@@ -618,8 +685,9 @@ class _TagCard extends StatelessWidget {
             else
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.02),
-                blurRadius: 4, offset: const Offset(0, 2),
-              )
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
           ],
         ),
         child: Text(
@@ -627,7 +695,9 @@ class _TagCard extends StatelessWidget {
           style: GoogleFonts.cairo(
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-            color: isSelected ? AppColors.onPrimary : AppColors.onSurfaceVariant,
+            color: isSelected
+                ? AppColors.onPrimary
+                : AppColors.onSurfaceVariant,
           ),
         ),
       ),

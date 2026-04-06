@@ -81,7 +81,11 @@ class JobModel {
     // Format for English
     final words = jobType.replaceAll('_', ' ').replaceAll('-', ' ').split(' ');
     if (words.isEmpty) return jobType;
-    return words.map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '').join(' ');
+    return words
+        .map(
+          (w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '',
+        )
+        .join(' ');
   }
 
   String getLocalizedDescription(String languageCode) {
@@ -146,14 +150,22 @@ class JobModel {
       company: map['company'] as String? ?? 'Unknown Company',
       location: Map<String, String>.from(map['location'] ?? {}),
       postedAt: (map['postedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      expiresAt: (map['expiresAt'] as Timestamp?)?.toDate() ?? DateTime.now().add(const Duration(days: 30)),
-      description: map['description'] != null ? Map<String, String>.from(map['description']) : null,
-      requirements: (map['requirements'] as Map<String, dynamic>?)?.map(
+      expiresAt:
+          (map['expiresAt'] as Timestamp?)?.toDate() ??
+          DateTime.now().add(const Duration(days: 30)),
+      description: map['description'] != null
+          ? Map<String, String>.from(map['description'])
+          : null,
+      requirements:
+          (map['requirements'] as Map<String, dynamic>?)?.map(
             (key, value) => MapEntry(key, List<String>.from(value)),
-          ) ?? {},
-      responsibilities: (map['responsibilities'] as Map<String, dynamic>?)?.map(
+          ) ??
+          {},
+      responsibilities:
+          (map['responsibilities'] as Map<String, dynamic>?)?.map(
             (key, value) => MapEntry(key, List<String>.from(value)),
-          ) ?? {},
+          ) ??
+          {},
       applyUrl: map['applyUrl'] as String? ?? '',
       categoryId: map['categoryId'] as String? ?? '',
       subCategoryId: map['subCategoryId'] as String? ?? '',

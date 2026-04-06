@@ -17,23 +17,32 @@ class JobsFeedScreen extends ConsumerStatefulWidget {
 }
 
 class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
-
   String _getLocalizedHeader(String titleId, String langCode) {
     if (langCode == 'ar') {
       switch (titleId) {
-        case 'perfect_matches': return '🔥 الأنسب لاختياراتك';
-        case 'sector_matches': return '💡 مقترحات أخرى في مجالك';
-        case 'explore_jobs': return '🌍 استكشف وظائف منوعة';
-        case 'search_results': return '🔍 نتائج البحث';
-        default: return titleId;
+        case 'perfect_matches':
+          return '🔥 الأنسب لاختياراتك';
+        case 'sector_matches':
+          return '💡 مقترحات أخرى في مجالك';
+        case 'explore_jobs':
+          return '🌍 استكشف وظائف منوعة';
+        case 'search_results':
+          return '🔍 نتائج البحث';
+        default:
+          return titleId;
       }
     } else {
       switch (titleId) {
-        case 'perfect_matches': return '🔥 Top Matches For You';
-        case 'sector_matches': return '💡 Other in your field';
-        case 'explore_jobs': return '🌍 Explore More Jobs';
-        case 'search_results': return '🔍 Search Results';
-        default: return titleId;
+        case 'perfect_matches':
+          return '🔥 Top Matches For You';
+        case 'sector_matches':
+          return '💡 Other in your field';
+        case 'explore_jobs':
+          return '🌍 Explore More Jobs';
+        case 'search_results':
+          return '🔍 Search Results';
+        default:
+          return titleId;
       }
     }
   }
@@ -41,7 +50,11 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
   @override
   Widget build(BuildContext context) {
     final jobsAsyncValue = ref.watch(jobsProvider);
-    final isFilterActive = ref.watch(contractTypeProvider) != null || ref.watch(workModeProvider) != null || ref.watch(experienceLevelProvider) != null || ref.watch(datePostedProvider) != null;
+    final isFilterActive =
+        ref.watch(contractTypeProvider) != null ||
+        ref.watch(workModeProvider) != null ||
+        ref.watch(experienceLevelProvider) != null ||
+        ref.watch(datePostedProvider) != null;
     final l10n = AppLocalizations.of(context)!;
     final langCode = Localizations.localeOf(context).languageCode;
 
@@ -58,133 +71,178 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
           },
           color: AppColors.primary,
           child: CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
+            ),
             slivers: [
               SliverAppBar(
-              floating: true,
-              pinned: true,
-              elevation: 0,
-              backgroundColor: AppColors.surface.withValues(alpha: 0.95),
-              surfaceTintColor: Colors.transparent,
-              expandedHeight: 120,
-              actions: [
-                Container(
-                  margin: const EdgeInsets.only(right: 16, left: 16),
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceContainerLowest,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 4))
+                floating: true,
+                pinned: true,
+                elevation: 0,
+                backgroundColor: AppColors.surface.withValues(alpha: 0.95),
+                surfaceTintColor: Colors.transparent,
+                expandedHeight: 120,
+                actions: [
+                  Container(
+                    margin: const EdgeInsets.only(right: 16, left: 16),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceContainerLowest,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.04),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.notifications_none_rounded,
+                        color: AppColors.onSurface,
+                      ),
+                      onPressed: () => context.push('/notifications'),
+                    ),
+                  ),
+                ],
+                flexibleSpace: FlexibleSpaceBar(
+                  titlePadding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  expandedTitleScale: 1.0,
+                  title: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.jobsHomeTitle,
+                        style: GoogleFonts.cairo(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.onSurface,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
                     ],
                   ),
-                  child: IconButton(
-                    icon: const Icon(Icons.notifications_none_rounded, color: AppColors.onSurface),
-                    onPressed: () => context.push('/notifications'),
+                ),
+              ),
+
+              // Search and Filter Bar
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceContainerLowest,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: AppColors.outlineVariant.withValues(
+                                alpha: 0.3,
+                              ),
+                            ),
+                          ),
+                          child: TextField(
+                            onChanged: (val) {
+                              ref.read(searchQueryProvider.notifier).state =
+                                  val;
+                            },
+                            decoration: InputDecoration(
+                              hintText: langCode == 'ar'
+                                  ? 'بحث عن المسمى الوظيفي أو الشركة...'
+                                  : 'Search jobs or companies...',
+                              hintStyle: GoogleFonts.cairo(
+                                color: AppColors.onSurfaceVariant,
+                                fontSize: 14,
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search_rounded,
+                                color: AppColors.primary,
+                              ),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
+                            ),
+                            style: GoogleFonts.cairo(
+                              color: AppColors.onSurface,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: isFilterActive
+                              ? AppColors.secondary
+                              : AppColors.surfaceContainerLowest,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: isFilterActive
+                                ? AppColors.secondary
+                                : AppColors.outlineVariant.withValues(
+                                    alpha: 0.3,
+                                  ),
+                          ),
+                        ),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.tune_rounded,
+                            color: isFilterActive
+                                ? Colors.white
+                                : AppColors.primary,
+                          ),
+                          onPressed: () => _showFilterSheet(context),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-              flexibleSpace: FlexibleSpaceBar(
-                titlePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                expandedTitleScale: 1.0,
-                title: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.jobsHomeTitle,
-                      style: GoogleFonts.cairo(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.onSurface,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                  ],
-                ),
               ),
-            ),
 
-            // Search and Filter Bar
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceContainerLowest,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
+              jobsAsyncValue.when(
+                data: (groups) {
+                  if (groups.isEmpty) {
+                    return SliverFillRemaining(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.search_off_rounded,
+                              size: 64,
+                              color: AppColors.outlineVariant,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              langCode == 'ar'
+                                  ? 'لا توجد نتائج مطابقة لبحثك'
+                                  : 'No matches found',
+                              style: GoogleFonts.cairo(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
                         ),
-                        child: TextField(
-                          onChanged: (val) {
-                             ref.read(searchQueryProvider.notifier).state = val;
-                          },
-                          decoration: InputDecoration(
-                            hintText: langCode == 'ar' ? 'بحث عن المسمى الوظيفي أو الشركة...' : 'Search jobs or companies...',
-                            hintStyle: GoogleFonts.cairo(color: AppColors.onSurfaceVariant, fontSize: 14),
-                            prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primary),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                          ),
-                          style: GoogleFonts.cairo(color: AppColors.onSurface),
-                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: isFilterActive ? AppColors.secondary : AppColors.surfaceContainerLowest,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: isFilterActive ? AppColors.secondary : AppColors.outlineVariant.withValues(alpha: 0.3)),
-                      ),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.tune_rounded, 
-                          color: isFilterActive ? Colors.white : AppColors.primary
-                        ),
-                        onPressed: () => _showFilterSheet(context),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            
-            jobsAsyncValue.when(
-              data: (groups) {
-                if (groups.isEmpty) {
-                  return SliverFillRemaining(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.search_off_rounded, size: 64, color: AppColors.outlineVariant),
-                          const SizedBox(height: 16),
-                          Text(
-                            langCode == 'ar' ? 'لا توجد نتائج مطابقة لبحثك' : 'No matches found',
-                            style: GoogleFonts.cairo(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.onSurfaceVariant,
-                            )
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-                
-                return SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, groupIndex) {
+                    );
+                  }
+
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate((context, groupIndex) {
                       final group = groups[groupIndex];
-                      
+
                       // For the very last group, add bottom padding
                       final isLastGroup = groupIndex == groups.length - 1;
-                      
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -196,24 +254,28 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                               style: GoogleFonts.cairo(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
-                                color: group.titleId == 'perfect_matches' ? AppColors.secondary : AppColors.onSurface,
+                                color: group.titleId == 'perfect_matches'
+                                    ? AppColors.secondary
+                                    : AppColors.onSurface,
                               ),
                             ),
                           ),
-                          
+
                           // Jobs List in this group
                           ...group.jobs.asMap().entries.map((entry) {
                             final jobIndex = entry.key;
                             final job = entry.value;
-                            
+
                             // Calculate global index for animation delay roughly
                             int globalIndex = jobIndex;
                             for (var i = 0; i < groupIndex; i++) {
                               globalIndex += groups[i].jobs.length;
                             }
-                            
-                            final delayMs = (400 + globalIndex * 80).clamp(0, 600).toInt();
-                            
+
+                            final delayMs = (400 + globalIndex * 80)
+                                .clamp(0, 600)
+                                .toInt();
+
                             return TweenAnimationBuilder<double>(
                               // Add a distinct key per job so the widget tree animates them correctly
                               key: ValueKey(job.id),
@@ -231,47 +293,60 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                               },
                               child: JobCardWidget(
                                 job: job,
-                                onTap: () => context.push('/job-details', extra: job),
+                                onTap: () =>
+                                    context.push('/job-details', extra: job),
                               ),
                             );
                           }),
-                          
+
                           if (isLastGroup)
                             const SizedBox(height: 16), // Light bottom padding
                         ],
                       );
-                    },
-                    childCount: groups.length,
-                  ),
-                );
-              },
-              loading: () => SliverFillRemaining(
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return Shimmer.fromColors(
-                      baseColor: AppColors.surfaceContainerLowest.withValues(alpha: 0.5),
-                      highlightColor: AppColors.surface,
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        height: 140, // Height of standard job card
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.1)),
+                    }, childCount: groups.length),
+                  );
+                },
+                loading: () => SliverFillRemaining(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 24,
+                    ),
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      return Shimmer.fromColors(
+                        baseColor: AppColors.surfaceContainerLowest.withValues(
+                          alpha: 0.5,
                         ),
-                      ),
-                    );
-                  },
+                        highlightColor: AppColors.surface,
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          height: 140, // Height of standard job card
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: AppColors.outlineVariant.withValues(
+                                alpha: 0.1,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                error: (err, stack) => SliverFillRemaining(
+                  child: Center(
+                    child: Text(
+                      'Error: $err',
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
                 ),
               ),
-              error: (err, stack) => SliverFillRemaining(
-                child: Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
-              ),
-            ),
-          ],
-        ),
+            ],
+          ),
         ),
       ),
     );
@@ -314,136 +389,194 @@ class _FilterSheetContent extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    isAr ? "تصفية متطورة" : "Advanced Filters",
+                    style: GoogleFonts.cairo(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  if (contractFilter != null ||
+                      workModeFilter != null ||
+                      experienceFilter != null ||
+                      dateFilter != null)
+                    TextButton(
+                      onPressed: () {
+                        ref.read(contractTypeProvider.notifier).state = null;
+                        ref.read(workModeProvider.notifier).state = null;
+                        ref.read(experienceLevelProvider.notifier).state = null;
+                        ref.read(datePostedProvider.notifier).state = null;
+                      },
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        isAr ? 'مسح الكل' : 'Clear All',
+                        style: GoogleFonts.cairo(
+                          color: Colors.redAccent,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 24),
               Text(
-                isAr ? "تصفية متطورة" : "Advanced Filters",
-                style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.primary),
+                isAr ? "طبيعة العمل" : "Work Mode",
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.onSurfaceVariant,
+                ),
               ),
-              if (contractFilter != null || workModeFilter != null || experienceFilter != null || dateFilter != null)
-                TextButton(
-                  onPressed: () {
-                    ref.read(contractTypeProvider.notifier).state = null;
-                    ref.read(workModeProvider.notifier).state = null;
-                    ref.read(experienceLevelProvider.notifier).state = null;
-                    ref.read(datePostedProvider.notifier).state = null;
-                  },
-                  style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                  child: Text(isAr ? 'مسح الكل' : 'Clear All', style: GoogleFonts.cairo(color: Colors.redAccent, fontWeight: FontWeight.w700)),
-                )
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  _FilterChip(
+                    label: isAr ? 'الكل' : 'All',
+                    isSelected: workModeFilter == null,
+                    onTap: () =>
+                        ref.read(workModeProvider.notifier).state = null,
+                  ),
+                  _FilterChip(
+                    label: isAr ? 'عن بُعد' : 'Remote',
+                    isSelected: workModeFilter == 'remote',
+                    onTap: () =>
+                        ref.read(workModeProvider.notifier).state = 'remote',
+                  ),
+                  _FilterChip(
+                    label: isAr ? 'مكتبي' : 'On-Site',
+                    isSelected: workModeFilter == 'on_site',
+                    onTap: () =>
+                        ref.read(workModeProvider.notifier).state = 'on_site',
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Text(
+                isAr ? "مستوى الخبرة" : "Experience Level",
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  _FilterChip(
+                    label: isAr ? 'الكل' : 'All',
+                    isSelected: experienceFilter == null,
+                    onTap: () =>
+                        ref.read(experienceLevelProvider.notifier).state = null,
+                  ),
+                  _FilterChip(
+                    label: isAr ? 'مبتدئ' : 'Junior',
+                    isSelected: experienceFilter == 'junior',
+                    onTap: () =>
+                        ref.read(experienceLevelProvider.notifier).state =
+                            'junior',
+                  ),
+                  _FilterChip(
+                    label: isAr ? 'متوسط' : 'Mid-Level',
+                    isSelected: experienceFilter == 'mid',
+                    onTap: () =>
+                        ref.read(experienceLevelProvider.notifier).state =
+                            'mid',
+                  ),
+                  _FilterChip(
+                    label: isAr ? 'خبير' : 'Senior',
+                    isSelected: experienceFilter == 'senior',
+                    onTap: () =>
+                        ref.read(experienceLevelProvider.notifier).state =
+                            'senior',
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Text(
+                isAr ? "نوع العقد" : "Contract Type",
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  _FilterChip(
+                    label: isAr ? 'الكل' : 'All',
+                    isSelected: contractFilter == null,
+                    onTap: () =>
+                        ref.read(contractTypeProvider.notifier).state = null,
+                  ),
+                  _FilterChip(
+                    label: isAr ? 'دوام كامل' : 'Full Time',
+                    isSelected: contractFilter == 'full_time',
+                    onTap: () => ref.read(contractTypeProvider.notifier).state =
+                        'full_time',
+                  ),
+                  _FilterChip(
+                    label: isAr ? 'دوام جزئي' : 'Part Time',
+                    isSelected: contractFilter == 'part_time',
+                    onTap: () => ref.read(contractTypeProvider.notifier).state =
+                        'part_time',
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Text(
+                isAr ? "تاريخ النشر" : "Date Posted",
+                style: GoogleFonts.cairo(
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  _FilterChip(
+                    label: isAr ? 'الكل' : 'Anytime',
+                    isSelected: dateFilter == null,
+                    onTap: () =>
+                        ref.read(datePostedProvider.notifier).state = null,
+                  ),
+                  _FilterChip(
+                    label: isAr ? 'آخر 24 ساعة' : 'Past 24h',
+                    isSelected: dateFilter == 'past_24h',
+                    onTap: () => ref.read(datePostedProvider.notifier).state =
+                        'past_24h',
+                  ),
+                  _FilterChip(
+                    label: isAr ? 'آخر أسبوع' : 'Past Week',
+                    isSelected: dateFilter == 'past_week',
+                    onTap: () => ref.read(datePostedProvider.notifier).state =
+                        'past_week',
+                  ),
+                  _FilterChip(
+                    label: isAr ? 'آخر شهر' : 'Past Month',
+                    isSelected: dateFilter == 'past_month',
+                    onTap: () => ref.read(datePostedProvider.notifier).state =
+                        'past_month',
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
             ],
           ),
-          const SizedBox(height: 24),
-          Text(isAr ? "طبيعة العمل" : "Work Mode", style: GoogleFonts.cairo(fontWeight: FontWeight.w700, color: AppColors.onSurfaceVariant)),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              _FilterChip(
-                label: isAr ? 'الكل' : 'All',
-                isSelected: workModeFilter == null,
-                onTap: () => ref.read(workModeProvider.notifier).state = null,
-              ),
-              _FilterChip(
-                label: isAr ? 'عن بُعد' : 'Remote',
-                isSelected: workModeFilter == 'remote',
-                onTap: () => ref.read(workModeProvider.notifier).state = 'remote',
-              ),
-              _FilterChip(
-                label: isAr ? 'مكتبي' : 'On-Site',
-                isSelected: workModeFilter == 'on_site',
-                onTap: () => ref.read(workModeProvider.notifier).state = 'on_site',
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Text(isAr ? "مستوى الخبرة" : "Experience Level", style: GoogleFonts.cairo(fontWeight: FontWeight.w700, color: AppColors.onSurfaceVariant)),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              _FilterChip(
-                label: isAr ? 'الكل' : 'All',
-                isSelected: experienceFilter == null,
-                onTap: () => ref.read(experienceLevelProvider.notifier).state = null,
-              ),
-              _FilterChip(
-                label: isAr ? 'مبتدئ' : 'Junior',
-                isSelected: experienceFilter == 'junior',
-                onTap: () => ref.read(experienceLevelProvider.notifier).state = 'junior',
-              ),
-              _FilterChip(
-                label: isAr ? 'متوسط' : 'Mid-Level',
-                isSelected: experienceFilter == 'mid',
-                onTap: () => ref.read(experienceLevelProvider.notifier).state = 'mid',
-              ),
-              _FilterChip(
-                label: isAr ? 'خبير' : 'Senior',
-                isSelected: experienceFilter == 'senior',
-                onTap: () => ref.read(experienceLevelProvider.notifier).state = 'senior',
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Text(isAr ? "نوع العقد" : "Contract Type", style: GoogleFonts.cairo(fontWeight: FontWeight.w700, color: AppColors.onSurfaceVariant)),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              _FilterChip(
-                label: isAr ? 'الكل' : 'All',
-                isSelected: contractFilter == null,
-                onTap: () => ref.read(contractTypeProvider.notifier).state = null,
-              ),
-              _FilterChip(
-                label: isAr ? 'دوام كامل' : 'Full Time',
-                isSelected: contractFilter == 'full_time',
-                onTap: () => ref.read(contractTypeProvider.notifier).state = 'full_time',
-              ),
-              _FilterChip(
-                label: isAr ? 'دوام جزئي' : 'Part Time',
-                isSelected: contractFilter == 'part_time',
-                onTap: () => ref.read(contractTypeProvider.notifier).state = 'part_time',
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Text(isAr ? "تاريخ النشر" : "Date Posted", style: GoogleFonts.cairo(fontWeight: FontWeight.w700, color: AppColors.onSurfaceVariant)),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              _FilterChip(
-                label: isAr ? 'الكل' : 'Anytime',
-                isSelected: dateFilter == null,
-                onTap: () => ref.read(datePostedProvider.notifier).state = null,
-              ),
-              _FilterChip(
-                label: isAr ? 'آخر 24 ساعة' : 'Past 24h',
-                isSelected: dateFilter == 'past_24h',
-                onTap: () => ref.read(datePostedProvider.notifier).state = 'past_24h',
-              ),
-              _FilterChip(
-                label: isAr ? 'آخر أسبوع' : 'Past Week',
-                isSelected: dateFilter == 'past_week',
-                onTap: () => ref.read(datePostedProvider.notifier).state = 'past_week',
-              ),
-              _FilterChip(
-                label: isAr ? 'آخر شهر' : 'Past Month',
-                isSelected: dateFilter == 'past_month',
-                onTap: () => ref.read(datePostedProvider.notifier).state = 'past_month',
-              ),
-            ],
-          ),
-          const SizedBox(height: 32),
-        ],
-      ),
         ),
       ),
     );
@@ -455,7 +588,11 @@ class _FilterChip extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _FilterChip({required this.label, required this.isSelected, required this.onTap});
+  const _FilterChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -465,9 +602,15 @@ class _FilterChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.secondary : AppColors.surfaceContainerLowest,
+          color: isSelected
+              ? AppColors.secondary
+              : AppColors.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isSelected ? AppColors.secondary : AppColors.outlineVariant.withValues(alpha: 0.3)),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.secondary
+                : AppColors.outlineVariant.withValues(alpha: 0.3),
+          ),
         ),
         child: Text(
           label,
