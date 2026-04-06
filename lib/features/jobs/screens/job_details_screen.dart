@@ -20,53 +20,32 @@ class JobDetailsScreen extends ConsumerWidget {
 
   Future<void> _launchUrl(
     BuildContext context,
-    WidgetRef ref, {
-    required bool isWhatsApp,
-  }) async {
-    final langCode = Localizations.localeOf(context).languageCode;
+    WidgetRef ref,
+  ) async {
+    final urlString = job.applyUrl;
 
-    // Get user onboarding data
-    final obState = ref.read(onboardingProvider);
-
-    String urlString = job.applyUrl;
-
-    // If WhatsApp is explicitly requested, or if the url is empty/already wa.me
-    if (isWhatsApp || urlString.isEmpty || urlString.contains('wa.me')) {
-      final String greeting = langCode == 'ar'
-          ? 'مرحباً، أود التقدم لوظيفة (${job.getLocalizedTitle('ar')}) المعروضة عبر *تطبيق PalCareer*. 🚀'
-          : 'Hello, I would like to apply for (${job.getLocalizedTitle('en')}) posted via *PalCareer app*. 🚀';
-
-      final String myDataTitle = langCode == 'ar'
-          ? '\n\nبياناتي المُسجلة:'
-          : '\n\nMy Registered Data:';
-
-      final currentUser = FirebaseAuth.instance.currentUser;
-      final String actualName = currentUser?.displayName ?? (langCode == 'ar' ? 'مستخدم جديد' : 'New User');
-
-      final String name = langCode == 'ar'
-          ? '- الاسم: $actualName'
-          : '- Name: $actualName';
-      final String sector = langCode == 'ar'
-          ? '- التخصص/المجال: ${obState.selectedSector ?? "غير محدد"}'
-          : '- Field: ${obState.selectedSector ?? "Not specified"}';
-      final String level = langCode == 'ar'
-          ? '- المستوى: ${obState.academicLevel ?? "غير محدد"}'
-          : '- Level: ${obState.academicLevel ?? "Not specified"}';
-
-      final String message = '$greeting$myDataTitle\n$name\n$sector\n$level\n';
-      final encodedMessage = Uri.encodeComponent(message);
-
-      urlString = 'https://wa.me/970599000000?text=$encodedMessage';
+    if (urlString.isEmpty) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'لا يوجد رابط تقديم متاح لهذه الوظيفة حالياً.',
+              style: GoogleFonts.cairo(),
+            ),
+          ),
+        );
+      }
+      return;
     }
 
     final Uri url = Uri.parse(urlString);
     try {
-      if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'لا يمكن فتح الرابط، تأكد من وجود متصفح أو واتساب.',
+                'لا يمكن فتح الرابط الخاص بالوظيفة.',
                 style: GoogleFonts.cairo(),
               ),
             ),
@@ -487,56 +466,12 @@ class JobDetailsScreen extends ConsumerWidget {
         top: false,
         child: Row(
           children: [
-            // WhatsApp Helper Button (Secondary Styling)
-            Expanded(
-              flex: 4,
-              child: ElevatedButton(
-                onPressed: isExpired
-                    ? null
-                    : () => _launchUrl(context, ref, isWhatsApp: true),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isExpired
-                      ? AppColors.surfaceContainerLow
-                      : const Color(0xFF25D366).withValues(alpha: 0.1),
-                  foregroundColor: isExpired
-                      ? AppColors.onSurfaceVariant
-                      : const Color(0xFF25D366),
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    side: BorderSide(
-                      color: isExpired
-                          ? AppColors.outlineVariant
-                          : const Color(0xFF25D366),
-                      width: 1.5,
-                    ),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.chat_rounded, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      langCode == 'ar' ? 'بمساعدتنا' : 'Via Us',
-                      style: GoogleFonts.cairo(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
             // Original Apply Button (Primary Styling)
             Expanded(
-              flex: 6,
               child: ElevatedButton(
                 onPressed: isExpired
                     ? null
-                    : () => _launchUrl(context, ref, isWhatsApp: false),
+                    : () => _launchUrl(context, ref),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isExpired
                       ? AppColors.errorContainer

@@ -10,7 +10,9 @@ import '../../../../core/providers/settings_provider.dart';
 import '../../../../core/utils/app_toast.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
-import '../../../../core/utils/firebase_seeder.dart';
+import '../../../../shared/models/career_taxonomy.dart';
+import '../../../../shared/services/firestore_service.dart';
+import '../../../../core/constants/firestore_keys.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -133,11 +135,20 @@ class ProfileScreen extends ConsumerWidget {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (nameController.text.isNotEmpty) {
-                          ref.read(userNameProvider.notifier).state =
-                              nameController.text;
-                          await authUser?.updateDisplayName(
-                            nameController.text,
-                          );
+                          ref.read(userNameProvider.notifier).state = nameController.text;
+                          await authUser?.updateDisplayName(nameController.text);
+                          
+                          if (authUser != null) {
+                            try {
+                              await ref.read(firestoreServiceProvider).updateDocument(
+                                FirestoreKeys.usersContent,
+                                authUser.uid,
+                                {'name': nameController.text}, // Update Firestore sync
+                              );
+                            } catch (_) {
+                              // Ignore if document not fully constructed yet
+                            }
+                          }
                         }
 
                         if (ctx.mounted) {
@@ -431,12 +442,7 @@ class ProfileScreen extends ConsumerWidget {
                               );
 
                               if (granted == true) {
-                                ref
-                                        .read(
-                                          pushNotificationsProvider.notifier,
-                                        )
-                                        .state =
-                                    true;
+                                ref.read(pushNotificationsProvider.notifier).setEnabled(true);
                                 if (context.mounted) {
                                   AppToast.showSuccess(
                                     context,
@@ -445,10 +451,7 @@ class ProfileScreen extends ConsumerWidget {
                                 }
                               }
                             } else {
-                              ref
-                                      .read(pushNotificationsProvider.notifier)
-                                      .state =
-                                  false;
+                              ref.read(pushNotificationsProvider.notifier).setEnabled(false);
                             }
                           },
                         ),
@@ -467,9 +470,7 @@ class ProfileScreen extends ConsumerWidget {
                       iconColor: AppColors.secondary,
                       onTap: () {
                         final isAr = currentLocale.languageCode == 'ar';
-                        ref.read(localeProvider.notifier).state = Locale(
-                          isAr ? 'en' : 'ar',
-                        );
+                        ref.read(localeProvider.notifier).setLocale(Locale(isAr ? 'en' : 'ar'));
                         AppToast.showInfo(
                           context,
                           'تم طلاء التطبيق بلغة جديدة 🌍',
@@ -506,39 +507,6 @@ class ProfileScreen extends ConsumerWidget {
                           applicationLegalese:
                               '© 2026 PalCareer Team.\nتم التطوير من أجل مساعدة الشباب الفلسطيني في إيجاد فرص عمل بكفاءة وسهولة.',
                         );
-                      },
-                    ),
-                    Divider(
-                      height: 1,
-                      indent: 64,
-                      endIndent: 20,
-                      color: AppColors.outlineVariant.withValues(alpha: 0.15),
-                    ),
-                    _SettingsItemLine(
-                      icon: Icons.cloud_upload_rounded,
-                      title: "رفع بيانات وهمية للوظائف",
-                      iconColor: AppColors.error,
-                      onTap: () async {
-                        try {
-                          AppToast.showInfo(
-                            context,
-                            'بدأ جلب ورفع الوظائف للسحابة...',
-                          );
-                          await FirebaseSeeder.seedJobs();
-                          if (context.mounted) {
-                            AppToast.showSuccess(
-                              context,
-                              'تمت العملية بنجاح! السحابة الآن محدثة. ☁️',
-                            );
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            AppToast.showError(
-                              context,
-                              'فشل الرفع يرجى المحاولة مرة أخرى.',
-                            );
-                          }
-                        }
                       },
                     ),
                   ],
