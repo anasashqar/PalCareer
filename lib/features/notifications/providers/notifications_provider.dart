@@ -47,13 +47,9 @@ final notificationsProvider = Provider<List<NotificationModel>>((ref) {
   final obState = ref.watch(onboardingProvider);
   final readIds = ref.watch(readNotificationsProvider);
 
-  if (!jobsState.hasValue || jobsState.value == null) return [];
+  if (jobsState.jobs.isEmpty) return [];
 
-  // Flatten job groups to get unique jobs
-  final allJobs = jobsState.value!
-      .expand((group) => group.jobs)
-      .toSet()
-      .toList();
+  final allJobs = jobsState.jobs;
   final sectorId = obState.selectedSector;
 
   // Filter jobs by matching category

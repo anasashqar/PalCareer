@@ -3,146 +3,183 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../../../core/constants/firestore_keys.dart';
 import '../../../shared/models/job_model.dart';
-import '../../onboarding/providers/onboarding_provider.dart';
 
-class JobGroup {
-  final String titleId;
-  final List<JobModel> jobs;
-
-  JobGroup(this.titleId, this.jobs);
-}
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
 final contractTypeProvider = StateProvider<String?>((ref) => null);
 final workModeProvider = StateProvider<String?>((ref) => null);
 final experienceLevelProvider = StateProvider<String?>((ref) => null);
 final datePostedProvider = StateProvider<String?>((ref) => null);
-final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
-  final obState = ref.watch(onboardingProvider);
 
-  List<JobModel> allJobs = [];
-  try {
-    final firestore = FirebaseFirestore.instance;
-    final snapshot = await firestore
-        .collection(FirestoreKeys.jobsCollection)
-        .where('isActive', isEqualTo: true)
-        .get();
+class JobsState {
+  final List<JobModel> jobs;
+  final bool isLoading;
+  final bool isFetchingMore;
+  final bool hasRechedEnd;
+  final DocumentSnapshot? lastDoc;
+  final String? error;
 
-    allJobs =
-        snapshot.docs
-            .map((doc) => JobModel.fromMap(doc.data(), doc.id))
-            .toList()
-          ..sort((a, b) => b.postedAt.compareTo(a.postedAt));
-  } catch (e) {
-    debugPrint('Error Fetching Jobs, falling back to mock data: $e');
+  JobsState({
+    this.jobs = const [],
+    this.isLoading = true,
+    this.isFetchingMore = false,
+    this.hasRechedEnd = false,
+    this.lastDoc,
+    this.error,
+  });
+
+  JobsState copyWith({
+    List<JobModel>? jobs,
+    bool? isLoading,
+    bool? isFetchingMore,
+    bool? hasRechedEnd,
+    DocumentSnapshot? lastDoc,
+    String? error,
+  }) {
+    return JobsState(
+      jobs: jobs ?? this.jobs,
+      isLoading: isLoading ?? this.isLoading,
+      isFetchingMore: isFetchingMore ?? this.isFetchingMore,
+      hasRechedEnd: hasRechedEnd ?? this.hasRechedEnd,
+      lastDoc: lastDoc ?? this.lastDoc,
+      error: error, // overwrite error if passed or keep null
+    );
+  }
+}
+
+class JobsNotifier extends Notifier<JobsState> {
+  static const int _limit = 10;
+
+  @override
+  JobsState build() {
+    // Listen to filter state changes so we auto-refresh when they change
+    ref.listen(searchQueryProvider, (previous, next) => _refresh());
+    ref.listen(contractTypeProvider, (previous, next) => _refresh());
+    ref.listen(workModeProvider, (previous, next) => _refresh());
+    ref.listen(experienceLevelProvider, (previous, next) => _refresh());
+    ref.listen(datePostedProvider, (previous, next) => _refresh());
+
+    Future.microtask(() => fetchJobs());
+    return JobsState();
   }
 
-  // Only use Firestore, do not fall back to mock data
-  if (allJobs.isEmpty) {
-    debugPrint('No jobs found in Firestore!');
+  void _refresh() {
+    state = JobsState(); // Reset state completely
+    fetchJobs();
   }
 
-  final search = ref.watch(searchQueryProvider).toLowerCase().trim();
-  final contractFilter = ref.watch(contractTypeProvider);
-  final workModeFilter = ref.watch(workModeProvider);
-  final experienceFilter = ref.watch(experienceLevelProvider);
-  final dateFilter = ref.watch(datePostedProvider);
-
-  // Check if any search or filter is active
-  final isSearchActive =
-      search.isNotEmpty ||
-      contractFilter != null ||
-      workModeFilter != null ||
-      experienceFilter != null ||
-      dateFilter != null;
-
-  final filteredJobs = allJobs.where((job) {
-    bool matchesSearch = true;
-    if (search.isNotEmpty) {
-      matchesSearch =
-          (job.title['ar']?.toLowerCase().contains(search) ?? false) ||
-          (job.title['en']?.toLowerCase().contains(search) ?? false) ||
-          job.company.toLowerCase().contains(search);
+  Future<void> fetchJobs({bool fetchMore = false}) async {
+    if (state.hasRechedEnd) return;
+    if (fetchMore && state.isFetchingMore) return;
+    if (!fetchMore && !state.isLoading) {
+       // Already fetching initial
+       return;
     }
 
-    final matchesContract =
-        contractFilter == null || job.jobType == contractFilter;
-    final matchesWorkMode =
-        workModeFilter == null ||
-        (workModeFilter == 'remote' && job.jobType == 'remote') ||
-        (workModeFilter == 'on_site' && job.jobType != 'remote');
-
-    final matchesExperience =
-        experienceFilter == null || job.level == experienceFilter;
-
-    bool matchesDate = true;
-    if (dateFilter != null) {
-      final now = DateTime.now();
-      if (dateFilter == 'past_24h') {
-        matchesDate = now.difference(job.postedAt).inDays <= 1;
-      } else if (dateFilter == 'past_week') {
-        matchesDate = now.difference(job.postedAt).inDays <= 7;
-      } else if (dateFilter == 'past_month') {
-        matchesDate = now.difference(job.postedAt).inDays <= 30;
-      }
-    }
-
-    return matchesSearch &&
-        matchesContract &&
-        matchesWorkMode &&
-        matchesExperience &&
-        matchesDate;
-  }).toList();
-
-  // THE LINKEDIN MODEL: If searching/filtering, return flat list of results instead of tiered matching
-  if (isSearchActive) {
-    // Sort by most recent for search results as standard practice
-    filteredJobs.sort((a, b) => b.postedAt.compareTo(a.postedAt));
-    return [JobGroup('search_results', filteredJobs)];
-  }
-
-  // ELSE: Return standard Tiered Feed
-  final perfectlyFilteredJobs = filteredJobs;
-  final perfectMatches = <JobModel>[];
-  final sectorMatches = <JobModel>[];
-  final exploreMore = <JobModel>[];
-
-  if (obState.selectedSector == null) {
-    return [JobGroup('explore_jobs', perfectlyFilteredJobs)];
-  }
-
-  for (final job in perfectlyFilteredJobs) {
-    bool isPerfect = false;
-
-    for (final userSub in obState.fieldsOfStudy) {
-      if (job.subCategoryId == userSub) {
-        isPerfect = true;
-        break;
-      }
-    }
-
-    if (isPerfect) {
-      perfectMatches.add(job);
-    } else if (job.categoryId == obState.selectedSector) {
-      sectorMatches.add(job);
+    if (fetchMore) {
+      state = state.copyWith(isFetchingMore: true);
     } else {
-      exploreMore.add(job);
+      state = state.copyWith(isLoading: true);
+    }
+
+    try {
+      final firestore = FirebaseFirestore.instance;
+      Query query = firestore
+          .collection(FirestoreKeys.jobsCollection)
+          .where('isActive', isEqualTo: true);
+
+      // Apply server-side filters where possible
+      final contractFilter = ref.read(contractTypeProvider);
+      final experienceFilter = ref.read(experienceLevelProvider);
+
+      if (contractFilter != null) {
+        query = query.where('jobType', isEqualTo: contractFilter);
+      }
+      if (experienceFilter != null) {
+        query = query.where('level', isEqualTo: experienceFilter);
+      }
+
+      // Order by date descending
+      query = query.orderBy('postedAt', descending: true);
+
+      // Apply pagination cursor
+      if (fetchMore && state.lastDoc != null) {
+        query = query.startAfterDocument(state.lastDoc!);
+      }
+
+      query = query.limit(_limit);
+
+      final snapshot = await query.get();
+
+      if (snapshot.docs.isEmpty) {
+        state = state.copyWith(
+          isFetchingMore: false,
+          isLoading: false,
+          hasRechedEnd: true,
+        );
+        return;
+      }
+
+      var newJobs = snapshot.docs
+          .map((doc) => JobModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+          .toList();
+
+      // Client-Side filtering for fields that can't be easily compound-indexed dynamically
+      // like textual search or complex date math, but applied ONLY to the fetched chunk:
+      final search = ref.read(searchQueryProvider).toLowerCase().trim();
+      final workModeFilter = ref.read(workModeProvider);
+      final dateFilter = ref.read(datePostedProvider);
+
+      newJobs = newJobs.where((job) {
+        bool matchesSearch = true;
+        if (search.isNotEmpty) {
+          matchesSearch =
+              (job.title['ar']?.toLowerCase().contains(search) ?? false) ||
+              (job.title['en']?.toLowerCase().contains(search) ?? false) ||
+              job.company.toLowerCase().contains(search);
+        }
+
+        final matchesWorkMode = workModeFilter == null ||
+            (workModeFilter == 'remote' && job.jobType == 'remote') ||
+            (workModeFilter == 'on_site' && job.jobType != 'remote');
+
+        bool matchesDate = true;
+        if (dateFilter != null) {
+          final now = DateTime.now();
+          if (dateFilter == 'past_24h') {
+            matchesDate = now.difference(job.postedAt).inDays <= 1;
+          } else if (dateFilter == 'past_week') {
+            matchesDate = now.difference(job.postedAt).inDays <= 7;
+          } else if (dateFilter == 'past_month') {
+            matchesDate = now.difference(job.postedAt).inDays <= 30;
+          }
+        }
+
+        return matchesSearch && matchesWorkMode && matchesDate;
+      }).toList();
+
+      state = state.copyWith(
+        jobs: fetchMore ? [...state.jobs, ...newJobs] : newJobs,
+        lastDoc: snapshot.docs.last,
+        isLoading: false,
+        isFetchingMore: false,
+        hasRechedEnd: snapshot.docs.length < _limit,
+      );
+    } catch (e) {
+      debugPrint('Error fetching jobs: $e');
+      state = state.copyWith(
+        isLoading: false,
+        isFetchingMore: false,
+        error: e.toString(),
+      );
     }
   }
 
-  final List<JobGroup> groups = [];
-
-  if (perfectMatches.isNotEmpty) {
-    groups.add(JobGroup('perfect_matches', perfectMatches));
+  void refreshManual() {
+    _refresh();
   }
-  if (sectorMatches.isNotEmpty) {
-    groups.add(JobGroup('sector_matches', sectorMatches));
-  }
+}
 
-  if (exploreMore.isNotEmpty) {
-    exploreMore.shuffle();
-    groups.add(JobGroup('explore_jobs', exploreMore));
-  }
-
-  return groups;
+final jobsProvider = NotifierProvider<JobsNotifier, JobsState>(() {
+  return JobsNotifier();
 });

@@ -5,6 +5,7 @@ import '../../../core/constants/firestore_keys.dart';
 import '../../../shared/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/services/firebase_messaging_service.dart';
+import '../../../shared/providers/profile_provider.dart';
 
 class OnboardingState {
   final String? selectedSector;
@@ -50,8 +51,9 @@ class OnboardingState {
 class OnboardingNotifier extends StateNotifier<OnboardingState> {
   final FirestoreService _firestoreService;
   final AuthRepository _authRepository;
+  final Ref _ref;
 
-  OnboardingNotifier(this._firestoreService, this._authRepository)
+  OnboardingNotifier(this._firestoreService, this._authRepository, this._ref)
     : super(OnboardingState());
 
   void setSector(String sector) {
@@ -84,21 +86,6 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
     state = state.copyWith(preferredWorkTypes: current);
   }
 
-  void loadProfile(Map<String, dynamic> data) {
-    final categoryIds = List<String>.from(data['preferredCategoryIds'] ?? []);
-    final sectorId = categoryIds.isNotEmpty ? categoryIds.first : null;
-
-    state = state.copyWith(
-      selectedSector: sectorId,
-      fieldsOfStudy: List<String>.from(data['preferredSubCategoryIds'] ?? []),
-      preferredWorkTypes: List<String>.from(data['preferredJobTypes'] ?? []),
-      academicLevel: data['educationLevelId'],
-    );
-
-    if (sectorId != null) {
-      FirebaseMessagingService().updateSectorSubscription(sectorId);
-    }
-  }
 
   Future<void> saveAndComplete() async {
     state = state.copyWith(isLoading: true, error: null);
@@ -135,6 +122,8 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
         );
       }
 
+      _ref.read(profileProvider.notifier).setUser(userModel);
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
       // Using e.toString() directly or stripping 'Exception: '
@@ -150,5 +139,6 @@ final onboardingProvider =
       return OnboardingNotifier(
         ref.watch(firestoreServiceProvider),
         ref.watch(authRepositoryProvider),
+        ref,
       );
     });

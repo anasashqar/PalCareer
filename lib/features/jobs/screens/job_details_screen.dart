@@ -402,9 +402,8 @@ class JobDetailsScreen extends ConsumerWidget {
           const SizedBox(height: 16),
           Consumer(
             builder: (context, ref, _) {
-              final jobsAsync = ref.watch(jobsProvider);
-              final allGroups = jobsAsync.valueOrNull ?? [];
-              final allJobs = allGroups.expand((g) => g.jobs).toList();
+              final jobsState = ref.watch(jobsProvider);
+              final allJobs = jobsState.jobs;
               final similarJobs = allJobs
                   .where(
                     (j) => j.id != job.id && j.categoryId == job.categoryId,

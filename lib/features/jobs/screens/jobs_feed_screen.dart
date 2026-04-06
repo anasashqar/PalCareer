@@ -17,46 +17,31 @@ class JobsFeedScreen extends ConsumerStatefulWidget {
 
 class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
   }
 
-  String _getLocalizedHeader(String titleId, String langCode) {
-    if (langCode == 'ar') {
-      switch (titleId) {
-        case 'perfect_matches':
-          return '🔥 الأنسب لاختياراتك';
-        case 'sector_matches':
-          return '💡 مقترحات أخرى في مجالك';
-        case 'explore_jobs':
-          return '🌍 استكشف وظائف منوعة';
-        case 'search_results':
-          return '🔍 نتائج البحث';
-        default:
-          return titleId;
-      }
-    } else {
-      switch (titleId) {
-        case 'perfect_matches':
-          return '🔥 Top Matches For You';
-        case 'sector_matches':
-          return '💡 Other in your field';
-        case 'explore_jobs':
-          return '🌍 Explore More Jobs';
-        case 'search_results':
-          return '🔍 Search Results';
-        default:
-          return titleId;
-      }
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      ref.read(jobsProvider.notifier).fetchJobs(fetchMore: true);
     }
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    final jobsAsyncValue = ref.watch(jobsProvider);
+    final jobsState = ref.watch(jobsProvider);
     final isFilterActive =
         ref.watch(contractTypeProvider) != null ||
         ref.watch(workModeProvider) != null ||
@@ -72,12 +57,11 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
         child: RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(jobsProvider);
-            try {
-              await ref.read(jobsProvider.future);
-            } catch (_) {}
+            await Future.delayed(const Duration(milliseconds: 600));
           },
           color: Theme.of(context).colorScheme.primary,
           child: CustomScrollView(
+            controller: _scrollController,
             physics: const AlwaysScrollableScrollPhysics(
               parent: BouncingScrollPhysics(),
             ),
@@ -281,151 +265,103 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                 ),
               ),
 
-              jobsAsyncValue.when(
-                data: (groups) {
-                  if (groups.isEmpty) {
-                    return SliverFillRemaining(
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.search_off_rounded,
-                              size: 64,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.outlineVariant,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              langCode == 'ar'
-                                  ? 'لا توجد نتائج مطابقة لبحثك'
-                                  : 'No matches found',
-                              style: GoogleFonts.cairo(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-
-                  return SliverList(
-                    delegate: SliverChildBuilderDelegate((context, groupIndex) {
-                      final group = groups[groupIndex];
-
-                      // For the very last group, add bottom padding
-                      final isLastGroup = groupIndex == groups.length - 1;
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Group Header
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
-                            child: Text(
-                              _getLocalizedHeader(group.titleId, langCode),
-                              style: GoogleFonts.cairo(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w800,
-                                color: group.titleId == 'perfect_matches'
-                                    ? Theme.of(context).colorScheme.secondary
-                                    : Theme.of(context).colorScheme.onSurface,
-                              ),
-                            ),
-                          ),
-
-                          // Jobs List in this group
-                          ...group.jobs.asMap().entries.map((entry) {
-                            final jobIndex = entry.key;
-                            final job = entry.value;
-
-                            // Calculate global index for animation delay roughly
-                            int globalIndex = jobIndex;
-                            for (var i = 0; i < groupIndex; i++) {
-                              globalIndex += groups[i].jobs.length;
-                            }
-
-                            final delayMs = (400 + globalIndex * 80)
-                                .clamp(0, 600)
-                                .toInt();
-
-                            return TweenAnimationBuilder<double>(
-                              // Add a distinct key per job so the widget tree animates them correctly
-                              key: ValueKey(job.id),
-                              tween: Tween(begin: 0.0, end: 1.0),
-                              duration: Duration(milliseconds: delayMs),
-                              curve: Curves.easeOutCubic,
-                              builder: (context, value, child) {
-                                return Opacity(
-                                  opacity: value,
-                                  child: Transform.translate(
-                                    offset: Offset(0, 40 * (1 - value)),
-                                    child: child,
-                                  ),
-                                );
-                              },
-                              child: JobCardWidget(
-                                job: job,
-                                onTap: () =>
-                                    context.push('/job-details', extra: job),
-                              ),
-                            );
-                          }),
-
-                          if (isLastGroup)
-                            const SizedBox(height: 16), // Light bottom padding
-                        ],
-                      );
-                    }, childCount: groups.length),
-                  );
-                },
-                loading: () => SliverFillRemaining(
+              if (jobsState.isLoading && jobsState.jobs.isEmpty)
+                SliverFillRemaining(
                   child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 24,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                     itemCount: 5,
                     itemBuilder: (context, index) {
                       return Shimmer.fromColors(
-                        baseColor: Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerLowest
-                            .withValues(alpha: 0.5),
+                        baseColor: Theme.of(context).colorScheme.surfaceContainerLowest.withValues(alpha: 0.5),
                         highlightColor: Theme.of(context).colorScheme.surface,
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 16),
-                          height: 140, // Height of standard job card
+                          height: 140,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .outlineVariant
-                                  .withValues(alpha: 0.1),
-                            ),
+                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.1)),
                           ),
                         ),
                       );
                     },
                   ),
-                ),
-                error: (err, stack) => SliverFillRemaining(
+                )
+              else if (jobsState.error != null && jobsState.jobs.isEmpty)
+                SliverFillRemaining(
                   child: Center(
-                    child: Text(
-                      'Error: $err',
-                      style: const TextStyle(color: Colors.red),
+                    child: Text('Error: ${jobsState.error}', style: const TextStyle(color: Colors.red)),
+                  ),
+                )
+              else if (jobsState.jobs.isEmpty)
+                SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off_rounded,
+                          size: 64,
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          langCode == 'ar' ? 'لا توجد نتائج مطابقة لبحثك' : 'No matches found',
+                          style: GoogleFonts.cairo(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                )
+              else
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (index == jobsState.jobs.length) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: jobsState.isFetchingMore
+                                ? const CircularProgressIndicator()
+                                : (jobsState.hasRechedEnd
+                                    ? Text(
+                                        langCode == 'ar' ? 'نهاية الوظائف' : 'End of jobs',
+                                        style: GoogleFonts.cairo(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                      )
+                                    : const SizedBox.shrink()),
+                          ),
+                        );
+                      }
+
+                      final job = jobsState.jobs[index];
+                      // Simple animation
+                      return TweenAnimationBuilder<double>(
+                        key: ValueKey(job.id),
+                        tween: Tween(begin: 0.0, end: 1.0),
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOutCubic,
+                        builder: (context, value, child) {
+                          return Opacity(
+                            opacity: value,
+                            child: Transform.translate(
+                              offset: Offset(0, 20 * (1 - value)),
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: JobCardWidget(
+                          job: job,
+                          onTap: () => context.push('/job-details', extra: job),
+                        ),
+                      );
+                    },
+                    childCount: jobsState.jobs.length + 1,
+                  ),
                 ),
-              ),
             ],
           ),
         ),

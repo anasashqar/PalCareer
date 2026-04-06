@@ -5,7 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/auth_repository.dart';
 import '../../../shared/services/firestore_service.dart';
 import '../../../core/constants/firestore_keys.dart';
-import '../../onboarding/providers/onboarding_provider.dart';
+import '../../../shared/providers/profile_provider.dart';
+import '../../../shared/models/user_model.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -82,7 +83,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               data['preferredCategoryIds'] ?? [],
             );
             if (preferredCategories.isNotEmpty) {
-              ref.read(onboardingProvider.notifier).loadProfile(data);
+              final userModel = UserModel.fromMap(data, user.uid);
+              ref.read(profileProvider.notifier).setUser(userModel);
               context.go('/home');
             } else {
               context.go('/onboarding');
