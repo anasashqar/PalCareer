@@ -1,10 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
-import '../../../core/theme/app_colors.dart';
 
 class MainScaffoldView extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -18,21 +16,25 @@ class MainScaffoldView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       extendBody: false, // Standard, non-floating layout
       body: navigationShell,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: AppColors.surfaceContainerLowest,
+          color: Theme.of(context).colorScheme.surfaceContainerLowest,
           border: Border(
             top: BorderSide(
-              color: AppColors.outlineVariant.withValues(alpha: 0.2),
+              color: Theme.of(
+                context,
+              ).colorScheme.outlineVariant.withValues(alpha: 0.2),
               width: 1.0,
             ),
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.05),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
@@ -110,7 +112,7 @@ class _NavBarItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primary.withValues(alpha: 0.1)
+              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(24),
         ),
@@ -125,8 +127,8 @@ class _NavBarItem extends StatelessWidget {
                 isSelected ? activeIcon : icon,
                 key: ValueKey(isSelected),
                 color: isSelected
-                    ? AppColors.primary
-                    : AppColors.onSurfaceVariant,
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 24,
               ),
             ),
@@ -144,7 +146,7 @@ class _NavBarItem extends StatelessWidget {
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.primary,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),

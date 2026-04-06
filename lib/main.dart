@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/providers/theme_provider.dart';
+
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
-import 'core/providers/settings_provider.dart';
+import 'core/services/remote_config_service.dart';
+import 'core/services/remote_config_asset_loader.dart';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:palcareer/firebase_options.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'core/services/firebase_messaging_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
 
   await Hive.initFlutter();
   await Hive.openBox('settings');
@@ -25,15 +28,25 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    await GoogleSignIn.instance.initialize();
-    
+
+    // Initialize Remote Config for App Strings and Theme
+    await RemoteConfigService.init();
+
     // Initialize FCM Push Notifications
     await FirebaseMessagingService().init();
   } catch (e) {
     debugPrint('Firebase/GoogleSignIn initialization error = $e');
   }
 
-  runApp(const ProviderScope(child: PalCareerApp()));
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [Locale('en'), Locale('ar')],
+      path: 'assets/i18n',
+      assetLoader: const RemoteConfigAssetLoader(),
+      fallbackLocale: const Locale('ar'),
+      child: const ProviderScope(child: PalCareerApp()),
+    ),
+  );
 }
 
 class PalCareerApp extends ConsumerWidget {
@@ -41,23 +54,21 @@ class PalCareerApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final locale = ref.watch(localeProvider);
+    final themeConfig = ref.watch(themeConfigProvider);
 
     return MaterialApp.router(
       title: 'PalCareer',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      theme: AppTheme.lightTheme(themeConfig),
       routerConfig: appRouter,
 
       // i18n support setup
-      localizationsDelegates: const [
+      localizationsDelegates: [
+        ...context.localizationDelegates,
         AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: AppLocalizations.supportedLocales,
-      locale: locale,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
     );
   }
 }

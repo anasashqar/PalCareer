@@ -87,7 +87,7 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
   void loadProfile(Map<String, dynamic> data) {
     final categoryIds = List<String>.from(data['preferredCategoryIds'] ?? []);
     final sectorId = categoryIds.isNotEmpty ? categoryIds.first : null;
-    
+
     state = state.copyWith(
       selectedSector: sectorId,
       fieldsOfStudy: List<String>.from(data['preferredSubCategoryIds'] ?? []),
@@ -130,7 +130,9 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
       );
 
       if (state.selectedSector != null) {
-        FirebaseMessagingService().updateSectorSubscription(state.selectedSector!);
+        FirebaseMessagingService().updateSectorSubscription(
+          state.selectedSector!,
+        );
       }
 
       state = state.copyWith(isLoading: false);

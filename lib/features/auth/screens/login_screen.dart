@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -100,7 +99,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.error!, style: GoogleFonts.cairo()),
-            backgroundColor: AppColors.error,
+            backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -111,7 +110,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     });
 
     return Scaffold(
-      backgroundColor: AppColors.surfaceContainerLow,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
       body: SafeArea(
         child: Stack(
           children: [
@@ -124,7 +123,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 height: 250,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.secondary.withValues(alpha: 0.04),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.secondary.withValues(alpha: 0.04),
                 ),
               ),
             ),
@@ -150,11 +151,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           width: 72,
                           height: 72,
                           decoration: BoxDecoration(
-                            color: AppColors.primary,
+                            color: Theme.of(context).colorScheme.primary,
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.3),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.3),
                                 blurRadius: 20,
                                 offset: const Offset(0, 8),
                               ),
@@ -186,7 +189,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 fontSize: 42,
                                 fontWeight: FontWeight.bold,
                                 height: 1.3,
-                                color: AppColors.onSurface,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             TextSpan(
@@ -194,7 +197,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               style: GoogleFonts.manrope(
                                 fontSize: 44,
                                 fontWeight: FontWeight.w800,
-                                color: AppColors.primary,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                           ],
@@ -214,7 +217,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         'اكتشف الوظائف التي تناسب مسارك المهني\nبذكاء وسهولة.',
                         style: GoogleFonts.cairo(
                           fontSize: 18,
-                          color: AppColors.onSurfaceVariant,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           height: 1.6,
                         ),
                       ),
@@ -233,9 +236,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           borderRadius: BorderRadius.circular(24.0),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.onSurface.withValues(
-                                alpha: 0.08,
-                              ),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.08),
                               blurRadius: 30,
                               spreadRadius: -5,
                               offset: const Offset(0, 15),
@@ -251,36 +254,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                       .signInWithGoogle();
                                 },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.surfaceContainerLowest,
-                            foregroundColor: AppColors.onSurface,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLowest,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onSurface,
                             elevation: 0,
                             padding: const EdgeInsets.symmetric(vertical: 22),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(24.0),
                               side: BorderSide(
-                                color: AppColors.outlineVariant.withValues(
-                                  alpha: 0.3,
-                                ),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant
+                                    .withValues(alpha: 0.3),
                                 width: 1,
                               ),
                             ),
                           ),
                           child: authState.isLoading
-                              ? const SizedBox(
+                              ? SizedBox(
                                   width: 24,
                                   height: 24,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: AppColors.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                                 )
                               : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.g_mobiledata_rounded,
                                       size: 36,
-                                      color: AppColors.primary,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
                                     ),
                                     const SizedBox(width: 12),
                                     Text(
@@ -309,9 +321,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         textAlign: TextAlign.center,
                         style: GoogleFonts.cairo(
                           fontSize: 14,
-                          color: AppColors.onSurfaceVariant.withValues(
-                            alpha: 0.8,
-                          ),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                         ),
                       ),
                     ),

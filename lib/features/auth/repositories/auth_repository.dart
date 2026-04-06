@@ -32,13 +32,8 @@ class FirebaseAuthRepository implements AuthRepository {
       }
 
       // Prompt user to select Google Account (For Android/iOS)
-      final GoogleSignInAccount? googleUser = await _googleSignIn
+      final GoogleSignInAccount googleUser = await _googleSignIn
           .authenticate();
-
-      // User cancelled the login flow
-      if (googleUser == null) {
-        throw Exception('تم إلغاء عملية تسجيل الدخول.');
-      }
 
       // Obtain the identity details (idToken)
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
@@ -80,7 +75,7 @@ class FirebaseAuthRepository implements AuthRepository {
     } catch (_) {
       // Ignore Google Sign In errors, we just want to clear Firebase Auth
     }
-    
+
     try {
       await _firebaseAuth.signOut();
     } catch (e) {

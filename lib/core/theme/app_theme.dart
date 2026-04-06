@@ -1,87 +1,87 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'app_colors.dart';
+import 'theme_config.dart';
 
 class AppTheme {
   AppTheme._();
 
-  static ThemeData get lightTheme {
+  static ThemeData lightTheme(ThemeConfig config) {
     final baseTheme = ThemeData.light();
 
     // The Display Voice
     final headlineTheme = GoogleFonts.manropeTextTheme(baseTheme.textTheme)
         .copyWith(
           displayLarge: GoogleFonts.manrope(
-            color: AppColors.onSurface,
+            color: config.onSurface,
             fontWeight: FontWeight.bold,
           ),
           displayMedium: GoogleFonts.manrope(
-            color: AppColors.onSurface,
+            color: config.onSurface,
             fontWeight: FontWeight.bold,
           ),
           displaySmall: GoogleFonts.manrope(
-            color: AppColors.onSurface,
+            color: config.onSurface,
             fontWeight: FontWeight.bold,
           ),
           titleLarge: GoogleFonts.manrope(
-            color: AppColors.onSurface,
+            color: config.onSurface,
             fontWeight: FontWeight.w600,
           ),
           titleMedium: GoogleFonts.manrope(
-            color: AppColors.onSurface,
+            color: config.onSurface,
             fontWeight: FontWeight.w600,
           ),
           titleSmall: GoogleFonts.manrope(
-            color: AppColors.onSurface,
+            color: config.onSurface,
             fontWeight: FontWeight.w600,
           ),
         );
 
     // The Utility Voice
     final bodyTheme = GoogleFonts.interTextTheme(headlineTheme).copyWith(
-      bodyLarge: GoogleFonts.inter(color: AppColors.onSurface),
-      bodyMedium: GoogleFonts.inter(color: AppColors.onSurface),
-      bodySmall: GoogleFonts.inter(color: AppColors.onSurfaceVariant),
+      bodyLarge: GoogleFonts.inter(color: config.onSurface),
+      bodyMedium: GoogleFonts.inter(color: config.onSurface),
+      bodySmall: GoogleFonts.inter(color: config.onSurfaceVariant),
       labelLarge: GoogleFonts.inter(
-        color: AppColors.onSurface,
+        color: config.onSurface,
         fontWeight: FontWeight.w500,
         letterSpacing: 0.5,
       ),
       labelMedium: GoogleFonts.inter(
-        color: AppColors.onSurface,
+        color: config.onSurface,
         fontWeight: FontWeight.w500,
       ),
       labelSmall: GoogleFonts.inter(
-        color: AppColors.onSurfaceVariant,
+        color: config.onSurfaceVariant,
         fontWeight: FontWeight.w500,
       ),
     );
 
     return ThemeData(
       useMaterial3: true,
-      colorScheme: const ColorScheme.light(
-        primary: AppColors.primary,
-        primaryContainer: AppColors.primaryContainer,
-        onPrimary: AppColors.onPrimary,
-        secondary: AppColors.secondary,
-        secondaryContainer: AppColors.secondaryContainer,
-        onSecondary: AppColors.onSecondary,
-        tertiary: AppColors.tertiary,
-        tertiaryContainer: AppColors.tertiaryContainer,
-        surface: AppColors.surface,
-        onSurface: AppColors.onSurface,
-        error: AppColors.error,
-        onError: AppColors.onError,
-        outline: AppColors.outline,
-        outlineVariant: AppColors.outlineVariant,
+      colorScheme: ColorScheme.light(
+        primary: config.primary,
+        primaryContainer: config.primaryContainer,
+        onPrimary: config.onPrimary,
+        secondary: config.secondary,
+        secondaryContainer: config.secondaryContainer,
+        onSecondary: config.onSecondary,
+        tertiary: config.tertiary,
+        tertiaryContainer: config.tertiaryContainer,
+        surface: config.surface,
+        onSurface: config.onSurface,
+        error: config.error,
+        onError: config.onError,
+        outline: config.outline,
+        outlineVariant: config.outlineVariant,
       ),
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: config.background,
       textTheme: bodyTheme,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.onPrimary,
+          backgroundColor: config.primary,
+          foregroundColor: config.onPrimary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24.0), // xl rounded corners
           ),
@@ -95,12 +95,12 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.onSurface,
+          foregroundColor: config.onSurface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24.0),
           ),
-          side: const BorderSide(
-            color: AppColors.outlineVariant,
+          side: BorderSide(
+            color: config.outlineVariant,
             width: 1,
           ), // "Ghost Border"
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),

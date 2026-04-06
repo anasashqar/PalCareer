@@ -9,16 +9,26 @@ class AppToast {
       context,
       message,
       Icons.check_circle_rounded,
-      AppColors.secondary,
+      Theme.of(context).colorScheme.secondary,
     );
   }
 
   static void showInfo(BuildContext context, String message) {
-    _showToast(context, message, Icons.info_rounded, AppColors.primary);
+    _showToast(
+      context,
+      message,
+      Icons.info_rounded,
+      Theme.of(context).colorScheme.primary,
+    );
   }
 
   static void showError(BuildContext context, String message) {
-    _showToast(context, message, Icons.error_rounded, AppColors.error);
+    _showToast(
+      context,
+      message,
+      Icons.error_rounded,
+      Theme.of(context).colorScheme.error,
+    );
   }
 
   static void _showToast(
@@ -68,7 +78,7 @@ class AppToast {
                   style: GoogleFonts.cairo(
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.onSurface,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),

@@ -38,6 +38,8 @@ dependencies:
   google_fonts: ^6.2.1
   share_plus: ^12.0.2
   shimmer: ^3.0.0
+  easy_localization: ^3.0.8
+  firebase_remote_config: ^5.5.0
 
 dev_dependencies:
   flutter_test:
@@ -47,3 +49,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/i18n/
+    - assets/config/

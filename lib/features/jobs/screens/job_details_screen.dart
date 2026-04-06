@@ -6,7 +6,6 @@ import 'package:palcareer/l10n/generated/app_localizations.dart';
 import '../../../shared/models/job_model.dart';
 import '../providers/jobs_provider.dart';
 import '../widgets/job_card.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../bookmarks/providers/bookmarks_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
@@ -16,10 +15,7 @@ class JobDetailsScreen extends ConsumerWidget {
 
   const JobDetailsScreen({super.key, required this.job});
 
-  Future<void> _launchUrl(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
+  Future<void> _launchUrl(BuildContext context, WidgetRef ref) async {
     final urlString = job.applyUrl;
 
     if (urlString.isEmpty) {
@@ -76,7 +72,7 @@ class JobDetailsScreen extends ConsumerWidget {
         : 'Job Description';
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -87,9 +83,9 @@ class JobDetailsScreen extends ConsumerWidget {
             child: Row(
               children: [
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.share_rounded,
-                    color: AppColors.onSurface,
+                    color: Theme.of(context).colorScheme.onSurface,
                     size: 22,
                   ),
                   onPressed: () {
@@ -100,7 +96,7 @@ class JobDetailsScreen extends ConsumerWidget {
                           'تم نسخ رابط الوظيفة بنجاح 🎉',
                           style: GoogleFonts.cairo(),
                         ),
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
@@ -117,8 +113,8 @@ class JobDetailsScreen extends ConsumerWidget {
                             ? Icons.bookmark_rounded
                             : Icons.bookmark_border_rounded,
                         color: isSaved
-                            ? AppColors.secondary
-                            : AppColors.onSurface,
+                            ? Theme.of(context).colorScheme.secondary
+                            : Theme.of(context).colorScheme.onSurface,
                         size: 24,
                       ),
                       onPressed: () {
@@ -134,9 +130,9 @@ class JobDetailsScreen extends ConsumerWidget {
           ),
         ],
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_rounded,
-            color: AppColors.onSurface,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
@@ -158,11 +154,13 @@ class JobDetailsScreen extends ConsumerWidget {
             margin: const EdgeInsets.symmetric(horizontal: 20),
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
             decoration: BoxDecoration(
-              color: AppColors.surfaceContainerLowest,
+              color: Theme.of(context).colorScheme.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.03),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.03),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -177,7 +175,7 @@ class JobDetailsScreen extends ConsumerWidget {
                   width: 72,
                   height: 72,
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
@@ -187,10 +185,10 @@ class JobDetailsScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Icon(
                       Icons.inbox_rounded,
-                      color: AppColors.primary,
+                      color: Theme.of(context).colorScheme.primary,
                       size: 36,
                     ), // Dropbox-like icon
                   ),
@@ -203,7 +201,7 @@ class JobDetailsScreen extends ConsumerWidget {
                   style: GoogleFonts.cairo(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.primary,
+                    color: Theme.of(context).colorScheme.primary,
                     height: 1.2,
                   ),
                 ),
@@ -216,7 +214,9 @@ class JobDetailsScreen extends ConsumerWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.secondary.withValues(alpha: 0.2),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.secondary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -224,7 +224,7 @@ class JobDetailsScreen extends ConsumerWidget {
                       style: GoogleFonts.cairo(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.secondary,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ),
                   ),
@@ -237,7 +237,7 @@ class JobDetailsScreen extends ConsumerWidget {
                   style: GoogleFonts.cairo(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.onSurfaceVariant,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
 
@@ -263,17 +263,19 @@ class JobDetailsScreen extends ConsumerWidget {
                           ? Icons.error_outline
                           : Icons.timer_outlined,
                       label: isExpired
-                          ? (isAr ? "انتهى التقديم" : "Application Closed")
+                          ? (isAr ? 'انتهى التقديم' : 'Application Closed')
                           : (isUrgent
-                                ? (isAr ? "ينتهي قريباً!" : "Closing soon!")
+                                ? (isAr ? 'ينتهي قريباً!' : 'Closing soon!')
                                 : (isAr
-                                      ? "ينتهي بعد $daysUntilExpiry يوم"
-                                      : "Expires in $daysUntilExpiry days")),
+                                      ? 'ينتهي بعد $daysUntilExpiry يوم'
+                                      : 'Expires in $daysUntilExpiry days')),
                       color: isExpired
-                          ? AppColors.error
+                          ? Theme.of(context).colorScheme.error
                           : (isUrgent
                                 ? const Color(0xFFD32F2F)
-                                : AppColors.onSurfaceVariant),
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -287,14 +289,18 @@ class JobDetailsScreen extends ConsumerWidget {
           if (job.getLocalizedDescription(langCode).isNotEmpty) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: _buildSectionTitle(descriptionLabel, AppColors.primary),
+              child: _buildSectionTitle(
+                context,
+                descriptionLabel,
+                Theme.of(context).colorScheme.primary,
+              ),
             ),
             const SizedBox(height: 16),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.surfaceContainerLowest,
+                color: Theme.of(context).colorScheme.surfaceContainerLowest,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
@@ -302,7 +308,7 @@ class JobDetailsScreen extends ConsumerWidget {
                 style: GoogleFonts.cairo(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   height: 1.8,
                 ),
               ),
@@ -314,8 +320,9 @@ class JobDetailsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: _buildSectionTitle(
+              context,
               l10n.jobRequirements,
-              AppColors.secondary,
+              Theme.of(context).colorScheme.secondary,
             ),
           ),
           const SizedBox(height: 16),
@@ -332,8 +339,8 @@ class JobDetailsScreen extends ConsumerWidget {
                     children: [
                       Container(
                         margin: const EdgeInsets.only(top: 4),
-                        decoration: const BoxDecoration(
-                          color: AppColors.secondary,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
                           shape: BoxShape.circle,
                         ),
                         padding: const EdgeInsets.all(2),
@@ -350,7 +357,9 @@ class JobDetailsScreen extends ConsumerWidget {
                           style: GoogleFonts.cairo(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             height: 1.6,
                           ),
                         ),
@@ -366,8 +375,9 @@ class JobDetailsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: _buildSectionTitle(
+              context,
               l10n.jobResponsibilities,
-              AppColors.error,
+              Theme.of(context).colorScheme.error,
             ),
           ),
           const SizedBox(height: 16),
@@ -376,7 +386,7 @@ class JobDetailsScreen extends ConsumerWidget {
               .map(
                 (res) => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: _buildResponsibilityCard(res),
+                  child: _buildResponsibilityCard(context, res),
                 ),
               ),
 
@@ -384,8 +394,9 @@ class JobDetailsScreen extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: _buildSectionTitle(
-              isAr ? "وظائف مشابهة" : "Similar Jobs",
-              AppColors.primary,
+              context,
+              isAr ? 'وظائف مشابهة' : 'Similar Jobs',
+              Theme.of(context).colorScheme.primary,
             ),
           ),
           const SizedBox(height: 16),
@@ -445,10 +456,12 @@ class JobDetailsScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           top: BorderSide(
-            color: AppColors.onSurface.withValues(alpha: 0.05),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.05),
             width: 1,
           ),
         ),
@@ -464,23 +477,22 @@ class JobDetailsScreen extends ConsumerWidget {
         top: false,
         child: Row(
           children: [
-            // Original Apply Button (Primary Styling)
             Expanded(
               child: ElevatedButton(
-                onPressed: isExpired
-                    ? null
-                    : () => _launchUrl(context, ref),
+                onPressed: isExpired ? null : () => _launchUrl(context, ref),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isExpired
-                      ? AppColors.errorContainer
+                      ? Theme.of(context).colorScheme.errorContainer
                       : (isUrgent
                             ? const Color(0xFFFFEBEE)
-                            : AppColors.primary),
+                            : Theme.of(context).colorScheme.primary),
                   foregroundColor: isExpired
-                      ? AppColors.error
+                      ? Theme.of(context).colorScheme.error
                       : (isUrgent ? const Color(0xFFD32F2F) : Colors.white),
                   elevation: isExpired ? 0 : 4,
-                  shadowColor: AppColors.primary.withValues(alpha: 0.4),
+                  shadowColor: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.4),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -512,13 +524,51 @@ class JobDetailsScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            if (!isExpired) ...[
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    final encodedMessage = Uri.encodeComponent(
+                      'مرحباً، أود التقدم لوظيفة: ${job.getLocalizedTitle('ar')} (ID: ${job.id}) عبر PalCareer',
+                    );
+                    launchUrl(
+                      Uri.parse('https://wa.me/970597142475?text=$encodedMessage'),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xFF25D366),
+                    side: const BorderSide(color: Color(0xFF25D366), width: 1.5),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.chat_rounded, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        langCode == 'ar' ? 'عبر واتساب' : 'WhatsApp',
+                        style: GoogleFonts.cairo(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title, Color barColor) {
+  Widget _buildSectionTitle(BuildContext context, String title, Color barColor) {
     return Row(
       children: [
         Container(
@@ -535,14 +585,14 @@ class JobDetailsScreen extends ConsumerWidget {
           style: GoogleFonts.cairo(
             fontSize: 18,
             fontWeight: FontWeight.w800,
-            color: AppColors.onSurface,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildResponsibilityCard(String responsibility) {
+  Widget _buildResponsibilityCard(BuildContext context, String responsibility) {
     final parts = responsibility.split(':');
     final title = parts[0];
     final subtitle = parts.length > 1 ? parts[1].trim() : '';
@@ -552,7 +602,7 @@ class JobDetailsScreen extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLowest,
+        color: Theme.of(context).colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -566,7 +616,7 @@ class JobDetailsScreen extends ConsumerWidget {
                   style: GoogleFonts.cairo(
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),
@@ -579,7 +629,7 @@ class JobDetailsScreen extends ConsumerWidget {
               style: GoogleFonts.cairo(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: AppColors.onSurfaceVariant,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 height: 1.6,
               ),
             ),
@@ -604,7 +654,7 @@ class _MetaPill extends StatelessWidget {
       decoration: BoxDecoration(
         color: color != null
             ? color!.withValues(alpha: 0.1)
-            : AppColors.surfaceContainerLow,
+            : Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(20),
         border: color != null
             ? Border.all(color: color!.withValues(alpha: 0.2))
@@ -613,14 +663,18 @@ class _MetaPill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: color ?? AppColors.primary),
+          Icon(
+            icon,
+            size: 14,
+            color: color ?? Theme.of(context).colorScheme.primary,
+          ),
           const SizedBox(width: 6),
           Text(
             label,
             style: GoogleFonts.cairo(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: color ?? AppColors.onSurfaceVariant,
+              color: color ?? Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],

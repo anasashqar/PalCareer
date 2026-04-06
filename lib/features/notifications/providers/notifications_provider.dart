@@ -36,32 +36,38 @@ class ReadNotificationsNotifier extends StateNotifier<Set<String>> {
   }
 }
 
-final readNotificationsProvider = StateNotifierProvider<ReadNotificationsNotifier, Set<String>>((ref) {
-  final box = Hive.box<bool>('read_notifications');
-  return ReadNotificationsNotifier(box);
-});
+final readNotificationsProvider =
+    StateNotifierProvider<ReadNotificationsNotifier, Set<String>>((ref) {
+      final box = Hive.box<bool>('read_notifications');
+      return ReadNotificationsNotifier(box);
+    });
 
 final notificationsProvider = Provider<List<NotificationModel>>((ref) {
   final jobsState = ref.watch(jobsProvider);
   final obState = ref.watch(onboardingProvider);
   final readIds = ref.watch(readNotificationsProvider);
-  
+
   if (!jobsState.hasValue || jobsState.value == null) return [];
-  
+
   // Flatten job groups to get unique jobs
-  final allJobs = jobsState.value!.expand((group) => group.jobs).toSet().toList();
+  final allJobs = jobsState.value!
+      .expand((group) => group.jobs)
+      .toSet()
+      .toList();
   final sectorId = obState.selectedSector;
-  
+
   // Filter jobs by matching category
   final matchedJobs = sectorId != null && sectorId.isNotEmpty
       ? allJobs.where((job) => job.categoryId == sectorId).toList()
       : allJobs.take(10).toList(); // Fallback if no sector
-      
+
   // Sort descending by postedAt
   matchedJobs.sort((a, b) => b.postedAt.compareTo(a.postedAt));
 
-  return matchedJobs.map((job) => NotificationModel(
-    job: job,
-    isUnread: !readIds.contains(job.id),
-  )).toList();
+  return matchedJobs
+      .map(
+        (job) =>
+            NotificationModel(job: job, isUnread: !readIds.contains(job.id)),
+      )
+      .toList();
 });

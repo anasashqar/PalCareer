@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import '../../../../shared/models/job_model.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../bookmarks/providers/bookmarks_provider.dart';
 
 class JobCardWidget extends StatefulWidget {
@@ -73,17 +72,21 @@ class _JobCardWidgetState extends State<JobCardWidget>
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             margin: const EdgeInsets.only(bottom: 10, left: 16, right: 16),
             decoration: BoxDecoration(
-              color: AppColors.surfaceContainerLowest,
+              color: Theme.of(context).colorScheme.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: AppColors.outlineVariant.withValues(alpha: 0.1),
+                color: Theme.of(
+                  context,
+                ).colorScheme.outlineVariant.withValues(alpha: 0.1),
                 width: 1.0,
               ),
               boxShadow: _animController.isAnimating
                   ? []
                   : [
                       BoxShadow(
-                        color: AppColors.onSurface.withValues(alpha: 0.03),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.03),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
@@ -104,10 +107,14 @@ class _JobCardWidgetState extends State<JobCardWidget>
                   height: 44,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryContainer.withValues(alpha: 0.3),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.05),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.05),
                     ),
                   ),
                   child: Text(
@@ -115,7 +122,7 @@ class _JobCardWidgetState extends State<JobCardWidget>
                     style: GoogleFonts.cairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.primary,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),
@@ -130,7 +137,7 @@ class _JobCardWidgetState extends State<JobCardWidget>
                         style: GoogleFonts.cairo(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.onSurface,
+                          color: Theme.of(context).colorScheme.onSurface,
                           height: 1.25,
                         ),
                         maxLines: 2,
@@ -142,7 +149,7 @@ class _JobCardWidgetState extends State<JobCardWidget>
                         style: GoogleFonts.cairo(
                           color: isUrgent
                               ? const Color(0xFFD32F2F)
-                              : AppColors.onSurfaceVariant,
+                              : Theme.of(context).colorScheme.onSurfaceVariant,
                           fontWeight: isUrgent
                               ? FontWeight.bold
                               : FontWeight.w600,
@@ -175,8 +182,8 @@ class _JobCardWidgetState extends State<JobCardWidget>
                               ? Icons.bookmark_rounded
                               : Icons.bookmark_border_rounded,
                           color: isSaved
-                              ? AppColors.secondary
-                              : AppColors.outline,
+                              ? Theme.of(context).colorScheme.secondary
+                              : Theme.of(context).colorScheme.outline,
                           size: 24,
                         ),
                       ),
@@ -239,10 +246,12 @@ class _JobCardWidgetState extends State<JobCardWidget>
                         isExpired ? Icons.error_outline : Icons.timer_outlined,
                         size: 12,
                         color: isExpired
-                            ? AppColors.error
+                            ? Theme.of(context).colorScheme.error
                             : (isUrgent
                                   ? const Color(0xFFD32F2F)
-                                  : AppColors.onSurfaceVariant),
+                                  : Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant),
                       ),
                       const SizedBox(width: 4),
                       Text(
@@ -253,10 +262,12 @@ class _JobCardWidgetState extends State<JobCardWidget>
                                   : 'Expires in ${daysUntilExpiry}d'),
                         style: GoogleFonts.cairo(
                           color: isExpired
-                              ? AppColors.error
+                              ? Theme.of(context).colorScheme.error
                               : (isUrgent
                                     ? const Color(0xFFD32F2F)
-                                    : AppColors.onSurfaceVariant),
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant),
                           fontWeight: isUrgent
                               ? FontWeight.bold
                               : FontWeight.w600,
@@ -284,7 +295,7 @@ class _MetadataChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLow,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
@@ -292,7 +303,7 @@ class _MetadataChip extends StatelessWidget {
         style: GoogleFonts.cairo(
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          color: AppColors.onSurfaceVariant,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
     );

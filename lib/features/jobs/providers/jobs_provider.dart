@@ -28,10 +28,11 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
         .where('isActive', isEqualTo: true)
         .get();
 
-    allJobs = snapshot.docs
-        .map((doc) => JobModel.fromMap(doc.data(), doc.id))
-        .toList()
-      ..sort((a, b) => b.postedAt.compareTo(a.postedAt));
+    allJobs =
+        snapshot.docs
+            .map((doc) => JobModel.fromMap(doc.data(), doc.id))
+            .toList()
+          ..sort((a, b) => b.postedAt.compareTo(a.postedAt));
   } catch (e) {
     debugPrint('Error Fetching Jobs, falling back to mock data: $e');
   }

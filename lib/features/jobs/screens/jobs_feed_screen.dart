@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../providers/jobs_provider.dart';
 import '../widgets/job_card.dart';
 import 'package:shimmer/shimmer.dart';
@@ -67,7 +66,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
     final langCode = Localizations.localeOf(context).languageCode;
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         bottom: false,
         child: RefreshIndicator(
@@ -77,7 +76,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
               await ref.read(jobsProvider.future);
             } catch (_) {}
           },
-          color: AppColors.primary,
+          color: Theme.of(context).colorScheme.primary,
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(
               parent: BouncingScrollPhysics(),
@@ -87,14 +86,18 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                 floating: true,
                 pinned: true,
                 elevation: 0,
-                backgroundColor: AppColors.surface.withValues(alpha: 0.95),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.surface.withValues(alpha: 0.95),
                 surfaceTintColor: Colors.transparent,
                 expandedHeight: 120,
                 actions: [
                   Container(
                     margin: const EdgeInsets.only(right: 16, left: 16),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceContainerLowest,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerLowest,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
@@ -105,9 +108,9 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                       ],
                     ),
                     child: IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.notifications_none_rounded,
-                        color: AppColors.onSurface,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                       onPressed: () => context.push('/notifications'),
                     ),
@@ -129,7 +132,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                         style: GoogleFonts.cairo(
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.onSurface,
+                          color: Theme.of(context).colorScheme.onSurface,
                           letterSpacing: -0.5,
                         ),
                       ),
@@ -147,12 +150,15 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: AppColors.surfaceContainerLowest,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerLowest,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: AppColors.outlineVariant.withValues(
-                                alpha: 0.3,
-                              ),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outlineVariant
+                                  .withValues(alpha: 0.3),
                             ),
                           ),
                           child: Consumer(
@@ -161,48 +167,73 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                               // Keep the local controller in sync ONLY IF it is completely out of sync textwise
                               // To avoid cursor jumping, we only set it if the entire word changed from outside.
                               if (_searchController.text != search &&
-                                  (_searchController.text.trim().isEmpty || search.isEmpty)) {
+                                  (_searchController.text.trim().isEmpty ||
+                                      search.isEmpty)) {
                                 _searchController.text = search;
                               }
 
                               return TextField(
                                 controller: _searchController,
                                 onChanged: (val) {
-                                  ref.read(searchQueryProvider.notifier).state = val;
+                                  ref.read(searchQueryProvider.notifier).state =
+                                      val;
                                 },
                                 decoration: InputDecoration(
                                   hintText: langCode == 'ar'
                                       ? 'بحث عن وظيفة...'
                                       : 'Search jobs...',
                                   hintStyle: GoogleFonts.cairo(
-                                    color: AppColors.onSurfaceVariant,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                     fontSize: 14,
                                   ),
                                   prefixIcon: IconButton(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.manage_accounts_rounded,
-                                      color: AppColors.primary,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
                                     ),
                                     onPressed: () {
                                       // Using StatefulNavigationShell to jump to Profile Tab (index 2)
                                       try {
-                                        final shell = StatefulNavigationShell.of(context);
+                                        final shell =
+                                            StatefulNavigationShell.of(context);
                                         shell.goBranch(2);
                                       } catch (e) {
                                         context.push('/profile');
                                       }
                                     },
-                                    tooltip: langCode == 'ar' ? 'حسابي' : 'My Account',
+                                    tooltip: langCode == 'ar'
+                                        ? 'حسابي'
+                                        : 'My Account',
                                   ),
-                                  suffixIcon: search.isNotEmpty 
+                                  suffixIcon: search.isNotEmpty
                                       ? IconButton(
-                                          icon: const Icon(Icons.close_rounded, color: AppColors.onSurfaceVariant),
+                                          icon: Icon(
+                                            Icons.close_rounded,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
+                                          ),
                                           onPressed: () {
                                             _searchController.clear();
-                                            ref.read(searchQueryProvider.notifier).state = '';
+                                            ref
+                                                    .read(
+                                                      searchQueryProvider
+                                                          .notifier,
+                                                    )
+                                                    .state =
+                                                '';
                                           },
-                                        ) 
-                                      : const Icon(Icons.search_rounded, color: AppColors.primary),
+                                        )
+                                      : Icon(
+                                          Icons.search_rounded,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                        ),
                                   border: InputBorder.none,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
@@ -210,10 +241,12 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                                   ),
                                 ),
                                 style: GoogleFonts.cairo(
-                                  color: AppColors.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                               );
-                            }
+                            },
                           ),
                         ),
                       ),
@@ -221,15 +254,16 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                       Container(
                         decoration: BoxDecoration(
                           color: isFilterActive
-                              ? AppColors.secondary
-                              : AppColors.surfaceContainerLowest,
+                              ? Theme.of(context).colorScheme.secondary
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerLowest,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isFilterActive
-                                ? AppColors.secondary
-                                : AppColors.outlineVariant.withValues(
-                                    alpha: 0.3,
-                                  ),
+                                ? Theme.of(context).colorScheme.secondary
+                                : Theme.of(context).colorScheme.outlineVariant
+                                      .withValues(alpha: 0.3),
                           ),
                         ),
                         child: IconButton(
@@ -237,7 +271,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                             Icons.tune_rounded,
                             color: isFilterActive
                                 ? Colors.white
-                                : AppColors.primary,
+                                : Theme.of(context).colorScheme.primary,
                           ),
                           onPressed: () => _showFilterSheet(context),
                         ),
@@ -258,7 +292,9 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                             Icon(
                               Icons.search_off_rounded,
                               size: 64,
-                              color: AppColors.outlineVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.outlineVariant,
                             ),
                             const SizedBox(height: 16),
                             Text(
@@ -268,7 +304,9 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                               style: GoogleFonts.cairo(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.onSurfaceVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -296,8 +334,8 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
                                 color: group.titleId == 'perfect_matches'
-                                    ? AppColors.secondary
-                                    : AppColors.onSurface,
+                                    ? Theme.of(context).colorScheme.secondary
+                                    : Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ),
@@ -356,10 +394,11 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                     itemCount: 5,
                     itemBuilder: (context, index) {
                       return Shimmer.fromColors(
-                        baseColor: AppColors.surfaceContainerLowest.withValues(
-                          alpha: 0.5,
-                        ),
-                        highlightColor: AppColors.surface,
+                        baseColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerLowest
+                            .withValues(alpha: 0.5),
+                        highlightColor: Theme.of(context).colorScheme.surface,
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 16),
                           height: 140, // Height of standard job card
@@ -367,9 +406,10 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: AppColors.outlineVariant.withValues(
-                                alpha: 0.1,
-                              ),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outlineVariant
+                                  .withValues(alpha: 0.1),
                             ),
                           ),
                         ),
@@ -420,9 +460,9 @@ class _FilterSheetContent extends ConsumerWidget {
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
       padding: const EdgeInsets.all(32),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: SafeArea(
         child: SingleChildScrollView(
@@ -435,11 +475,11 @@ class _FilterSheetContent extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    isAr ? "تصفية متطورة" : "Advanced Filters",
+                    isAr ? 'تصفية متطورة' : 'Advanced Filters',
                     style: GoogleFonts.cairo(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.primary,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   if (contractFilter != null ||
@@ -470,10 +510,10 @@ class _FilterSheetContent extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                isAr ? "طبيعة العمل" : "Work Mode",
+                isAr ? 'طبيعة العمل' : 'Work Mode',
                 style: GoogleFonts.cairo(
                   fontWeight: FontWeight.w700,
-                  color: AppColors.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 12),
@@ -503,10 +543,10 @@ class _FilterSheetContent extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                isAr ? "مستوى الخبرة" : "Experience Level",
+                isAr ? 'مستوى الخبرة' : 'Experience Level',
                 style: GoogleFonts.cairo(
                   fontWeight: FontWeight.w700,
-                  color: AppColors.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 12),
@@ -545,10 +585,10 @@ class _FilterSheetContent extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                isAr ? "نوع العقد" : "Contract Type",
+                isAr ? 'نوع العقد' : 'Contract Type',
                 style: GoogleFonts.cairo(
                   fontWeight: FontWeight.w700,
-                  color: AppColors.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 12),
@@ -578,10 +618,10 @@ class _FilterSheetContent extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                isAr ? "تاريخ النشر" : "Date Posted",
+                isAr ? 'تاريخ النشر' : 'Date Posted',
                 style: GoogleFonts.cairo(
                   fontWeight: FontWeight.w700,
-                  color: AppColors.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 12),
@@ -644,19 +684,23 @@ class _FilterChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.secondary
-              : AppColors.surfaceContainerLowest,
+              ? Theme.of(context).colorScheme.secondary
+              : Theme.of(context).colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
-                ? AppColors.secondary
-                : AppColors.outlineVariant.withValues(alpha: 0.3),
+                ? Theme.of(context).colorScheme.secondary
+                : Theme.of(
+                    context,
+                  ).colorScheme.outlineVariant.withValues(alpha: 0.3),
           ),
         ),
         child: Text(
           label,
           style: GoogleFonts.cairo(
-            color: isSelected ? Colors.white : AppColors.onSurface,
+            color: isSelected
+                ? Colors.white
+                : Theme.of(context).colorScheme.onSurface,
             fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
           ),
         ),

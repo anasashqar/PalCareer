@@ -18,7 +18,9 @@ class LocaleNotifier extends StateNotifier<Locale> {
   }
 }
 
-final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) => LocaleNotifier());
+final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>(
+  (ref) => LocaleNotifier(),
+);
 
 class PushNotificationsNotifier extends StateNotifier<bool> {
   final Box _box = Hive.box('settings');
@@ -36,6 +38,9 @@ class PushNotificationsNotifier extends StateNotifier<bool> {
   }
 }
 
-final pushNotificationsProvider = StateNotifierProvider<PushNotificationsNotifier, bool>((ref) => PushNotificationsNotifier());
+final pushNotificationsProvider =
+    StateNotifierProvider<PushNotificationsNotifier, bool>(
+      (ref) => PushNotificationsNotifier(),
+    );
 
 final userNameProvider = StateProvider<String>((ref) => 'مستخدم تجريبي');

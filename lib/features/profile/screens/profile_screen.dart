@@ -5,15 +5,15 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/providers/settings_provider.dart';
 import '../../../../core/utils/app_toast.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
-import '../../../../shared/models/career_taxonomy.dart';
 import '../../../../shared/services/firestore_service.dart';
 import '../../../../core/constants/firestore_keys.dart';
+import '../../../../core/providers/taxonomy_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -28,10 +28,15 @@ class ProfileScreen extends ConsumerWidget {
     final currentLocale = ref.watch(localeProvider);
 
     final authUser = FirebaseAuth.instance.currentUser;
-    final String userName = authUser?.displayName ?? ref.watch(userNameProvider);
+    final String? currentDisplayName = authUser?.displayName;
+    final String userNameState = ref.watch(userNameProvider);
+    final String userName = userNameState != 'مستخدم تجريبي' 
+        ? userNameState 
+        : (currentDisplayName ?? 'مستخدم تجريبي');
     final String? photoUrl = authUser?.photoURL;
 
     final obState = ref.watch(onboardingProvider);
+    final taxonomyAsync = ref.watch(taxonomyProvider);
 
     void showEditProfileSheet() {
       final nameController = TextEditingController(text: userName);
@@ -46,9 +51,9 @@ class ProfileScreen extends ConsumerWidget {
             ),
             child: Container(
               padding: const EdgeInsets.all(32),
-              decoration: const BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -58,17 +63,17 @@ class ProfileScreen extends ConsumerWidget {
                     width: 48,
                     height: 6,
                     decoration: BoxDecoration(
-                      color: AppColors.outlineVariant.withValues(alpha: 0.3),
+                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    "تحديث البيانات",
+                    'تحديث البيانات',
                     style: GoogleFonts.cairo(
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.onSurface,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -76,19 +81,19 @@ class ProfileScreen extends ConsumerWidget {
                   TextField(
                     controller: nameController,
                     decoration: InputDecoration(
-                      labelText: "الاسم الكامل",
-                      prefixIcon: const Icon(
+                      labelText: 'الاسم الكامل',
+                      prefixIcon: Icon(
                         Icons.person_rounded,
-                        color: AppColors.primary,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
-                      labelStyle: GoogleFonts.cairo(color: AppColors.outline),
+                      labelStyle: GoogleFonts.cairo(color: Theme.of(context).colorScheme.outline),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(
-                          color: AppColors.primary,
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
                           width: 2,
                         ),
                       ),
@@ -99,16 +104,16 @@ class ProfileScreen extends ConsumerWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryContainer.withValues(alpha: 0.3),
+                      color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+                      border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)),
                     ),
                     child: Column(
                       children: [
                         Text(
-                          "لتغيير تخصصك واهتماماتك الوظيفية بدقة عالية، يرجى الاستعانة بمرشد المسار المهني",
+                          'لتغيير تخصصك واهتماماتك الوظيفية بدقة عالية، يرجى الاستعانة بمرشد المسار المهني',
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.cairo(fontSize: 14, color: AppColors.onSurfaceVariant, fontWeight: FontWeight.w600),
+                          style: GoogleFonts.cairo(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 12),
                         ElevatedButton.icon(
@@ -117,9 +122,9 @@ class ProfileScreen extends ConsumerWidget {
                             context.push('/onboarding');
                           },
                           icon: const Icon(Icons.tune_rounded, size: 18),
-                          label: Text("إعادة ضبط المسار المهني", style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                          label: Text('إعادة ضبط المسار المهني', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
+                            backgroundColor: Theme.of(context).colorScheme.primary,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                           ),
@@ -157,20 +162,20 @@ class ProfileScreen extends ConsumerWidget {
                           if (context.mounted) {
                             AppToast.showSuccess(
                               context,
-                              "تم حفظ وتحديث ملفك الشخصي بنجاح 🚀",
+                              'تم حفظ وتحديث ملفك الشخصي بنجاح 🚀',
                             );
                           }
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                       child: Text(
-                        "حفظ التغييرات",
+                        'حفظ التغييرات',
                         style: GoogleFonts.cairo(
                           fontSize: 18,
                           color: Colors.white,
@@ -187,10 +192,10 @@ class ProfileScreen extends ConsumerWidget {
       );
     }
 
-    final String? sectorLocalized = obState.selectedSector != null
-        ? CareerTaxonomy.sectors
+    final String? sectorLocalized = obState.selectedSector != null && taxonomyAsync.hasValue && taxonomyAsync.value!.sectors.isNotEmpty
+        ? taxonomyAsync.value!.sectors
             .firstWhere((s) => s.id == obState.selectedSector,
-                orElse: () => CareerTaxonomy.sectors.first)
+                orElse: () => taxonomyAsync.value!.sectors.first)
             .getLocalizedName(currentLocale.languageCode)
         : null;
 
@@ -206,7 +211,7 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor:
-          AppColors.surfaceContainerLowest, // Lighter, cleaner background
+          Theme.of(context).colorScheme.surfaceContainerLowest, // Lighter, cleaner background
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -224,10 +229,10 @@ class ProfileScreen extends ConsumerWidget {
                       height: 100,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: AppColors.primary,
+                        color: Theme.of(context).colorScheme.primary,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.3),
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                             blurRadius: 24,
                             offset: const Offset(0, 10),
                           ),
@@ -243,9 +248,9 @@ class ProfileScreen extends ConsumerWidget {
                                 height: 100,
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => const CircularProgressIndicator(color: Colors.white),
-                                errorWidget: (context, url, error) => _buildFallbackAvatar(userName),
+                                errorWidget: (context, url, error) => _buildFallbackAvatar(context, userName),
                               )
-                            : _buildFallbackAvatar(userName),
+                            : _buildFallbackAvatar(context, userName),
                       ),
                     ),
                     Positioned(
@@ -256,10 +261,10 @@ class ProfileScreen extends ConsumerWidget {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.surface,
+                            color: Theme.of(context).colorScheme.surface,
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: AppColors.outlineVariant.withValues(
+                              color: Theme.of(context).colorScheme.outlineVariant.withValues(
                                 alpha: 0.2,
                               ),
                             ),
@@ -271,9 +276,9 @@ class ProfileScreen extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.edit_rounded,
-                            color: AppColors.primary,
+                            color: Theme.of(context).colorScheme.primary,
                             size: 18,
                           ),
                         ),
@@ -287,7 +292,7 @@ class ProfileScreen extends ConsumerWidget {
                   style: GoogleFonts.cairo(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.onSurface,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -297,10 +302,10 @@ class ProfileScreen extends ConsumerWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.secondary.withValues(alpha: 0.1),
+                    color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: AppColors.secondary.withValues(alpha: 0.2),
+                      color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Text(
@@ -308,7 +313,7 @@ class ProfileScreen extends ConsumerWidget {
                     style: GoogleFonts.cairo(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.secondary,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                 ),
@@ -317,12 +322,12 @@ class ProfileScreen extends ConsumerWidget {
                   onPressed: showEditProfileSheet,
                   icon: const Icon(Icons.tune_rounded, size: 20),
                   label: Text(
-                    "تعديل التوجه والبيانات",
+                    'تعديل التوجه والبيانات',
                     style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
                   ),
                   style: TextButton.styleFrom(
-                    foregroundColor: AppColors.primary,
-                    backgroundColor: AppColors.primaryContainer.withValues(
+                    foregroundColor: Theme.of(context).colorScheme.primary,
+                    backgroundColor: Theme.of(context).colorScheme.primaryContainer.withValues(
                       alpha: 0.3,
                     ),
                     padding: const EdgeInsets.symmetric(
@@ -344,7 +349,7 @@ class ProfileScreen extends ConsumerWidget {
               style: GoogleFonts.cairo(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: AppColors.onSurfaceVariant,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 16),
@@ -352,14 +357,14 @@ class ProfileScreen extends ConsumerWidget {
             // Grouped Settings Cluster (Modern iOS / Material 3 style)
             Container(
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(28),
                 border: Border.all(
-                  color: AppColors.outlineVariant.withValues(alpha: 0.2),
+                  color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.onSurface.withValues(alpha: 0.03),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.03),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -377,10 +382,10 @@ class ProfileScreen extends ConsumerWidget {
                         scale: 0.85,
                         child: Switch(
                           value: pushEnabled,
-                          activeColor: Colors.white,
-                          activeTrackColor: AppColors.primary,
-                          inactiveTrackColor: AppColors.surfaceContainerLow,
-                          inactiveThumbColor: AppColors.onSurfaceVariant,
+                          activeThumbColor: Colors.white,
+                          activeTrackColor: Theme.of(context).colorScheme.primary,
+                          inactiveTrackColor: Theme.of(context).colorScheme.surfaceContainerLow,
+                          inactiveThumbColor: Theme.of(context).colorScheme.onSurfaceVariant,
                           onChanged: (val) async {
                             if (val == true) {
                               bool? granted = await showDialog<bool>(
@@ -391,13 +396,13 @@ class ProfileScreen extends ConsumerWidget {
                                   ),
                                   title: Row(
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         Icons.notifications_active_rounded,
-                                        color: AppColors.primary,
+                                        color: Theme.of(context).colorScheme.primary,
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
-                                        "السماح بالإشعارات؟",
+                                        'السماح بالإشعارات؟',
                                         style: GoogleFonts.cairo(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -406,7 +411,7 @@ class ProfileScreen extends ConsumerWidget {
                                     ],
                                   ),
                                   content: Text(
-                                    "يرغب تطبيق PalCareer في إرسال إشعارات لتنبيهك بالفرص الوظيفية فور توافرها.",
+                                    'يرغب تطبيق PalCareer في إرسال إشعارات لتنبيهك بالفرص الوظيفية فور توافرها.',
                                     style: GoogleFonts.cairo(fontSize: 14),
                                   ),
                                   actions: [
@@ -414,15 +419,15 @@ class ProfileScreen extends ConsumerWidget {
                                       onPressed: () =>
                                           Navigator.pop(ctx, false),
                                       child: Text(
-                                        "رفض",
+                                        'رفض',
                                         style: GoogleFonts.cairo(
-                                          color: AppColors.error,
+                                          color: Theme.of(context).colorScheme.error,
                                         ),
                                       ),
                                     ),
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.primary,
+                                        backgroundColor: Theme.of(context).colorScheme.primary,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
                                             12,
@@ -431,7 +436,7 @@ class ProfileScreen extends ConsumerWidget {
                                       ),
                                       onPressed: () => Navigator.pop(ctx, true),
                                       child: Text(
-                                        "سماح",
+                                        'سماح',
                                         style: GoogleFonts.cairo(
                                           color: Colors.white,
                                         ),
@@ -461,16 +466,18 @@ class ProfileScreen extends ConsumerWidget {
                       height: 1,
                       indent: 64,
                       endIndent: 20,
-                      color: AppColors.outlineVariant.withValues(alpha: 0.15),
+                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.15),
                     ),
                     _SettingsItemLine(
                       icon: Icons.language_rounded,
                       title:
                           "تغيير اللغة (${currentLocale.languageCode == 'ar' ? 'English' : 'عربي'})",
-                      iconColor: AppColors.secondary,
+                      iconColor: Theme.of(context).colorScheme.secondary,
                       onTap: () {
                         final isAr = currentLocale.languageCode == 'ar';
-                        ref.read(localeProvider.notifier).setLocale(Locale(isAr ? 'en' : 'ar'));
+                        final newLocale = Locale(isAr ? 'en' : 'ar');
+                        ref.read(localeProvider.notifier).setLocale(newLocale);
+                        context.setLocale(newLocale);
                         AppToast.showInfo(
                           context,
                           'تم طلاء التطبيق بلغة جديدة 🌍',
@@ -481,12 +488,12 @@ class ProfileScreen extends ConsumerWidget {
                       height: 1,
                       indent: 64,
                       endIndent: 20,
-                      color: AppColors.outlineVariant.withValues(alpha: 0.15),
+                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.15),
                     ),
                     _SettingsItemLine(
                       icon: Icons.info_outline_rounded,
                       title: l10n.aboutApp,
-                      iconColor: AppColors.primary,
+                      iconColor: Theme.of(context).colorScheme.primary,
                       onTap: () {
                         showAboutDialog(
                           context: context,
@@ -494,13 +501,13 @@ class ProfileScreen extends ConsumerWidget {
                           applicationVersion: '1.0.0+1',
                           applicationIcon: Container(
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.1),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             padding: const EdgeInsets.all(16),
-                            child: const Icon(
+                            child: Icon(
                               Icons.work_rounded,
-                              color: AppColors.primary,
+                              color: Theme.of(context).colorScheme.primary,
                               size: 40,
                             ),
                           ),
@@ -531,10 +538,10 @@ class ProfileScreen extends ConsumerWidget {
                 }
               },
               style: TextButton.styleFrom(
-                backgroundColor: AppColors.errorContainer.withValues(
+                backgroundColor: Theme.of(context).colorScheme.errorContainer.withValues(
                   alpha: 0.4,
                 ),
-                foregroundColor: AppColors.error,
+                foregroundColor: Theme.of(context).colorScheme.error,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
@@ -562,13 +569,13 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildFallbackAvatar(String userName) {
+  Widget _buildFallbackAvatar(BuildContext context, String userName) {
     return Container(
       width: 100,
       height: 100,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.primary, AppColors.secondary],
+          colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.secondary],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -626,16 +633,16 @@ class _SettingsItemLine extends StatelessWidget {
                   style: GoogleFonts.cairo(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.onSurface,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
               if (trailing != null)
                 trailing!
               else
-                const Icon(
+                Icon(
                   Icons.keyboard_arrow_left_rounded,
-                  color: AppColors.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   size: 20,
                 ),
             ],

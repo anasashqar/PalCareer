@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../../../shared/models/career_taxonomy.dart';
+import '../../../core/providers/taxonomy_provider.dart';
 import '../providers/onboarding_provider.dart';
 import '../../jobs/providers/jobs_provider.dart';
 
@@ -56,7 +56,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -73,9 +73,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     opacity: _currentPage > 0 ? 1.0 : 0.0,
                     duration: const Duration(milliseconds: 200),
                     child: IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_back_rounded,
-                        color: AppColors.onSurface,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                       onPressed: _currentPage > 0 ? _previousPage : null,
                     ),
@@ -93,8 +93,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         width: isSelected ? 32 : 8,
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? AppColors.primary
-                              : AppColors.outlineVariant.withValues(alpha: 0.5),
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       );
@@ -138,6 +138,7 @@ class _StepOneSector extends ConsumerWidget {
     final state = ref.watch(onboardingProvider);
     final notifier = ref.read(onboardingProvider.notifier);
     final langCode = Localizations.localeOf(context).languageCode;
+    final taxonomyAsync = ref.watch(taxonomyProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -151,7 +152,7 @@ class _StepOneSector extends ConsumerWidget {
             style: GoogleFonts.cairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: AppColors.primary,
+              color: Theme.of(context).colorScheme.primary,
               height: 1.3,
             ),
           ),
@@ -163,19 +164,20 @@ class _StepOneSector extends ConsumerWidget {
             style: GoogleFonts.cairo(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: AppColors.onSurfaceVariant,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 32),
 
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: CareerTaxonomy.sectors.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final sector = CareerTaxonomy.sectors[index];
-              return _SelectionCard(
+          if (taxonomyAsync.hasValue)
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: taxonomyAsync.value!.sectors.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final sector = taxonomyAsync.value!.sectors[index];
+                return _SelectionCard(
                 label: sector.getLocalizedName(langCode),
                 icon: sector.icon,
                 isSelected: state.selectedSector == sector.id,
@@ -190,7 +192,7 @@ class _StepOneSector extends ConsumerWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: state.isStep1Complete ? onNext : null,
-              style: _primaryButtonStyle(),
+              style: _primaryButtonStyle(context),
               child: Text(
                 l10n.nextBtn,
                 style: GoogleFonts.cairo(
@@ -221,9 +223,10 @@ class _StepTwoSpecialization extends ConsumerWidget {
     final state = ref.watch(onboardingProvider);
     final notifier = ref.read(onboardingProvider.notifier);
     final langCode = Localizations.localeOf(context).languageCode;
+    final taxonomyAsync = ref.watch(taxonomyProvider);
 
-    final subSectors = state.selectedSector != null
-        ? CareerTaxonomy.getSubSectors(state.selectedSector!)
+    final subSectors = state.selectedSector != null && taxonomyAsync.hasValue
+        ? taxonomyAsync.value!.subSectors[state.selectedSector!] ?? <TaxonomyItem>[]
         : <TaxonomyItem>[];
 
     return SingleChildScrollView(
@@ -238,7 +241,7 @@ class _StepTwoSpecialization extends ConsumerWidget {
             style: GoogleFonts.cairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: AppColors.primary,
+              color: Theme.of(context).colorScheme.primary,
               height: 1.3,
             ),
           ),
@@ -250,7 +253,7 @@ class _StepTwoSpecialization extends ConsumerWidget {
             style: GoogleFonts.cairo(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: AppColors.onSurfaceVariant,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 32),
@@ -260,7 +263,7 @@ class _StepTwoSpecialization extends ConsumerWidget {
               langCode == 'ar'
                   ? 'لا يوجد تخصصات متوفرة لهذا القطاع حالياً.'
                   : 'No specializations available.',
-              style: GoogleFonts.cairo(color: AppColors.error),
+              style: GoogleFonts.cairo(color: Theme.of(context).colorScheme.error),
             )
           else
             Wrap(
@@ -282,7 +285,7 @@ class _StepTwoSpecialization extends ConsumerWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: state.isStep2Complete ? onNext : null,
-              style: _primaryButtonStyle(),
+              style: _primaryButtonStyle(context),
               child: Text(
                 l10n.nextBtn,
                 style: GoogleFonts.cairo(
@@ -346,7 +349,7 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
             style: GoogleFonts.cairo(
               fontSize: 26,
               fontWeight: FontWeight.w800,
-              color: AppColors.primary,
+              color: Theme.of(context).colorScheme.primary,
               height: 1.3,
             ),
           ),
@@ -358,7 +361,7 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
             style: GoogleFonts.cairo(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: AppColors.onSurfaceVariant,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 32),
@@ -366,7 +369,7 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
           _SectionHeader(
             icon: Icons.school_rounded,
             title: l10n.onboardingAcademic,
-            color: AppColors.secondary,
+            color: Theme.of(context).colorScheme.secondary,
           ),
           const SizedBox(height: 16),
           Row(
@@ -394,7 +397,7 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
           _SectionHeader(
             icon: Icons.work_history_rounded,
             title: l10n.onboardingWorkType,
-            color: AppColors.tertiary,
+            color: Theme.of(context).colorScheme.tertiary,
           ),
           const SizedBox(height: 16),
           Wrap(
@@ -427,7 +430,7 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
               onPressed: state.isStep3Complete && !_isLoading
                   ? _finishOnboarding
                   : null,
-              style: _primaryButtonStyle(),
+              style: _primaryButtonStyle(context),
               child: _isLoading
                   ? const SizedBox(
                       width: 24,
@@ -457,13 +460,13 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
 // Helper Widgets
 // -----------------------------------------------------------------------------
 
-ButtonStyle _primaryButtonStyle() {
+ButtonStyle _primaryButtonStyle(BuildContext context) {
   return ElevatedButton.styleFrom(
-    backgroundColor: AppColors.primary,
-    foregroundColor: AppColors.onPrimary,
+    backgroundColor: Theme.of(context).colorScheme.primary,
+    foregroundColor: Theme.of(context).colorScheme.onPrimary,
     padding: const EdgeInsets.symmetric(vertical: 14),
     elevation: 4,
-    shadowColor: AppColors.primary.withValues(alpha: 0.4),
+    shadowColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
   );
 }
@@ -498,7 +501,7 @@ class _SectionHeader extends StatelessWidget {
             style: GoogleFonts.cairo(
               fontSize: 17,
               fontWeight: FontWeight.bold,
-              color: AppColors.onSurface,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),
@@ -530,25 +533,25 @@ class _SelectionCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.secondary.withValues(alpha: 0.12)
-              : AppColors.surfaceContainerLowest,
+              ? Theme.of(context).colorScheme.secondary.withValues(alpha: 0.12)
+              : Theme.of(context).colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
-                ? AppColors.secondary
-                : AppColors.outlineVariant.withValues(alpha: 0.3),
+                ? Theme.of(context).colorScheme.secondary
+                : Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
             if (!isSelected)
               BoxShadow(
-                color: AppColors.onSurface.withValues(alpha: 0.04),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.04),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               )
             else
               BoxShadow(
-                color: AppColors.secondary.withValues(alpha: 0.15),
+                color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -561,16 +564,16 @@ class _SelectionCard extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? AppColors.secondary.withValues(alpha: 0.2)
-                      : AppColors.surfaceContainerLow,
+                      ? Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2)
+                      : Theme.of(context).colorScheme.surfaceContainerLow,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   icon,
                   size: 24,
                   color: isSelected
-                      ? AppColors.secondary
-                      : AppColors.onSurfaceVariant.withValues(alpha: 0.6),
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                 ),
               ),
               const SizedBox(width: 16),
@@ -582,15 +585,15 @@ class _SelectionCard extends StatelessWidget {
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                   color: isSelected
-                      ? AppColors.onSurface
-                      : AppColors.onSurfaceVariant,
+                      ? Theme.of(context).colorScheme.onSurface
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
             if (isSelected)
-              const Icon(
+              Icon(
                 Icons.check_circle_rounded,
-                color: AppColors.secondary,
+                color: Theme.of(context).colorScheme.secondary,
                 size: 24,
               ),
           ],
@@ -621,18 +624,18 @@ class _SelectionCardSimple extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.secondary.withValues(alpha: 0.12)
-              : AppColors.surfaceContainerLowest,
+              ? Theme.of(context).colorScheme.secondary.withValues(alpha: 0.12)
+              : Theme.of(context).colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
-                ? AppColors.secondary
-                : AppColors.outlineVariant.withValues(alpha: 0.3),
+                ? Theme.of(context).colorScheme.secondary
+                : Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.onSurface.withValues(alpha: 0.04),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.04),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -645,8 +648,8 @@ class _SelectionCardSimple extends StatelessWidget {
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
             color: isSelected
-                ? AppColors.onSurface
-                : AppColors.onSurfaceVariant,
+                ? Theme.of(context).colorScheme.onSurface
+                : Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ),
@@ -675,19 +678,19 @@ class _TagCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primary
-              : AppColors.surfaceContainerLowest,
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
             color: isSelected
-                ? AppColors.primary
-                : AppColors.outlineVariant.withValues(alpha: 0.5),
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
             width: 1,
           ),
           boxShadow: [
             if (isSelected)
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.3),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                 blurRadius: 12,
                 offset: const Offset(0, 6),
               )
@@ -705,8 +708,8 @@ class _TagCard extends StatelessWidget {
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
             color: isSelected
-                ? AppColors.onPrimary
-                : AppColors.onSurfaceVariant,
+                ? Theme.of(context).colorScheme.onPrimary
+                : Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ),

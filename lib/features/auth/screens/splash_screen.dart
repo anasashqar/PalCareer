@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/auth_repository.dart';
 import '../../../shared/services/firestore_service.dart';
@@ -110,15 +109,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            stops: [0.0, 0.5, 1.0],
+            stops: const [0.0, 0.5, 1.0],
             colors: [
-              AppColors.primary,
-              AppColors.primaryContainer,
-              AppColors.secondary,
+              Theme.of(context).colorScheme.primary,
+              Theme.of(context).colorScheme.primaryContainer,
+              Theme.of(context).colorScheme.secondary,
             ],
           ),
         ),
@@ -133,7 +132,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 height: 300,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.secondaryContainer.withValues(alpha: 0.05),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.secondaryContainer.withValues(alpha: 0.05),
                 ),
               ),
             ),
@@ -145,7 +146,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 height: 250,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.tertiary.withValues(alpha: 0.05),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.tertiary.withValues(alpha: 0.05),
                 ),
               ),
             ),
@@ -172,9 +175,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.onSurface.withValues(
-                                  alpha: 0.15,
-                                ),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.15),
                                 blurRadius: 40,
                                 spreadRadius: 5,
                                 offset: const Offset(0, 15),
@@ -186,21 +189,22 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                               width: 64,
                               height: 64,
                               decoration: BoxDecoration(
-                                color: AppColors.tertiary,
+                                color: Theme.of(context).colorScheme.tertiary,
                                 borderRadius: BorderRadius.circular(20),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.tertiary.withValues(
-                                      alpha: 0.5,
-                                    ),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .tertiary
+                                        .withValues(alpha: 0.5),
                                     blurRadius: 20,
                                     offset: const Offset(0, 8),
                                   ),
                                 ],
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.work_outline_rounded,
-                                color: AppColors.primary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 36,
                               ),
                             ),
@@ -218,7 +222,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                             style: GoogleFonts.manrope(
                               fontSize: 44,
                               fontWeight: FontWeight.w800,
-                              color: AppColors.onPrimary,
+                              color: Theme.of(context).colorScheme.onPrimary,
                               letterSpacing: 1.2,
                             ),
                           ),
@@ -233,7 +237,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                           style: GoogleFonts.cairo(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
-                            color: AppColors.onPrimary.withValues(alpha: 0.9),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary.withValues(alpha: 0.9),
                             letterSpacing: 0.5,
                           ),
                         ),

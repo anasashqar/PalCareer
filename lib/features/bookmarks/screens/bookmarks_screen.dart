@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../jobs/providers/jobs_provider.dart';
 import '../../jobs/widgets/job_card.dart';
 import '../providers/bookmarks_provider.dart';
@@ -19,17 +18,17 @@ class BookmarksScreen extends ConsumerWidget {
     final jobsAsyncValue = ref.watch(jobsProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text(
           l10n.bookmarksTab,
           style: GoogleFonts.cairo(
             fontSize: 20,
             fontWeight: FontWeight.w800,
-            color: AppColors.onSurface,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        backgroundColor: AppColors.surface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
       ),
@@ -54,14 +53,16 @@ class BookmarksScreen extends ConsumerWidget {
                   Icon(
                     Icons.bookmark_border_rounded,
                     size: 80,
-                    color: AppColors.outlineVariant.withValues(alpha: 0.5),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.outlineVariant.withValues(alpha: 0.5),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    "لم تقم بحفظ أي وظيفة بعد",
+                    'لم تقم بحفظ أي وظيفة بعد',
                     style: GoogleFonts.cairo(
                       fontSize: 16,
-                      color: AppColors.onSurfaceVariant,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -83,8 +84,10 @@ class BookmarksScreen extends ConsumerWidget {
             },
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.primary),
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
         error: (err, stack) => Center(
           child: Text('Error: $err', style: const TextStyle(color: Colors.red)),

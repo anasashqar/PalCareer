@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
-
-import '../../../../core/theme/app_colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/notifications_provider.dart';
 import '../../jobs/providers/jobs_provider.dart';
@@ -14,14 +12,14 @@ class NotificationsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     final notifications = ref.watch(notificationsProvider);
     final jobsState = ref.watch(jobsProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         title: Text(
@@ -29,60 +27,75 @@ class NotificationsScreen extends ConsumerWidget {
           style: GoogleFonts.cairo(
             fontSize: 20,
             fontWeight: FontWeight.w800,
-            color: AppColors.onSurface,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: AppColors.outlineVariant.withValues(alpha: 0.2),
+            color: Theme.of(
+              context,
+            ).colorScheme.outlineVariant.withValues(alpha: 0.2),
             height: 1.0,
           ),
         ),
       ),
       body: jobsState.isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            )
           : notifications.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.notifications_off_outlined,
-                          size: 64, color: AppColors.outlineVariant),
-                      const SizedBox(height: 16),
-                      Text(
-                        'لا يوجد إشعارات جديدة حالياً',
-                        style: GoogleFonts.cairo(
-                          fontSize: 16,
-                          color: AppColors.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.notifications_off_outlined,
+                    size: 64,
+                    color: Theme.of(context).colorScheme.outlineVariant,
                   ),
-                )
-              : ListView.separated(
-                  itemCount: notifications.length,
-                  separatorBuilder: (context, index) => Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: AppColors.outlineVariant.withValues(alpha: 0.15),
+                  const SizedBox(height: 16),
+                  Text(
+                    'لا يوجد إشعارات جديدة حالياً',
+                    style: GoogleFonts.cairo(
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
-                  itemBuilder: (context, index) {
-                    final notif = notifications[index];
-                    return _NotificationTile(
-                      title: notif.job.getLocalizedTitle('ar'), // Fallback lang, usually dynamic
-                      company: notif.job.company,
-                      time: _formatDate(notif.job.postedAt),
-                      isUnread: notif.isUnread,
-                      onTap: () {
-                        // Mark as read
-                        ref.read(readNotificationsProvider.notifier).markAsRead(notif.job.id);
-                        // Navigate to job details
-                        context.push('/job/${notif.job.id}', extra: notif.job);
-                      },
-                    );
+                ],
+              ),
+            )
+          : ListView.separated(
+              itemCount: notifications.length,
+              separatorBuilder: (context, index) => Divider(
+                height: 1,
+                thickness: 1,
+                color: Theme.of(
+                  context,
+                ).colorScheme.outlineVariant.withValues(alpha: 0.15),
+              ),
+              itemBuilder: (context, index) {
+                final notif = notifications[index];
+                return _NotificationTile(
+                  title: notif.job.getLocalizedTitle(
+                    'ar',
+                  ), // Fallback lang, usually dynamic
+                  company: notif.job.company,
+                  time: _formatDate(notif.job.postedAt),
+                  isUnread: notif.isUnread,
+                  onTap: () {
+                    // Mark as read
+                    ref
+                        .read(readNotificationsProvider.notifier)
+                        .markAsRead(notif.job.id);
+                    // Navigate to job details
+                    context.push('/job/${notif.job.id}', extra: notif.job);
                   },
-                ),
+                );
+              },
+            ),
     );
   }
 
@@ -121,7 +134,7 @@ class _NotificationTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         color: isUnread
-            ? AppColors.secondary.withValues(alpha: 0.08)
+            ? Theme.of(context).colorScheme.secondary.withValues(alpha: 0.08)
             : Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
@@ -130,15 +143,15 @@ class _NotificationTile extends StatelessWidget {
             // Circular Avatar for company
             CircleAvatar(
               radius: 26,
-              backgroundColor: AppColors.primaryContainer.withValues(
-                alpha: 0.4,
-              ),
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.primaryContainer.withValues(alpha: 0.4),
               child: Text(
                 companyInitial,
                 style: GoogleFonts.cairo(
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.primary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ),
@@ -154,7 +167,7 @@ class _NotificationTile extends StatelessWidget {
                     text: TextSpan(
                       style: GoogleFonts.cairo(
                         fontSize: 14,
-                        color: AppColors.onSurface,
+                        color: Theme.of(context).colorScheme.onSurface,
                         height: 1.5,
                       ),
                       children: [
@@ -177,8 +190,8 @@ class _NotificationTile extends StatelessWidget {
                     style: GoogleFonts.cairo(
                       fontSize: 13,
                       color: isUnread
-                          ? AppColors.primary
-                          : AppColors.onSurfaceVariant,
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -192,9 +205,9 @@ class _NotificationTile extends StatelessWidget {
                 width: 10,
                 height: 10,
                 margin: const EdgeInsets.only(top: 8),
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.secondary,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
           ],
