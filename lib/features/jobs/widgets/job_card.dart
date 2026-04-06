@@ -171,7 +171,10 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                   child: Wrap(
                     spacing: 4,
                     runSpacing: 4,
-                    children: widget.job.getLocalizedTypes(langCode).map((t) => _MetadataChip(label: t)).toList(),
+                    children: [
+                      _MetadataChip(label: widget.job.getLocalizedJobType(langCode)),
+                      _MetadataChip(label: widget.job.level),
+                    ],
                   ),
                 ),
                 if (widget.job.isNew)

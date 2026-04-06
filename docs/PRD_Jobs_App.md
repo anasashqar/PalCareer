@@ -99,9 +99,10 @@
 **البيانات المحفوظة بعد Onboarding:**
 ```
 users/{userId}
-├── fields: ["it"]                          // التخصصات المختارة
-├── educationLevel: "graduate"              // المستوى التعليمي
-├── preferredJobTypes: ["full_time", "remote"]
+├── preferredCategoryIds: ["it"]                 // معرفات الأقسام الأساسية المختارة
+├── preferredSubCategoryIds: ["software_dev"]    // الأقسام الفرعية التابعة
+├── educationLevelId: "bachelor"                 // معرف المستوى التعليمي
+├── preferredJobTypes: ["full-time", "remote"]   // أنواع الدوام المفضلة
 └── onboardingCompleted: true
 ```
 
@@ -133,8 +134,8 @@ users/{userId}
 FirebaseFirestore.instance
   .collection('jobs')
   .where('isActive', isEqualTo: true)
-  .where('fields', arrayContainsAny: user.fields)
-  .orderBy('publishedAt', descending: true)
+  // تتم الفلترة الإضافية والتوزيع لطبقات التطابق داخل التطبيق باستخدام CategoryId و SubCategoryId
+  .orderBy('postedAt', descending: true)
 ```
 
 ---

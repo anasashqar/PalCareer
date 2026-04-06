@@ -7,9 +7,21 @@ import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'core/providers/settings_provider.dart';
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:palcareer/firebase_options.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // TODO: Add Firebase.initializeApp() later
+  
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await GoogleSignIn.instance.initialize();
+  } catch (e) {
+    debugPrint('Firebase/GoogleSignIn initialization error = $e');
+  }
   
   runApp(
     const ProviderScope(

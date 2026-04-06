@@ -7,33 +7,40 @@ class JobModel {
   final Map<String, String> title;
   final String company;
   final Map<String, String> location;
-  final List<String> types; // e.g. full-time, remote
   final DateTime postedAt;
   final DateTime expiresAt;
   final Map<String, String>? description;
   final Map<String, List<String>> requirements;
   final Map<String, List<String>> responsibilities;
   final String applyUrl;
-  final String experienceLevel;
-  
-  final String? primarySector;
-  final List<String> subSectors;
+  final String categoryId;
+  final String subCategoryId;
+  final String educationLevelId;
+  final String iconId;
+  final String jobType;
+  final String level;
+  final List<String> skills;
+  final bool isActive;
 
   const JobModel({
     required this.id,
     required this.title,
     required this.company,
     required this.location,
-    required this.types,
     required this.postedAt,
     required this.expiresAt,
     this.description,
     required this.requirements,
     required this.responsibilities,
     required this.applyUrl,
-    required this.experienceLevel,
-    this.primarySector,
-    this.subSectors = const [],
+    required this.categoryId,
+    required this.subCategoryId,
+    required this.educationLevelId,
+    required this.iconId,
+    required this.jobType,
+    required this.level,
+    required this.skills,
+    this.isActive = true,
   });
 
   bool get isNew {
@@ -50,35 +57,31 @@ class JobModel {
     return location[languageCode] ?? location['en'] ?? 'Unknown Location';
   }
 
-  List<String> getLocalizedTypes(String languageCode) {
+  String getLocalizedJobType(String languageCode) {
     if (languageCode == 'ar') {
-      return types.map((type) {
-        switch (type.toLowerCase()) {
-          case 'full_time':
-          case 'full-time':
-            return 'دوام كامل';
-          case 'part_time':
-          case 'part-time':
-            return 'دوام جزئي';
-          case 'remote':
-            return 'عن بُعد';
-          case 'freelance':
-            return 'عمل حر';
-          case 'contract':
-            return 'عقد';
-          case 'internship':
-            return 'تدريب';
-          default:
-            return type;
-        }
-      }).toList();
+      switch (jobType.toLowerCase()) {
+        case 'full_time':
+        case 'full-time':
+          return 'دوام كامل';
+        case 'part_time':
+        case 'part-time':
+          return 'دوام جزئي';
+        case 'remote':
+          return 'عن بُعد';
+        case 'freelance':
+          return 'عمل حر';
+        case 'contract':
+          return 'عقد';
+        case 'internship':
+          return 'تدريب';
+        default:
+          return jobType;
+      }
     }
     // Format for English
-    return types.map((type) {
-        final words = type.replaceAll('_', ' ').replaceAll('-', ' ').split(' ');
-        if (words.isEmpty) return type;
-        return words.map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '').join(' ');
-    }).toList();
+    final words = jobType.replaceAll('_', ' ').replaceAll('-', ' ').split(' ');
+    if (words.isEmpty) return jobType;
+    return words.map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '').join(' ');
   }
 
   String getLocalizedDescription(String languageCode) {
@@ -99,32 +102,40 @@ class JobModel {
     Map<String, String>? title,
     String? company,
     Map<String, String>? location,
-    List<String>? types,
     DateTime? postedAt,
     DateTime? expiresAt,
     Map<String, String>? description,
     Map<String, List<String>>? requirements,
     Map<String, List<String>>? responsibilities,
     String? applyUrl,
-    String? experienceLevel,
-    String? primarySector,
-    List<String>? subSectors,
+    String? categoryId,
+    String? subCategoryId,
+    String? educationLevelId,
+    String? iconId,
+    String? jobType,
+    String? level,
+    List<String>? skills,
+    bool? isActive,
   }) {
     return JobModel(
       id: id ?? this.id,
       title: title ?? this.title,
       company: company ?? this.company,
       location: location ?? this.location,
-      types: types ?? this.types,
       postedAt: postedAt ?? this.postedAt,
       expiresAt: expiresAt ?? this.expiresAt,
       description: description ?? this.description,
       requirements: requirements ?? this.requirements,
       responsibilities: responsibilities ?? this.responsibilities,
       applyUrl: applyUrl ?? this.applyUrl,
-      experienceLevel: experienceLevel ?? this.experienceLevel,
-      primarySector: primarySector ?? this.primarySector,
-      subSectors: subSectors ?? this.subSectors,
+      categoryId: categoryId ?? this.categoryId,
+      subCategoryId: subCategoryId ?? this.subCategoryId,
+      educationLevelId: educationLevelId ?? this.educationLevelId,
+      iconId: iconId ?? this.iconId,
+      jobType: jobType ?? this.jobType,
+      level: level ?? this.level,
+      skills: skills ?? this.skills,
+      isActive: isActive ?? this.isActive,
     );
   }
 
@@ -134,7 +145,6 @@ class JobModel {
       title: Map<String, String>.from(map['title'] ?? {}),
       company: map['company'] as String? ?? 'Unknown Company',
       location: Map<String, String>.from(map['location'] ?? {}),
-      types: List<String>.from(map['types'] ?? []),
       postedAt: (map['postedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       expiresAt: (map['expiresAt'] as Timestamp?)?.toDate() ?? DateTime.now().add(const Duration(days: 30)),
       description: map['description'] != null ? Map<String, String>.from(map['description']) : null,
@@ -145,9 +155,14 @@ class JobModel {
             (key, value) => MapEntry(key, List<String>.from(value)),
           ) ?? {},
       applyUrl: map['applyUrl'] as String? ?? '',
-      experienceLevel: map['experienceLevel'] as String? ?? 'mid',
-      primarySector: map['primarySector'] as String?,
-      subSectors: List<String>.from(map['subSectors'] ?? []),
+      categoryId: map['categoryId'] as String? ?? '',
+      subCategoryId: map['subCategoryId'] as String? ?? '',
+      educationLevelId: map['educationLevelId'] as String? ?? '',
+      iconId: map['iconId'] as String? ?? '',
+      jobType: map['jobType'] as String? ?? 'full_time',
+      level: map['level'] as String? ?? 'mid',
+      skills: List<String>.from(map['skills'] ?? []),
+      isActive: map['isActive'] as bool? ?? true,
     );
   }
 
@@ -156,16 +171,20 @@ class JobModel {
       'title': title,
       'company': company,
       'location': location,
-      'types': types,
       'postedAt': Timestamp.fromDate(postedAt),
       'expiresAt': Timestamp.fromDate(expiresAt),
       'description': description,
       'requirements': requirements,
       'responsibilities': responsibilities,
       'applyUrl': applyUrl,
-      'experienceLevel': experienceLevel,
-      'primarySector': primarySector,
-      'subSectors': subSectors,
+      'categoryId': categoryId,
+      'subCategoryId': subCategoryId,
+      'educationLevelId': educationLevelId,
+      'iconId': iconId,
+      'jobType': jobType,
+      'level': level,
+      'skills': skills,
+      'isActive': isActive,
     };
   }
 }

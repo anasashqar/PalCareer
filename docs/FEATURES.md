@@ -127,20 +127,20 @@
 
 ## 🔲 ما تبقى للمرحلة الأولى (V1)
 
-### المرحلة التالية أ: ربط Firebase (أولوية قصوى)
-- [ ] إعداد `Firebase.initializeApp()` في main.dart
-- [ ] تنفيذ `FirebaseAuthRepository` الحقيقي (بدل MockAuthRepository)
-- [ ] ربط Google Sign-In فعلياً
-- [ ] حفظ بيانات المستخدم الجديد في Firestore عند أول دخول
-- [ ] تجديد الجلسة تلقائياً (Persistent Auth State)
-- [ ] تنفيذ `FirestoreService` لجلب/حفظ البيانات
-- [ ] ملء `firestore_keys.dart` بثوابت أسماء الحقول
+### المرحلة التالية أ: تقدم ربط Firebase
+- [x] إعداد `Firebase.initializeApp()` في main.dart
+- [x] تنفيذ `FirebaseAuthRepository` الحقيقي (بدل MockAuthRepository)
+- [x] ربط Google Sign-In فعلياً
+- [ ] حفظ بيانات المستخدم الجديد في Firestore عند أول دخول (بناءً على الهيكلية الجديدة)
+- [x] تجديد الجلسة تلقائياً (Persistent Auth State)
+- [ ] تنفيذ `FirestoreService` لدعم حفظ وتعديل الـ (Onboarding)
+- [ ] ملء `firestore_keys.dart` بثوابت أسماء الحقول حسب المودلز الجديدة
 - [ ] التوجيه الذكي في Splash (مسجّل؟ Onboarding مكتمل؟)
-- [ ] حفظ بيانات Onboarding في Firestore
-- [ ] جلب الوظائف من Firestore (بدل Mock Data)
+- [ ] حفظ بيانات Onboarding في Firebase Firestore
+- [ ] جلب الوظائف ديناميكياً من Firestore وتغذيته بلوحة تحكم
 - [ ] شريط الفلاتر في الشاشة الرئيسية
 - [ ] ربط `url_launcher` لزر "تقدم الآن"
-- [ ] تسجيل الخروج الفعلي
+- [x] تسجيل الخروج الفعلي
 
 ### المرحلة التالية ب: الإشعارات
 - [ ] إعداد FCM في Flutter
@@ -189,8 +189,8 @@
 | Frontend | Flutter (Android — API 21+) | ✅ مُعدّ |
 | State Management | Riverpod | ✅ مُفعّل |
 | Navigation | GoRouter | ✅ مُفعّل |
-| Auth | Firebase Authentication (Google) | 🔲 Mock فقط |
-| Database | Cloud Firestore | 🔲 غير مربوط |
+| Auth | Firebase Authentication (Google) | ✅ مربوط فعلياً |
+| Database | Cloud Firestore | 🟡 جزئي (تم تجهيز القُراءات والموديلز) |
 | Notifications | Firebase Cloud Messaging (FCM) | 🔲 غير مُعدّ |
 | Backend Logic | Firebase Cloud Functions (Node.js) | 🔲 غير مكتوب |
 | Local Storage | Hive (لسجل الإشعارات) | 🔲 غير مُعدّ |

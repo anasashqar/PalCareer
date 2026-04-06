@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "391434676871",
+    "project_id": "pal-career-0",
+    "storage_bucket": "pal-career-0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:391434676871:android:cbfe61cd18ca961aaae622",
+        "android_client_info": {
+          "package_name": "com.example.palcareer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7xUzYFY-skeiHIzjlSZ2t-553qafja4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

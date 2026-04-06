@@ -6,10 +6,10 @@ class UserModel {
   final String displayName;
   final String email;
   final String? photoUrl;
-  final String? academicLevel;
-  final String? primarySector;
-  final List<String> specialties;
-  final List<String> workTypes;
+  final String? educationLevelId;
+  final List<String> preferredCategoryIds;
+  final List<String> preferredSubCategoryIds;
+  final List<String> preferredJobTypes;
   final String? fcmToken;
   final bool pushEnabled;
 
@@ -18,10 +18,10 @@ class UserModel {
     required this.displayName,
     required this.email,
     this.photoUrl,
-    this.academicLevel,
-    this.primarySector,
-    this.specialties = const [],
-    this.workTypes = const [],
+    this.educationLevelId,
+    this.preferredCategoryIds = const [],
+    this.preferredSubCategoryIds = const [],
+    this.preferredJobTypes = const [],
     this.fcmToken,
     this.pushEnabled = true,
   });
@@ -31,10 +31,10 @@ class UserModel {
     String? displayName,
     String? email,
     String? photoUrl,
-    String? academicLevel,
-    String? primarySector,
-    List<String>? specialties,
-    List<String>? workTypes,
+    String? educationLevelId,
+    List<String>? preferredCategoryIds,
+    List<String>? preferredSubCategoryIds,
+    List<String>? preferredJobTypes,
     String? fcmToken,
     bool? pushEnabled,
   }) {
@@ -43,10 +43,10 @@ class UserModel {
       displayName: displayName ?? this.displayName,
       email: email ?? this.email,
       photoUrl: photoUrl ?? this.photoUrl,
-      academicLevel: academicLevel ?? this.academicLevel,
-      primarySector: primarySector ?? this.primarySector,
-      specialties: specialties ?? this.specialties,
-      workTypes: workTypes ?? this.workTypes,
+      educationLevelId: educationLevelId ?? this.educationLevelId,
+      preferredCategoryIds: preferredCategoryIds ?? this.preferredCategoryIds,
+      preferredSubCategoryIds: preferredSubCategoryIds ?? this.preferredSubCategoryIds,
+      preferredJobTypes: preferredJobTypes ?? this.preferredJobTypes,
       fcmToken: fcmToken ?? this.fcmToken,
       pushEnabled: pushEnabled ?? this.pushEnabled,
     );
@@ -58,10 +58,10 @@ class UserModel {
       displayName: map['displayName'] as String? ?? '',
       email: map['email'] as String? ?? '',
       photoUrl: map['photoUrl'] as String?,
-      academicLevel: map['academicLevel'] as String?,
-      primarySector: map['primarySector'] as String?,
-      specialties: List<String>.from(map['specialties'] ?? []),
-      workTypes: List<String>.from(map['workTypes'] ?? []),
+      educationLevelId: map['educationLevelId'] as String?,
+      preferredCategoryIds: List<String>.from(map['preferredCategoryIds'] ?? []),
+      preferredSubCategoryIds: List<String>.from(map['preferredSubCategoryIds'] ?? []),
+      preferredJobTypes: List<String>.from(map['preferredJobTypes'] ?? []),
       fcmToken: map['fcmToken'] as String?,
       pushEnabled: map['pushEnabled'] as bool? ?? true,
     );
@@ -72,10 +72,10 @@ class UserModel {
       'displayName': displayName,
       'email': email,
       'photoUrl': photoUrl,
-      'academicLevel': academicLevel,
-      'primarySector': primarySector,
-      'specialties': specialties,
-      'workTypes': workTypes,
+      'educationLevelId': educationLevelId,
+      'preferredCategoryIds': preferredCategoryIds,
+      'preferredSubCategoryIds': preferredSubCategoryIds,
+      'preferredJobTypes': preferredJobTypes,
       'fcmToken': fcmToken,
       'pushEnabled': pushEnabled,
     };

@@ -209,8 +209,8 @@ class JobDetailsScreen extends ConsumerWidget {
                   alignment: WrapAlignment.center,
                   children: [
                     _MetaPill(icon: Icons.location_on_rounded, label: job.getLocalizedLocation(langCode)),
-                    if (job.types.isNotEmpty)
-                      _MetaPill(icon: Icons.access_time_rounded, label: job.getLocalizedTypes(langCode).first),
+                    if (job.jobType.isNotEmpty)
+                      _MetaPill(icon: Icons.access_time_rounded, label: job.getLocalizedJobType(langCode)),
                     _MetaPill(
                       icon: isExpired ? Icons.error_outline : Icons.timer_outlined, 
                       label: isExpired 
@@ -314,7 +314,7 @@ class JobDetailsScreen extends ConsumerWidget {
             final jobsAsync = ref.watch(jobsProvider);
             final allGroups = jobsAsync.valueOrNull ?? [];
             final allJobs = allGroups.expand((g) => g.jobs).toList();
-            final similarJobs = allJobs.where((j) => j.id != job.id && j.primarySector == job.primarySector).take(3).toList();
+            final similarJobs = allJobs.where((j) => j.id != job.id && j.categoryId == job.categoryId).take(3).toList();
             
             if (similarJobs.isEmpty) return const SizedBox.shrink();
             
