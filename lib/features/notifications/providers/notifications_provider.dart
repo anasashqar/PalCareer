@@ -52,13 +52,14 @@ final notificationsProvider = Provider<List<NotificationModel>>((ref) {
   final allJobs = jobsState.jobs;
   final sectorId = obState.selectedSector;
 
-  // Filter jobs by matching category
-  final matchedJobs = sectorId != null && sectorId.isNotEmpty
-      ? allJobs.where((job) => job.categoryId == sectorId).toList()
-      : allJobs.take(10).toList(); // Fallback if no sector
-
-  // Sort descending by postedAt
+  // Get matched jobs based on sector, or fallback to the 10 most recent jobs
+  var matchedJobs = allJobs.toList();
+  if (sectorId != null && sectorId.isNotEmpty) {
+    matchedJobs = allJobs.where((job) => job.categoryId == sectorId).toList();
+  }
+  
   matchedJobs.sort((a, b) => b.postedAt.compareTo(a.postedAt));
+  matchedJobs = matchedJobs.take(10).toList();
 
   return matchedJobs
       .map(

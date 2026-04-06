@@ -12,6 +12,7 @@ import '../../onboarding/providers/onboarding_provider.dart';
 import '../../../../shared/services/firestore_service.dart';
 import '../../../../core/constants/firestore_keys.dart';
 import '../../../../core/providers/taxonomy_provider.dart';
+import '../../../../shared/providers/profile_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -166,28 +167,10 @@ class ProfileScreen extends ConsumerWidget {
                     height: 56,
                     child: ElevatedButton(
                       onPressed: () async {
-                        if (nameController.text.isNotEmpty) {
-                          ref.read(userNameProvider.notifier).state =
-                              nameController.text;
-                          await authUser?.updateDisplayName(
-                            nameController.text,
-                          );
-
-                          if (authUser != null) {
-                            try {
-                              await ref
-                                  .read(firestoreServiceProvider)
-                                  .updateDocument(
-                                    FirestoreKeys.usersContent,
-                                    authUser.uid,
-                                    {
-                                      'name': nameController.text,
-                                    }, // Update Firestore sync
-                                  );
-                            } catch (_) {
-                              // Ignore if document not fully constructed yet
-                            }
-                          }
+                        final newName = nameController.text.trim();
+                        if (newName.isNotEmpty) {
+                          ref.read(userNameProvider.notifier).state = newName;
+                          await ref.read(profileProvider.notifier).updateUserDisplayName(newName);
                         }
 
                         if (ctx.mounted) {
