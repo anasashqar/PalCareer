@@ -202,9 +202,13 @@ class JobDetailsScreen extends ConsumerWidget {
                   children: [
                     _MetaPill(icon: Icons.location_on_rounded, label: job.getLocalizedLocation(langCode)),
                     if (job.types.isNotEmpty)
-                      _MetaPill(icon: Icons.access_time_rounded, label: job.types.first), // Just showing first type as per UI mockup maybe
-                    // Optional: Showing posted string like 'نشر منذ يومين' (mocking the time string for now)
-                    _MetaPill(icon: Icons.calendar_today_rounded, label: 'منذ يومين'),
+                      _MetaPill(icon: Icons.access_time_rounded, label: job.getLocalizedTypes(langCode).first),
+                    _MetaPill(
+                      icon: Icons.timer_outlined, 
+                      label: langCode == 'ar' 
+                          ? 'ينتهي بعد ${job.expiresAt.difference(DateTime.now()).inDays} يوم' 
+                          : 'Expires in ${job.expiresAt.difference(DateTime.now()).inDays}d',
+                    ),
                   ],
                 ),
               ],
@@ -294,6 +298,8 @@ class JobDetailsScreen extends ConsumerWidget {
   }
 
   Widget _buildBottomNavigationBar(BuildContext context, WidgetRef ref, AppLocalizations l10n, String langCode) {
+    final isExpired = job.expiresAt.difference(DateTime.now()).inDays < 0;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
@@ -317,15 +323,15 @@ class JobDetailsScreen extends ConsumerWidget {
             Expanded(
               flex: 4,
               child: ElevatedButton(
-                onPressed: () => _launchUrl(context, ref, isWhatsApp: true),
+                onPressed: isExpired ? null : () => _launchUrl(context, ref, isWhatsApp: true),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF25D366).withValues(alpha: 0.1),
-                  foregroundColor: const Color(0xFF25D366),
+                  backgroundColor: isExpired ? AppColors.surfaceContainerLow : const Color(0xFF25D366).withValues(alpha: 0.1),
+                  foregroundColor: isExpired ? AppColors.onSurfaceVariant : const Color(0xFF25D366),
                   elevation: 0,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
-                    side: const BorderSide(color: Color(0xFF25D366), width: 1.5),
+                    side: BorderSide(color: isExpired ? AppColors.outlineVariant : const Color(0xFF25D366), width: 1.5),
                   ),
                 ),
                 child: Row(
@@ -346,11 +352,11 @@ class JobDetailsScreen extends ConsumerWidget {
             Expanded(
               flex: 6,
               child: ElevatedButton(
-                onPressed: () => _launchUrl(context, ref, isWhatsApp: false),
+                onPressed: isExpired ? null : () => _launchUrl(context, ref, isWhatsApp: false),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: isExpired ? AppColors.outlineVariant : AppColors.primary,
                   foregroundColor: Colors.white,
-                  elevation: 4,
+                  elevation: isExpired ? 0 : 4,
                   shadowColor: AppColors.primary.withValues(alpha: 0.4),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -360,10 +366,10 @@ class JobDetailsScreen extends ConsumerWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.send_rounded, size: 20),
+                    Icon(isExpired ? Icons.do_not_disturb_alt_rounded : Icons.send_rounded, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      l10n.applyNowBtn,
+                      isExpired ? (langCode == 'ar' ? 'انتهى التقديم' : 'Expired') : l10n.applyNowBtn,
                       style: GoogleFonts.cairo(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,

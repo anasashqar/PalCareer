@@ -188,6 +188,24 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                         ),
                       ],
                     ),
+                  )
+                else
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.timer_outlined, size: 12, color: AppColors.onSurfaceVariant),
+                      const SizedBox(width: 4),
+                      Text(
+                        langCode == 'ar' 
+                            ? 'ينتهي بعد ${widget.job.expiresAt.difference(DateTime.now()).inDays} يوم' 
+                            : 'Expires in ${widget.job.expiresAt.difference(DateTime.now()).inDays}d',
+                        style: GoogleFonts.cairo(
+                          color: AppColors.onSurfaceVariant,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
                   ),
               ],
             ),

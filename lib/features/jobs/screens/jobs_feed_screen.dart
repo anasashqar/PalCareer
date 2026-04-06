@@ -40,7 +40,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
   @override
   Widget build(BuildContext context) {
     final jobsAsyncValue = ref.watch(jobsProvider);
-    final isFilterActive = ref.watch(contractTypeProvider) != null || ref.watch(workModeProvider) != null;
+    final isFilterActive = ref.watch(contractTypeProvider) != null || ref.watch(workModeProvider) != null || ref.watch(datePostedProvider) != null;
     final l10n = AppLocalizations.of(context)!;
     final langCode = Localizations.localeOf(context).languageCode;
 
@@ -253,6 +253,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (ctx) => const _FilterSheetContent(),
     );
   }
@@ -265,18 +266,25 @@ class _FilterSheetContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final contractFilter = ref.watch(contractTypeProvider);
     final workModeFilter = ref.watch(workModeProvider);
+    final dateFilter = ref.watch(datePostedProvider);
     final langCode = Localizations.localeOf(context).languageCode;
     final isAr = langCode == 'ar';
 
     return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.85,
+      ),
       padding: const EdgeInsets.all(32),
       decoration: const BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -285,11 +293,12 @@ class _FilterSheetContent extends ConsumerWidget {
                 isAr ? "تصفية متطورة" : "Advanced Filters",
                 style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.primary),
               ),
-              if (contractFilter != null || workModeFilter != null)
+              if (contractFilter != null || workModeFilter != null || dateFilter != null)
                 TextButton(
                   onPressed: () {
                     ref.read(contractTypeProvider.notifier).state = null;
                     ref.read(workModeProvider.notifier).state = null;
+                    ref.read(datePostedProvider.notifier).state = null;
                   },
                   style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                   child: Text(isAr ? 'مسح الكل' : 'Clear All', style: GoogleFonts.cairo(color: Colors.redAccent, fontWeight: FontWeight.w700)),
@@ -344,8 +353,39 @@ class _FilterSheetContent extends ConsumerWidget {
               ),
             ],
           ),
+          const SizedBox(height: 24),
+          Text(isAr ? "تاريخ النشر" : "Date Posted", style: GoogleFonts.cairo(fontWeight: FontWeight.w700, color: AppColors.onSurfaceVariant)),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              _FilterChip(
+                label: isAr ? 'الكل' : 'Anytime',
+                isSelected: dateFilter == null,
+                onTap: () => ref.read(datePostedProvider.notifier).state = null,
+              ),
+              _FilterChip(
+                label: isAr ? 'آخر 24 ساعة' : 'Past 24h',
+                isSelected: dateFilter == 'past_24h',
+                onTap: () => ref.read(datePostedProvider.notifier).state = 'past_24h',
+              ),
+              _FilterChip(
+                label: isAr ? 'آخر أسبوع' : 'Past Week',
+                isSelected: dateFilter == 'past_week',
+                onTap: () => ref.read(datePostedProvider.notifier).state = 'past_week',
+              ),
+              _FilterChip(
+                label: isAr ? 'آخر شهر' : 'Past Month',
+                isSelected: dateFilter == 'past_month',
+                onTap: () => ref.read(datePostedProvider.notifier).state = 'past_month',
+              ),
+            ],
+          ),
           const SizedBox(height: 32),
         ],
+      ),
+        ),
       ),
     );
   }

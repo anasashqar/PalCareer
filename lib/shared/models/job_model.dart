@@ -9,6 +9,7 @@ class JobModel {
   final Map<String, String> location;
   final List<String> types; // e.g. full-time, remote
   final DateTime postedAt;
+  final DateTime expiresAt;
   final Map<String, String>? description;
   final Map<String, List<String>> requirements;
   final Map<String, List<String>> responsibilities;
@@ -24,6 +25,7 @@ class JobModel {
     required this.location,
     required this.types,
     required this.postedAt,
+    required this.expiresAt,
     this.description,
     required this.requirements,
     required this.responsibilities,
@@ -97,6 +99,7 @@ class JobModel {
     Map<String, String>? location,
     List<String>? types,
     DateTime? postedAt,
+    DateTime? expiresAt,
     Map<String, String>? description,
     Map<String, List<String>>? requirements,
     Map<String, List<String>>? responsibilities,
@@ -111,6 +114,7 @@ class JobModel {
       location: location ?? this.location,
       types: types ?? this.types,
       postedAt: postedAt ?? this.postedAt,
+      expiresAt: expiresAt ?? this.expiresAt,
       description: description ?? this.description,
       requirements: requirements ?? this.requirements,
       responsibilities: responsibilities ?? this.responsibilities,
@@ -128,6 +132,7 @@ class JobModel {
       location: Map<String, String>.from(map['location'] ?? {}),
       types: List<String>.from(map['types'] ?? []),
       postedAt: (map['postedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      expiresAt: (map['expiresAt'] as Timestamp?)?.toDate() ?? DateTime.now().add(const Duration(days: 30)),
       description: map['description'] != null ? Map<String, String>.from(map['description']) : null,
       requirements: (map['requirements'] as Map<String, dynamic>?)?.map(
             (key, value) => MapEntry(key, List<String>.from(value)),
@@ -148,6 +153,7 @@ class JobModel {
       'location': location,
       'types': types,
       'postedAt': Timestamp.fromDate(postedAt),
+      'expiresAt': Timestamp.fromDate(expiresAt),
       'description': description,
       'requirements': requirements,
       'responsibilities': responsibilities,
