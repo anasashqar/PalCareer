@@ -9,6 +9,9 @@ class JobGroup {
   JobGroup(this.titleId, this.jobs);
 }
 
+final searchQueryProvider = StateProvider<String>((ref) => '');
+final contractTypeProvider = StateProvider<String?>((ref) => null);
+final workModeProvider = StateProvider<String?>((ref) => null);
 final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
   final obState = ref.watch(onboardingProvider);
   
@@ -204,15 +207,47 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
     ),
   ];
 
+  final search = ref.watch(searchQueryProvider).toLowerCase().trim();
+  final contractFilter = ref.watch(contractTypeProvider);
+  final workModeFilter = ref.watch(workModeProvider);
+
+  // Check if any search or filter is active
+  final isSearchActive = search.isNotEmpty || contractFilter != null || workModeFilter != null;
+
+  final filteredJobs = allJobs.where((job) {
+    bool matchesSearch = true;
+    if (search.isNotEmpty) {
+      matchesSearch = (job.title['ar']?.toLowerCase().contains(search) ?? false) ||
+          (job.title['en']?.toLowerCase().contains(search) ?? false) ||
+          job.company.toLowerCase().contains(search);
+    }
+        
+    final matchesContract = contractFilter == null || job.types.contains(contractFilter);
+    final matchesWorkMode = workModeFilter == null || 
+        (workModeFilter == 'remote' && job.types.contains('remote')) ||
+        (workModeFilter == 'on_site' && !job.types.contains('remote'));
+    
+    return matchesSearch && matchesContract && matchesWorkMode;
+  }).toList();
+
+  // THE LINKEDIN MODEL: If searching/filtering, return flat list of results instead of tiered matching
+  if (isSearchActive) {
+    // Sort by most recent for search results as standard practice
+    filteredJobs.sort((a, b) => b.postedAt.compareTo(a.postedAt));
+    return [JobGroup('search_results', filteredJobs)];
+  }
+
+  // ELSE: Return standard Tiered Feed
+  final perfectlyFilteredJobs = filteredJobs;
   final perfectMatches = <JobModel>[];
   final sectorMatches = <JobModel>[];
   final exploreMore = <JobModel>[];
 
   if (obState.selectedSector == null) {
-    return [JobGroup('explore_jobs', allJobs)];
+    return [JobGroup('explore_jobs', perfectlyFilteredJobs)];
   }
 
-  for (final job in allJobs) {
+  for (final job in perfectlyFilteredJobs) {
     bool isPerfect = false;
     
     for (final userSub in obState.fieldsOfStudy) {
