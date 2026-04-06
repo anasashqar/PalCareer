@@ -7,11 +7,9 @@ import '../../../shared/models/job_model.dart';
 import '../providers/jobs_provider.dart';
 import '../widgets/job_card.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../onboarding/providers/onboarding_provider.dart';
 import '../../bookmarks/providers/bookmarks_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class JobDetailsScreen extends ConsumerWidget {
   final JobModel job;

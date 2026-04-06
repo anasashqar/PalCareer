@@ -139,6 +139,13 @@ class MockJobs {
 
           final specificSkills = List<String>.from(role['skills']);
           
+          final sampleUrls = [
+            'https://www.linkedin.com/jobs',
+            'https://rabt.ps/jobs',
+            'https://careers.google.com',
+          ];
+          final pickedUrl = sampleUrls[random.nextInt(sampleUrls.length)];
+
           generatedJobs.add(JobModel(
             id: 'job_${catId}_${globalIndex++}',
             title: {'ar': role['titleAr'], 'en': role['titleEn']},
@@ -174,7 +181,7 @@ class MockJobs {
                 'Supervise ${role['titleEn']} tasks and develop overall performance'
               ],
             },
-            applyUrl: '',
+            applyUrl: pickedUrl,
             categoryId: catId,
             subCategoryId: role['subId'],
             educationLevelId: eLvl,
