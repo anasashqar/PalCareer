@@ -27,6 +27,7 @@ Instead of searching through dozens of irrelevant listings, PalCareer learns you
 | 🎯 | Smart job matching based on your field & preferences | مطابقة ذكية للوظائف |
 | 🔔 | Instant push notification when a matching job is posted | إشعار فوري عند نشر وظيفة مطابقة |
 | ⚡ | Fast onboarding — 2 steps only | تسجيل سريع في خطوتين |
+| 💎 | Elegant modern UI with Shimmer loading, Urgency badges & Swipe-to-refresh | واجهة أنيقة مع تحميل متطور وتحديث بالسحب |
 | 🌍 | Full Arabic & English support | دعم العربية والإنجليزية |
 | 📱 | Lightweight native Android app | تطبيق Android خفيف الوزن |
 
