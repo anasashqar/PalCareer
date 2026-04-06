@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
-import '../../features/auth/views/splash_view.dart';
-import '../../features/auth/views/login_view.dart';
+import '../../features/auth/screens/splash_screen.dart';
+import '../../features/auth/screens/login_screen.dart';
 import '../../features/onboarding/screens/onboarding_screen.dart';
 import '../../features/jobs/screens/jobs_feed_screen.dart';
 import '../../features/jobs/screens/job_details_screen.dart';
@@ -15,11 +15,11 @@ final GoRouter appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const SplashView(),
+      builder: (context, state) => const SplashScreen(),
     ),
     GoRoute(
       path: '/login',
-      builder: (context, state) => const LoginView(),
+      builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
       path: '/onboarding',

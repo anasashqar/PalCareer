@@ -200,7 +200,6 @@ match /jobs/{jobId} {
 
 These features are explicitly excluded from V1 and must not be implemented:
 
-- Bookmarking jobs
 - Uploading CV / resume
 - In-app job application
 - Company profiles
