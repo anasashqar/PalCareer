@@ -12,6 +12,7 @@ class JobGroup {
 final searchQueryProvider = StateProvider<String>((ref) => '');
 final contractTypeProvider = StateProvider<String?>((ref) => null);
 final workModeProvider = StateProvider<String?>((ref) => null);
+final experienceLevelProvider = StateProvider<String?>((ref) => null);
 final datePostedProvider = StateProvider<String?>((ref) => null);
 final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
   final obState = ref.watch(onboardingProvider);
@@ -37,7 +38,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
         'en': ['UI/UX: Build clean interfaces', 'Performance: Optimize apps for 60fps'],
         'ar': ['هندسة الواجهات: بناء شاشات عالية الدقة التزاماً بنظام التصميم (Figma).', 'تحسين الأداء: مراقبة أداء التطبيق وحل مشكلات الجانك لضمان سلاسة بمعدل 60FPS.', 'تدريب الفريق: توجيه وإرشاد المطورين المبتدئين في الفريق.', 'تطوير النظم: المساهمة في تطوير هيكلية البيانات وإعداد بنية النظام الأساسية.'],
       },
-      applyUrl: 'https://example.com/apply', primarySector: 'it', subSectors: ['mobile_dev'],
+      applyUrl: 'https://example.com/apply', experienceLevel: 'senior', primarySector: 'it', subSectors: ['mobile_dev'],
     ),
     JobModel(
       id: 'job_2',
@@ -47,7 +48,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
       description: {'en': 'Server-side logic and database integration.', 'ar': 'بناء وتطوير خدمات سحابية تتحمل ضغط العمل العالي باستخدام Node.js وقواعد بيانات MongoDB.'},
       requirements: {'en': ['Node.js', 'MongoDB', 'AWS'], 'ar': ['خبرة معمقة في Node.js', 'تصميم قواعد بيانات MongoDB', 'التعامل مع AWS']},
       responsibilities: {'en': ['API: Design architecture'], 'ar': ['بناء الأنظمة: تصميم وهندسة RESTful APIs بكفاءة.', 'الأمن السيبراني: تأمين البيانات ومنع الاختراقات.']},
-      applyUrl: '', primarySector: 'it', subSectors: ['software_dev', 'web_dev'],
+      applyUrl: '', experienceLevel: 'mid', primarySector: 'it', subSectors: ['software_dev', 'web_dev'],
     ),
     JobModel(
       id: 'job_3',
@@ -57,7 +58,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
       description: {'en': 'Creative designer for modern apps.', 'ar': 'نحن نبحث عن مصمم شغوف بتحليل رحلات المستخدمين، لترجمة الأفكار لحلول بصرية تبهر العملاء.'},
       requirements: {'en': ['Figma'], 'ar': ['إتقان Figma بدرجة احترافية', 'فهم مسبق لـ Material 3 Design', 'محفظة أعمال قوية']},
       responsibilities: {'en': ['Wireframing: Draft user flows'], 'ar': ['رسم مسارات المستخدمين: تبسيط تجربة التطبيق لتكون بديهية.', 'أنظمة التصميم: بناء Design System موحد ليستخدمه فريق البرمجة.']},
-      applyUrl: '', primarySector: 'it', subSectors: ['design_ux'],
+      applyUrl: '', experienceLevel: 'mid', primarySector: 'it', subSectors: ['design_ux'],
     ),
     JobModel(
       id: 'job_4',
@@ -67,7 +68,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
       description: {'en':'Parse data sets.','ar': 'تحليل جداول البيانات الضخمة للمساعدة في اتخاذ القرارات الإدارية.'},
       requirements: {'en': ['Python'], 'ar': ['بايثون وتحليل البيانات', 'إجادة SQL']}, 
       responsibilities: {'en': ['Reports: Build dashboards'], 'ar': ['التقارير الإحصائية: بناء لوحات تحكم ديناميكية.', 'تحليل السوق: استخراج الاتجاهات بناءً على البيانات.']},
-      applyUrl: '', primarySector: 'it', subSectors: ['data_ai'],
+      applyUrl: '', experienceLevel: 'junior', primarySector: 'it', subSectors: ['data_ai'],
     ),
     JobModel(
       id: 'job_5',
@@ -77,7 +78,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
       description: {'en':'Secure networks.','ar':'تأمين الشبكات والأنظمة الداخلية للشركة وضمان حمايتها من هجمات التصيد والاختراقات.'},
       requirements: {'en': ['Cisco'], 'ar': ['Cisco CCNA/CCNP', 'Pen testing']}, 
       responsibilities: {'en': ['Testing: Pen testing'], 'ar': ['فحص الثغرات: عمل Penetration Testing بشكل دوري.', 'التدريب: توعية الموظفين أمنياً.']},
-      applyUrl: '', primarySector: 'it', subSectors: ['networks'],
+      applyUrl: '', experienceLevel: 'senior', primarySector: 'it', subSectors: ['networks'],
     ),
 
     // ---------------- MEDICINE SECTOR ----------------
@@ -89,7 +90,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
       description: {'en':'Provide general care.','ar': 'تقديم الاستشارات الطبية العامة والتشخيص الأولي للمرضى ضمن قسم الطوارئ والعيادات.'},
       requirements: {'en': ['MBBS', 'License'], 'ar': ['شهادة بكالوريوس طب وجراحة', 'مزاولة مهنة سارية المفعول']}, 
       responsibilities: {'en': ['Diagnosis: Treat patients'], 'ar': ['التشخيص المبدئي: فحص ومعالجة المرضى يومياً.', 'تحويل الحالات: توجيه المريض للعيادة التخصصية المناسبة.']},
-      applyUrl: '', primarySector: 'medicine', subSectors: ['general_medicine'],
+      applyUrl: '', experienceLevel: 'mid', primarySector: 'medicine', subSectors: ['general_medicine'],
     ),
     JobModel(
       id: 'job_7',
@@ -99,7 +100,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
       description: {'en':'Care duties.','ar': 'توفير رعاية تمريضية ممتازة في وحدة العناية المركزية والعيادات الخارجية.'},
       requirements: {'en': ['Nursing degree'], 'ar': ['شهادة دبلوم أو بكالوريوس تمريض', 'تحمل ضغط العمل بنظام الشفتات']}, 
       responsibilities: {'en': ['Monitoring: Vitals'], 'ar': ['مراقبة العلامات الحيوية: متابعة المرضى بشكل دوري على مدار الشفت.', 'إعطاء الأدوية: الالتزام بالجدول العلاجي للمريض بدقة.']},
-      applyUrl: '', primarySector: 'medicine', subSectors: ['nursing'],
+      applyUrl: '', experienceLevel: 'mid', primarySector: 'medicine', subSectors: ['nursing'],
     ),
     JobModel(
       id: 'job_8',
@@ -109,7 +110,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
        description: {'en':'Distribute meds.','ar': 'صرف الأدوية للمرضى وتقديم الإرشادات الصيدلانية، مع إدارة مخزون الصيدلية.'},
       requirements: {'en': ['Pharmacy degree'], 'ar': ['بكالوريوس في الصيدلة', 'معرفة ممتازة بالأدوية وبدائلها']}, 
       responsibilities: {'en': ['Dispensing: Prescriptions'], 'ar': ['صرف الوصفات: التأكد من مطابقة الوصفات الطبية بدقة.', 'الجرد المالي: الاهتمام بطلبيات وجرد المخزون الطبي.']},
-      applyUrl: '', primarySector: 'medicine', subSectors: ['pharmacy'],
+      applyUrl: '', experienceLevel: 'senior', primarySector: 'medicine', subSectors: ['pharmacy'],
     ),
     JobModel(
       id: 'job_9',
@@ -128,7 +129,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
          'en': ['Surgery: Perform operations'], 
          'ar': ['العمليات الجراحية: التركيبات السنية وزراعة الأسنان باحترافية عالية.', 'الفحص السريري: تقديم استشارات وتحديد الخطط العلاجية المتكاملة للمرضى.', 'التوثيق المكتبي: إبقاء سجلات المرضى محدثة ومكتملة بشكل يومي.', 'مكافحة العدوى: التأكد التام من نظافة وتعقيم بيئة العيادة.']
       },
-      applyUrl: '', primarySector: 'medicine', subSectors: ['dentistry'],
+      applyUrl: '', experienceLevel: 'junior', primarySector: 'medicine', subSectors: ['dentistry'],
     ),
 
     // ---------------- ENGINEERING SECTOR ----------------
@@ -140,7 +141,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
       description: {'en':'Site management','ar': 'الإشراف على تشييد المباني الكبرى والمجمعات التجارية في قلب المدينة.'},
       requirements: {'en': ['Civil Eng'], 'ar': ['هندسة مدنية خبرة 4 سنوات', 'إجادة AutoCad']}, 
       responsibilities: {'en': ['Site Work: Oversight'], 'ar': ['الإشراف الهندسي: إدارة العمال والمشرفين في الموقع يومياً.', 'متابعة المشتريات: فحص مطابقة المواد لمواصفات البناء.']},
-      applyUrl: '', primarySector: 'engineering', subSectors: ['civil'],
+      applyUrl: '', experienceLevel: 'senior', primarySector: 'engineering', subSectors: ['civil'],
     ),
     JobModel(
       id: 'job_11',
@@ -150,7 +151,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
       description: {'en':'Design houses','ar': 'تصميم المخططات المعمارية والديكور الداخلي لفلل سكنية حديثة.'},
       requirements: {'en': ['Architecture'], 'ar': ['خبرة في 3D Max والتصميم المعماري']}, 
       responsibilities: {'en': ['Planning: Draw'], 'ar': ['المخططات: بناء تصاميم هندسية وتوزيع الفراغات.', 'الإخراج البصري: إنشاء ريندر 3D واقعي ليراه العميل.']},
-      applyUrl: '', primarySector: 'engineering', subSectors: ['architecture'],
+      applyUrl: '', experienceLevel: 'senior', primarySector: 'engineering', subSectors: ['architecture'],
     ),
     JobModel(
       id: 'job_12',
@@ -160,7 +161,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
        description: {'en':'Power grid design','ar': 'تصميم وتنفيذ أنظمة كهرباء الجهد المنخفض والمنازل الذكية.'},
       requirements: {'en': ['Electrical Exp'], 'ar': ['خبرة تمديدات ولوحات طاقة شمسية']}, 
       responsibilities: {'en': ['wiring: cables'], 'ar': ['التمديدات: الإشراف على مقاولي الكهرباء.', 'دراسات الأحمال: حساب مقاطع الكابلات وأنظمة التحويل.']},
-      applyUrl: '', primarySector: 'engineering', subSectors: ['electrical'],
+      applyUrl: '', experienceLevel: 'senior', primarySector: 'engineering', subSectors: ['electrical'],
     ),
 
     // ---------------- BUSINESS SECTOR ----------------
@@ -172,7 +173,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
        description: {'en':'Online ads','ar': 'تسويق وإطلاق حملات إعلانية مدفوعة وإدارة ميزانيات السوشيال ميديا.'},
       requirements: {'en': ['Marketing'], 'ar': ['خبرة في Meta Ads و Google Ads']}, 
       responsibilities: {'en': ['Campaigns: Run ads'], 'ar': ['الحملات: إطلاق وتحسين إعلانات السوشيال ميديا يومياً.', 'كتابة المحتوى: توجيه كتاب وصناع المحتوى.']},
-      applyUrl: '', primarySector: 'business', subSectors: ['marketing'],
+      applyUrl: '', experienceLevel: 'senior', primarySector: 'business', subSectors: ['marketing'],
     ),
     JobModel(
       id: 'job_14',
@@ -182,7 +183,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
        description: {'en':'Auditing','ar': 'وظيفة في المقر الرئيسي للبنك لرصد الحركات المالية والتدقيق الداخلي.'},
       requirements: {'en': ['Accounting'], 'ar': ['محاسبة', 'برنامج الشامل']}, 
       responsibilities: {'en': ['Auditing: Books'], 'ar': ['التدقيق المالي: إعداد القوائم المالية الشهرية.', 'متابعة البنوك: عمليات التسوية والمطابقة.']},
-      applyUrl: '', primarySector: 'business', subSectors: ['accounting'],
+      applyUrl: '', experienceLevel: 'mid', primarySector: 'business', subSectors: ['accounting'],
     ),
     JobModel(
       id: 'job_15',
@@ -192,7 +193,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
       description: {'en':'Manage employees','ar': 'قيادة موظفي الشركة والإشراف على عمليات التوظيف والتقييم.'},
       requirements: {'en': ['HR'], 'ar': ['شهادة متقدمة في الموارد البشرية']}, 
       responsibilities: {'en': ['Recruitment: Hiring'], 'ar': ['التوظيف: إجراء المقابلات واختيار الكفاءات.', 'بيئة العمل: السهر على راحة وإنتاجية الموظفين.']},
-      applyUrl: '', primarySector: 'business', subSectors: ['hr'],
+      applyUrl: '', experienceLevel: 'mid', primarySector: 'business', subSectors: ['hr'],
     ),
     
     // ---------------- EDUCATION SECTOR ----------------
@@ -204,17 +205,18 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
        description: {'en':'Teaching','ar': 'تدريس الأطفال والمرحلة الأساسية بطرق تفاعلية حديثة.'},
       requirements: {'en': ['Teaching'], 'ar': ['تدريس']}, 
       responsibilities: {'en': ['Classes: Teach'], 'ar': ['التدريس: إعطاء الحصص للطلبة.', 'التقييم: تصحيح أوراق العمل وإعداد الامتحانات.']},
-      applyUrl: '', primarySector: 'education', subSectors: ['teaching'],
+      applyUrl: '', experienceLevel: 'mid', primarySector: 'education', subSectors: ['teaching'],
     ),
   ];
 
   final search = ref.watch(searchQueryProvider).toLowerCase().trim();
   final contractFilter = ref.watch(contractTypeProvider);
   final workModeFilter = ref.watch(workModeProvider);
+  final experienceFilter = ref.watch(experienceLevelProvider);
   final dateFilter = ref.watch(datePostedProvider);
 
   // Check if any search or filter is active
-  final isSearchActive = search.isNotEmpty || contractFilter != null || workModeFilter != null || dateFilter != null;
+  final isSearchActive = search.isNotEmpty || contractFilter != null || workModeFilter != null || experienceFilter != null || dateFilter != null;
 
   final filteredJobs = allJobs.where((job) {
     bool matchesSearch = true;
@@ -229,6 +231,8 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
         (workModeFilter == 'remote' && job.types.contains('remote')) ||
         (workModeFilter == 'on_site' && !job.types.contains('remote'));
         
+    final matchesExperience = experienceFilter == null || job.experienceLevel == experienceFilter;
+        
     bool matchesDate = true;
     if (dateFilter != null) {
       final now = DateTime.now();
@@ -241,7 +245,7 @@ final jobsProvider = FutureProvider<List<JobGroup>>((ref) async {
       }
     }
     
-    return matchesSearch && matchesContract && matchesWorkMode && matchesDate;
+    return matchesSearch && matchesContract && matchesWorkMode && matchesExperience && matchesDate;
   }).toList();
 
   // THE LINKEDIN MODEL: If searching/filtering, return flat list of results instead of tiered matching

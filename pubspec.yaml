@@ -37,6 +37,7 @@ dependencies:
   intl: any
   google_fonts: ^6.2.1
   share_plus: ^12.0.2
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

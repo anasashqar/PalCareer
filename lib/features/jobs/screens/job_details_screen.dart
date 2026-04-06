@@ -3,7 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
-import '../../../../shared/models/job_model.dart';
+import '../../../shared/models/job_model.dart';
+import '../providers/jobs_provider.dart';
+import '../widgets/job_card.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
 import '../../bookmarks/providers/bookmarks_provider.dart';
@@ -63,6 +65,12 @@ class JobDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final langCode = Localizations.localeOf(context).languageCode;
+    final isAr = langCode == 'ar';
+    
+    final now = DateTime.now();
+    final isExpired = job.expiresAt.isBefore(now);
+    final daysUntilExpiry = job.expiresAt.difference(now).inDays;
+    final isUrgent = !isExpired && daysUntilExpiry <= 3;
     
     // Add translation string for Description for now if not available
     final String descriptionLabel = langCode == 'ar' ? 'وصف الوظيفة' : 'Job Description';
@@ -115,7 +123,7 @@ class JobDetailsScreen extends ConsumerWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(context, ref, l10n, langCode),
+      bottomNavigationBar: _buildBottomNavigationBar(context, ref, l10n, langCode, isExpired, isUrgent),
       body: ListView(
         padding: const EdgeInsets.only(top: 100, bottom: 40),
         physics: const BouncingScrollPhysics(),
@@ -204,10 +212,13 @@ class JobDetailsScreen extends ConsumerWidget {
                     if (job.types.isNotEmpty)
                       _MetaPill(icon: Icons.access_time_rounded, label: job.getLocalizedTypes(langCode).first),
                     _MetaPill(
-                      icon: Icons.timer_outlined, 
-                      label: langCode == 'ar' 
-                          ? 'ينتهي بعد ${job.expiresAt.difference(DateTime.now()).inDays} يوم' 
-                          : 'Expires in ${job.expiresAt.difference(DateTime.now()).inDays}d',
+                      icon: isExpired ? Icons.error_outline : Icons.timer_outlined, 
+                      label: isExpired 
+                          ? (isAr ? "انتهى التقديم" : "Application Closed")
+                          : (isUrgent ? (isAr ? "ينتهي قريباً!" : "Closing soon!") : (isAr ? "ينتهي بعد $daysUntilExpiry يوم" : "Expires in $daysUntilExpiry days")),
+                      color: isExpired 
+                          ? AppColors.error 
+                          : (isUrgent ? const Color(0xFFD32F2F) : AppColors.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -292,14 +303,42 @@ class JobDetailsScreen extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: _buildResponsibilityCard(res),
               )),
+              
+          const SizedBox(height: 32),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: _buildSectionTitle(isAr ? "وظائف مشابهة" : "Similar Jobs", AppColors.primary),
+          ),
+          const SizedBox(height: 16),
+          Consumer(builder: (context, ref, _) {
+            final jobsAsync = ref.watch(jobsProvider);
+            final allGroups = jobsAsync.valueOrNull ?? [];
+            final allJobs = allGroups.expand((g) => g.jobs).toList();
+            final similarJobs = allJobs.where((j) => j.id != job.id && j.primarySector == job.primarySector).take(3).toList();
+            
+            if (similarJobs.isEmpty) return const SizedBox.shrink();
+            
+            return Column(
+              children: similarJobs.map((j) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                child: JobCardWidget(
+                  job: j, 
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => JobDetailsScreen(job: j),
+                    ));
+                  },
+                ),
+              )).toList(),
+            );
+          }),
+          const SizedBox(height: 40),
         ],
       ),
     );
   }
 
-  Widget _buildBottomNavigationBar(BuildContext context, WidgetRef ref, AppLocalizations l10n, String langCode) {
-    final isExpired = job.expiresAt.difference(DateTime.now()).inDays < 0;
-
+  Widget _buildBottomNavigationBar(BuildContext context, WidgetRef ref, AppLocalizations l10n, String langCode, bool isExpired, bool isUrgent) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
@@ -354,13 +393,16 @@ class JobDetailsScreen extends ConsumerWidget {
               child: ElevatedButton(
                 onPressed: isExpired ? null : () => _launchUrl(context, ref, isWhatsApp: false),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isExpired ? AppColors.outlineVariant : AppColors.primary,
-                  foregroundColor: Colors.white,
+                  backgroundColor: isExpired 
+                      ? AppColors.errorContainer 
+                      : (isUrgent ? const Color(0xFFFFEBEE) : AppColors.primary),
+                  foregroundColor: isExpired ? AppColors.error : (isUrgent ? const Color(0xFFD32F2F) : Colors.white),
                   elevation: isExpired ? 0 : 4,
                   shadowColor: AppColors.primary.withValues(alpha: 0.4),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
+                    side: isUrgent && !isExpired ? const BorderSide(color: Color(0xFFD32F2F)) : BorderSide.none,
                   ),
                 ),
                 child: Row(
@@ -460,28 +502,30 @@ class JobDetailsScreen extends ConsumerWidget {
 class _MetaPill extends StatelessWidget {
   final IconData icon;
   final String label;
+  final Color? color;
 
-  const _MetaPill({required this.icon, required this.label});
+  const _MetaPill({required this.icon, required this.label, this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLow,
+        color: color != null ? color!.withValues(alpha: 0.1) : AppColors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(20),
+        border: color != null ? Border.all(color: color!.withValues(alpha: 0.2)) : null,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.primary),
+          Icon(icon, size: 14, color: color ?? AppColors.primary),
           const SizedBox(width: 6),
           Text(
             label,
             style: GoogleFonts.cairo(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: AppColors.onSurfaceVariant,
+              color: color ?? AppColors.onSurfaceVariant,
             ),
           ),
         ],

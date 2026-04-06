@@ -14,6 +14,7 @@ class JobModel {
   final Map<String, List<String>> requirements;
   final Map<String, List<String>> responsibilities;
   final String applyUrl;
+  final String experienceLevel;
   
   final String? primarySector;
   final List<String> subSectors;
@@ -30,6 +31,7 @@ class JobModel {
     required this.requirements,
     required this.responsibilities,
     required this.applyUrl,
+    required this.experienceLevel,
     this.primarySector,
     this.subSectors = const [],
   });
@@ -104,6 +106,7 @@ class JobModel {
     Map<String, List<String>>? requirements,
     Map<String, List<String>>? responsibilities,
     String? applyUrl,
+    String? experienceLevel,
     String? primarySector,
     List<String>? subSectors,
   }) {
@@ -119,6 +122,7 @@ class JobModel {
       requirements: requirements ?? this.requirements,
       responsibilities: responsibilities ?? this.responsibilities,
       applyUrl: applyUrl ?? this.applyUrl,
+      experienceLevel: experienceLevel ?? this.experienceLevel,
       primarySector: primarySector ?? this.primarySector,
       subSectors: subSectors ?? this.subSectors,
     );
@@ -141,6 +145,7 @@ class JobModel {
             (key, value) => MapEntry(key, List<String>.from(value)),
           ) ?? {},
       applyUrl: map['applyUrl'] as String? ?? '',
+      experienceLevel: map['experienceLevel'] as String? ?? 'mid',
       primarySector: map['primarySector'] as String?,
       subSectors: List<String>.from(map['subSectors'] ?? []),
     );
@@ -158,6 +163,7 @@ class JobModel {
       'requirements': requirements,
       'responsibilities': responsibilities,
       'applyUrl': applyUrl,
+      'experienceLevel': experienceLevel,
       'primarySector': primarySector,
       'subSectors': subSectors,
     };

@@ -39,8 +39,16 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final langCode = Localizations.localeOf(context).languageCode;
+    final l10n = AppLocalizations.of(context)!;
+    
+    final expiresAt = widget.job.expiresAt;
+    final now = DateTime.now();
+    bool isNew = widget.job.isNew;
+    
+    int daysUntilExpiry = expiresAt.difference(now).inDays;
+    bool isExpired = expiresAt.isBefore(now);
+    final isUrgent = (!isExpired && daysUntilExpiry <= 3 && !isNew);
     
     // Get first letter of company for logo placeholder
     final companyInitial = widget.job.company.isNotEmpty ? widget.job.company.substring(0, 1).toUpperCase() : 'C';
@@ -122,9 +130,9 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                       Text(
                         '${widget.job.company} • ${widget.job.getLocalizedLocation(langCode)}',
                         style: GoogleFonts.cairo(
-                          fontWeight: FontWeight.w600,
+                          color: isUrgent ? const Color(0xFFD32F2F) : AppColors.onSurfaceVariant,
+                          fontWeight: isUrgent ? FontWeight.bold : FontWeight.w600,
                           fontSize: 13,
-                          color: AppColors.onSurfaceVariant,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -193,15 +201,15 @@ class _JobCardWidgetState extends State<JobCardWidget> with SingleTickerProvider
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.timer_outlined, size: 12, color: AppColors.onSurfaceVariant),
+                      Icon(isExpired ? Icons.error_outline : Icons.timer_outlined, size: 12, color: isExpired ? AppColors.error : (isUrgent ? const Color(0xFFD32F2F) : AppColors.onSurfaceVariant)),
                       const SizedBox(width: 4),
                       Text(
-                        langCode == 'ar' 
-                            ? 'ينتهي بعد ${widget.job.expiresAt.difference(DateTime.now()).inDays} يوم' 
-                            : 'Expires in ${widget.job.expiresAt.difference(DateTime.now()).inDays}d',
+                        isExpired
+                           ? (langCode == 'ar' ? 'انتهى التقديم' : 'Expired')
+                           : (langCode == 'ar' ? 'ينتهي بعد $daysUntilExpiry يوم' : 'Expires in ${daysUntilExpiry}d'),
                         style: GoogleFonts.cairo(
-                          color: AppColors.onSurfaceVariant,
-                          fontWeight: FontWeight.w600,
+                          color: isExpired ? AppColors.error : (isUrgent ? const Color(0xFFD32F2F) : AppColors.onSurfaceVariant),
+                          fontWeight: isUrgent ? FontWeight.bold : FontWeight.w600,
                           fontSize: 11,
                         ),
                       ),

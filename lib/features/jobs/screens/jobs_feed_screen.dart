@@ -7,6 +7,7 @@ import 'package:palcareer/l10n/generated/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../providers/jobs_provider.dart';
 import '../widgets/job_card.dart';
+import 'package:shimmer/shimmer.dart';
 
 class JobsFeedScreen extends ConsumerStatefulWidget {
   const JobsFeedScreen({super.key});
@@ -40,7 +41,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
   @override
   Widget build(BuildContext context) {
     final jobsAsyncValue = ref.watch(jobsProvider);
-    final isFilterActive = ref.watch(contractTypeProvider) != null || ref.watch(workModeProvider) != null || ref.watch(datePostedProvider) != null;
+    final isFilterActive = ref.watch(contractTypeProvider) != null || ref.watch(workModeProvider) != null || ref.watch(experienceLevelProvider) != null || ref.watch(datePostedProvider) != null;
     final l10n = AppLocalizations.of(context)!;
     final langCode = Localizations.localeOf(context).languageCode;
 
@@ -48,10 +49,18 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
       backgroundColor: AppColors.surface,
       body: SafeArea(
         bottom: false,
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverAppBar(
+        child: RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(jobsProvider);
+            try {
+              await ref.read(jobsProvider.future);
+            } catch (_) {}
+          },
+          color: AppColors.primary,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+            slivers: [
+              SliverAppBar(
               floating: true,
               pinned: true,
               elevation: 0,
@@ -236,14 +245,33 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                   ),
                 );
               },
-              loading: () => const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+              loading: () => SliverFillRemaining(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    return Shimmer.fromColors(
+                      baseColor: AppColors.surfaceContainerLowest.withValues(alpha: 0.5),
+                      highlightColor: AppColors.surface,
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 16),
+                        height: 140, // Height of standard job card
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.1)),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
               error: (err, stack) => SliverFillRemaining(
                 child: Center(child: Text('Error: $err', style: const TextStyle(color: Colors.red))),
               ),
             ),
           ],
+        ),
         ),
       ),
     );
@@ -266,6 +294,7 @@ class _FilterSheetContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final contractFilter = ref.watch(contractTypeProvider);
     final workModeFilter = ref.watch(workModeProvider);
+    final experienceFilter = ref.watch(experienceLevelProvider);
     final dateFilter = ref.watch(datePostedProvider);
     final langCode = Localizations.localeOf(context).languageCode;
     final isAr = langCode == 'ar';
@@ -293,11 +322,12 @@ class _FilterSheetContent extends ConsumerWidget {
                 isAr ? "تصفية متطورة" : "Advanced Filters",
                 style: GoogleFonts.cairo(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.primary),
               ),
-              if (contractFilter != null || workModeFilter != null || dateFilter != null)
+              if (contractFilter != null || workModeFilter != null || experienceFilter != null || dateFilter != null)
                 TextButton(
                   onPressed: () {
                     ref.read(contractTypeProvider.notifier).state = null;
                     ref.read(workModeProvider.notifier).state = null;
+                    ref.read(experienceLevelProvider.notifier).state = null;
                     ref.read(datePostedProvider.notifier).state = null;
                   },
                   style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 0), tapTargetSize: MaterialTapTargetSize.shrinkWrap),
@@ -326,6 +356,35 @@ class _FilterSheetContent extends ConsumerWidget {
                 label: isAr ? 'مكتبي' : 'On-Site',
                 isSelected: workModeFilter == 'on_site',
                 onTap: () => ref.read(workModeProvider.notifier).state = 'on_site',
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Text(isAr ? "مستوى الخبرة" : "Experience Level", style: GoogleFonts.cairo(fontWeight: FontWeight.w700, color: AppColors.onSurfaceVariant)),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              _FilterChip(
+                label: isAr ? 'الكل' : 'All',
+                isSelected: experienceFilter == null,
+                onTap: () => ref.read(experienceLevelProvider.notifier).state = null,
+              ),
+              _FilterChip(
+                label: isAr ? 'مبتدئ' : 'Junior',
+                isSelected: experienceFilter == 'junior',
+                onTap: () => ref.read(experienceLevelProvider.notifier).state = 'junior',
+              ),
+              _FilterChip(
+                label: isAr ? 'متوسط' : 'Mid-Level',
+                isSelected: experienceFilter == 'mid',
+                onTap: () => ref.read(experienceLevelProvider.notifier).state = 'mid',
+              ),
+              _FilterChip(
+                label: isAr ? 'خبير' : 'Senior',
+                isSelected: experienceFilter == 'senior',
+                onTap: () => ref.read(experienceLevelProvider.notifier).state = 'senior',
               ),
             ],
           ),
