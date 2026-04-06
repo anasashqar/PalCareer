@@ -533,13 +533,18 @@ class JobDetailsScreen extends ConsumerWidget {
                       'مرحباً، أود التقدم لوظيفة: ${job.getLocalizedTitle('ar')} (ID: ${job.id}) عبر PalCareer',
                     );
                     launchUrl(
-                      Uri.parse('https://wa.me/970597142475?text=$encodedMessage'),
+                      Uri.parse(
+                        'https://wa.me/970597142475?text=$encodedMessage',
+                      ),
                       mode: LaunchMode.externalApplication,
                     );
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFF25D366),
-                    side: const BorderSide(color: Color(0xFF25D366), width: 1.5),
+                    side: const BorderSide(
+                      color: Color(0xFF25D366),
+                      width: 1.5,
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -568,7 +573,11 @@ class JobDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSectionTitle(BuildContext context, String title, Color barColor) {
+  Widget _buildSectionTitle(
+    BuildContext context,
+    String title,
+    Color barColor,
+  ) {
     return Row(
       children: [
         Container(

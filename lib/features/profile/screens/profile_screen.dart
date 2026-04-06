@@ -30,8 +30,8 @@ class ProfileScreen extends ConsumerWidget {
     final authUser = FirebaseAuth.instance.currentUser;
     final String? currentDisplayName = authUser?.displayName;
     final String userNameState = ref.watch(userNameProvider);
-    final String userName = userNameState != 'مستخدم تجريبي' 
-        ? userNameState 
+    final String userName = userNameState != 'مستخدم تجريبي'
+        ? userNameState
         : (currentDisplayName ?? 'مستخدم تجريبي');
     final String? photoUrl = authUser?.photoURL;
 
@@ -53,7 +53,9 @@ class ProfileScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(40),
+                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -63,7 +65,9 @@ class ProfileScreen extends ConsumerWidget {
                     width: 48,
                     height: 6,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outlineVariant.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -86,7 +90,9 @@ class ProfileScreen extends ConsumerWidget {
                         Icons.person_rounded,
                         color: Theme.of(context).colorScheme.primary,
                       ),
-                      labelStyle: GoogleFonts.cairo(color: Theme.of(context).colorScheme.outline),
+                      labelStyle: GoogleFonts.cairo(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -104,16 +110,28 @@ class ProfileScreen extends ConsumerWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)),
+                      border: Border.all(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.2),
+                      ),
                     ),
                     child: Column(
                       children: [
                         Text(
                           'لتغيير تخصصك واهتماماتك الوظيفية بدقة عالية، يرجى الاستعانة بمرشد المسار المهني',
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.cairo(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600),
+                          style: GoogleFonts.cairo(
+                            fontSize: 14,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         ElevatedButton.icon(
@@ -122,11 +140,20 @@ class ProfileScreen extends ConsumerWidget {
                             context.push('/onboarding');
                           },
                           icon: const Icon(Icons.tune_rounded, size: 18),
-                          label: Text('إعادة ضبط المسار المهني', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                          label: Text(
+                            'إعادة ضبط المسار المهني',
+                            style: GoogleFonts.cairo(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).colorScheme.primary,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
                           ),
                         ),
                       ],
@@ -140,16 +167,23 @@ class ProfileScreen extends ConsumerWidget {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (nameController.text.isNotEmpty) {
-                          ref.read(userNameProvider.notifier).state = nameController.text;
-                          await authUser?.updateDisplayName(nameController.text);
-                          
+                          ref.read(userNameProvider.notifier).state =
+                              nameController.text;
+                          await authUser?.updateDisplayName(
+                            nameController.text,
+                          );
+
                           if (authUser != null) {
                             try {
-                              await ref.read(firestoreServiceProvider).updateDocument(
-                                FirestoreKeys.usersContent,
-                                authUser.uid,
-                                {'name': nameController.text}, // Update Firestore sync
-                              );
+                              await ref
+                                  .read(firestoreServiceProvider)
+                                  .updateDocument(
+                                    FirestoreKeys.usersContent,
+                                    authUser.uid,
+                                    {
+                                      'name': nameController.text,
+                                    }, // Update Firestore sync
+                                  );
                             } catch (_) {
                               // Ignore if document not fully constructed yet
                             }
@@ -192,26 +226,34 @@ class ProfileScreen extends ConsumerWidget {
       );
     }
 
-    final String? sectorLocalized = obState.selectedSector != null && taxonomyAsync.hasValue && taxonomyAsync.value!.sectors.isNotEmpty
+    final String? sectorLocalized =
+        obState.selectedSector != null &&
+            taxonomyAsync.hasValue &&
+            taxonomyAsync.value!.sectors.isNotEmpty
         ? taxonomyAsync.value!.sectors
-            .firstWhere((s) => s.id == obState.selectedSector,
-                orElse: () => taxonomyAsync.value!.sectors.first)
-            .getLocalizedName(currentLocale.languageCode)
+              .firstWhere(
+                (s) => s.id == obState.selectedSector,
+                orElse: () => taxonomyAsync.value!.sectors.first,
+              )
+              .getLocalizedName(currentLocale.languageCode)
         : null;
 
     final String? levelLocalized = obState.academicLevel == 'student'
         ? (currentLocale.languageCode == 'ar' ? 'طالب' : 'Student')
         : (obState.academicLevel == 'graduate'
-            ? (currentLocale.languageCode == 'ar' ? 'خريج جديد' : 'Fresh Graduate')
-            : null);
+              ? (currentLocale.languageCode == 'ar'
+                    ? 'خريج جديد'
+                    : 'Fresh Graduate')
+              : null);
 
     final subtitle = levelLocalized != null && sectorLocalized != null
         ? '$levelLocalized في $sectorLocalized'
         : 'مكتشف وظائف فلسطين';
 
     return Scaffold(
-      backgroundColor:
-          Theme.of(context).colorScheme.surfaceContainerLowest, // Lighter, cleaner background
+      backgroundColor: Theme.of(
+        context,
+      ).colorScheme.surfaceContainerLowest, // Lighter, cleaner background
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -232,7 +274,9 @@ class ProfileScreen extends ConsumerWidget {
                         color: Theme.of(context).colorScheme.primary,
                         boxShadow: [
                           BoxShadow(
-                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: 0.3),
                             blurRadius: 24,
                             offset: const Offset(0, 10),
                           ),
@@ -247,8 +291,12 @@ class ProfileScreen extends ConsumerWidget {
                                 width: 100,
                                 height: 100,
                                 fit: BoxFit.cover,
-                                placeholder: (context, url) => const CircularProgressIndicator(color: Colors.white),
-                                errorWidget: (context, url, error) => _buildFallbackAvatar(context, userName),
+                                placeholder: (context, url) =>
+                                    const CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
+                                errorWidget: (context, url, error) =>
+                                    _buildFallbackAvatar(context, userName),
                               )
                             : _buildFallbackAvatar(context, userName),
                       ),
@@ -264,9 +312,10 @@ class ProfileScreen extends ConsumerWidget {
                             color: Theme.of(context).colorScheme.surface,
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: Theme.of(context).colorScheme.outlineVariant.withValues(
-                                alpha: 0.2,
-                              ),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .outlineVariant
+                                  .withValues(alpha: 0.2),
                             ),
                             boxShadow: [
                               BoxShadow(
@@ -302,10 +351,14 @@ class ProfileScreen extends ConsumerWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.2),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.secondary.withValues(alpha: 0.2),
                     ),
                   ),
                   child: Text(
@@ -327,9 +380,9 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   style: TextButton.styleFrom(
                     foregroundColor: Theme.of(context).colorScheme.primary,
-                    backgroundColor: Theme.of(context).colorScheme.primaryContainer.withValues(
-                      alpha: 0.3,
-                    ),
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer.withValues(alpha: 0.3),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 24,
                       vertical: 12,
@@ -360,11 +413,15 @@ class ProfileScreen extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(28),
                 border: Border.all(
-                  color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.2),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.outlineVariant.withValues(alpha: 0.2),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.03),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.03),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -383,9 +440,15 @@ class ProfileScreen extends ConsumerWidget {
                         child: Switch(
                           value: pushEnabled,
                           activeThumbColor: Colors.white,
-                          activeTrackColor: Theme.of(context).colorScheme.primary,
-                          inactiveTrackColor: Theme.of(context).colorScheme.surfaceContainerLow,
-                          inactiveThumbColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                          activeTrackColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          inactiveTrackColor: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerLow,
+                          inactiveThumbColor: Theme.of(
+                            context,
+                          ).colorScheme.onSurfaceVariant,
                           onChanged: (val) async {
                             if (val == true) {
                               bool? granted = await showDialog<bool>(
@@ -398,7 +461,9 @@ class ProfileScreen extends ConsumerWidget {
                                     children: [
                                       Icon(
                                         Icons.notifications_active_rounded,
-                                        color: Theme.of(context).colorScheme.primary,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
@@ -421,13 +486,17 @@ class ProfileScreen extends ConsumerWidget {
                                       child: Text(
                                         'رفض',
                                         style: GoogleFonts.cairo(
-                                          color: Theme.of(context).colorScheme.error,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.error,
                                         ),
                                       ),
                                     ),
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: Theme.of(context).colorScheme.primary,
+                                        backgroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
                                             12,
@@ -447,7 +516,9 @@ class ProfileScreen extends ConsumerWidget {
                               );
 
                               if (granted == true) {
-                                ref.read(pushNotificationsProvider.notifier).setEnabled(true);
+                                ref
+                                    .read(pushNotificationsProvider.notifier)
+                                    .setEnabled(true);
                                 if (context.mounted) {
                                   AppToast.showSuccess(
                                     context,
@@ -456,7 +527,9 @@ class ProfileScreen extends ConsumerWidget {
                                 }
                               }
                             } else {
-                              ref.read(pushNotificationsProvider.notifier).setEnabled(false);
+                              ref
+                                  .read(pushNotificationsProvider.notifier)
+                                  .setEnabled(false);
                             }
                           },
                         ),
@@ -466,7 +539,9 @@ class ProfileScreen extends ConsumerWidget {
                       height: 1,
                       indent: 64,
                       endIndent: 20,
-                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.15),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outlineVariant.withValues(alpha: 0.15),
                     ),
                     _SettingsItemLine(
                       icon: Icons.language_rounded,
@@ -488,7 +563,9 @@ class ProfileScreen extends ConsumerWidget {
                       height: 1,
                       indent: 64,
                       endIndent: 20,
-                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.15),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.outlineVariant.withValues(alpha: 0.15),
                     ),
                     _SettingsItemLine(
                       icon: Icons.info_outline_rounded,
@@ -501,7 +578,9 @@ class ProfileScreen extends ConsumerWidget {
                           applicationVersion: '1.0.0+1',
                           applicationIcon: Container(
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             padding: const EdgeInsets.all(16),
@@ -530,7 +609,7 @@ class ProfileScreen extends ConsumerWidget {
                   // Forcibly navigate immediately to stop any rebuild loops
                   context.go('/login');
                   AppToast.showInfo(context, 'تم تسجيل الخروج بنجاح 👋');
-                  
+
                   // Then process the signout blindly in background
                   await ref.read(authNotifierProvider.notifier).signOut();
                 } catch (e) {
@@ -538,9 +617,9 @@ class ProfileScreen extends ConsumerWidget {
                 }
               },
               style: TextButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.errorContainer.withValues(
-                  alpha: 0.4,
-                ),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.errorContainer.withValues(alpha: 0.4),
                 foregroundColor: Theme.of(context).colorScheme.error,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
@@ -575,7 +654,10 @@ class ProfileScreen extends ConsumerWidget {
       height: 100,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.secondary],
+          colors: [
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.secondary,
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
