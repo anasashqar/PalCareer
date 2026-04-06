@@ -7,6 +7,7 @@ import 'package:palcareer/l10n/generated/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/models/career_taxonomy.dart';
 import '../providers/onboarding_provider.dart';
+import '../../jobs/providers/jobs_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -315,6 +316,14 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
   void _finishOnboarding() async {
     setState(() => _isLoading = true);
     await ref.read(onboardingProvider.notifier).saveAndComplete();
+    
+    // Clear search and filters so they land on a fresh Tiered Feed
+    ref.invalidate(searchQueryProvider);
+    ref.invalidate(contractTypeProvider);
+    ref.invalidate(workModeProvider);
+    ref.invalidate(experienceLevelProvider);
+    ref.invalidate(datePostedProvider);
+
     if (mounted) {
       context.go('/home');
     }

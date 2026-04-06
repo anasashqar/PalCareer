@@ -17,6 +17,14 @@ class JobsFeedScreen extends ConsumerStatefulWidget {
 }
 
 class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   String _getLocalizedHeader(String titleId, String langCode) {
     if (langCode == 'ar') {
       switch (titleId) {
@@ -147,32 +155,65 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                               ),
                             ),
                           ),
-                          child: TextField(
-                            onChanged: (val) {
-                              ref.read(searchQueryProvider.notifier).state =
-                                  val;
-                            },
-                            decoration: InputDecoration(
-                              hintText: langCode == 'ar'
-                                  ? 'بحث عن المسمى الوظيفي أو الشركة...'
-                                  : 'Search jobs or companies...',
-                              hintStyle: GoogleFonts.cairo(
-                                color: AppColors.onSurfaceVariant,
-                                fontSize: 14,
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.search_rounded,
-                                color: AppColors.primary,
-                              ),
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                            ),
-                            style: GoogleFonts.cairo(
-                              color: AppColors.onSurface,
-                            ),
+                          child: Consumer(
+                            builder: (context, ref, _) {
+                              final search = ref.watch(searchQueryProvider);
+                              // Keep the local controller in sync ONLY IF it is completely out of sync textwise
+                              // To avoid cursor jumping, we only set it if the entire word changed from outside.
+                              if (_searchController.text != search &&
+                                  (_searchController.text.trim().isEmpty || search.isEmpty)) {
+                                _searchController.text = search;
+                              }
+
+                              return TextField(
+                                controller: _searchController,
+                                onChanged: (val) {
+                                  ref.read(searchQueryProvider.notifier).state = val;
+                                },
+                                decoration: InputDecoration(
+                                  hintText: langCode == 'ar'
+                                      ? 'بحث عن وظيفة...'
+                                      : 'Search jobs...',
+                                  hintStyle: GoogleFonts.cairo(
+                                    color: AppColors.onSurfaceVariant,
+                                    fontSize: 14,
+                                  ),
+                                  prefixIcon: IconButton(
+                                    icon: const Icon(
+                                      Icons.manage_accounts_rounded,
+                                      color: AppColors.primary,
+                                    ),
+                                    onPressed: () {
+                                      // Using StatefulNavigationShell to jump to Profile Tab (index 2)
+                                      try {
+                                        final shell = StatefulNavigationShell.of(context);
+                                        shell.goBranch(2);
+                                      } catch (e) {
+                                        context.push('/profile');
+                                      }
+                                    },
+                                    tooltip: langCode == 'ar' ? 'حسابي' : 'My Account',
+                                  ),
+                                  suffixIcon: search.isNotEmpty 
+                                      ? IconButton(
+                                          icon: const Icon(Icons.close_rounded, color: AppColors.onSurfaceVariant),
+                                          onPressed: () {
+                                            _searchController.clear();
+                                            ref.read(searchQueryProvider.notifier).state = '';
+                                          },
+                                        ) 
+                                      : const Icon(Icons.search_rounded, color: AppColors.primary),
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                ),
+                                style: GoogleFonts.cairo(
+                                  color: AppColors.onSurface,
+                                ),
+                              );
+                            }
                           ),
                         ),
                       ),

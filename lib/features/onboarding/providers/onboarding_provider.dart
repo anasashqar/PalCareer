@@ -4,6 +4,7 @@ import '../../../shared/services/firestore_service.dart';
 import '../../../core/constants/firestore_keys.dart';
 import '../../../shared/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../core/services/firebase_messaging_service.dart';
 
 class OnboardingState {
   final String? selectedSector;
@@ -85,12 +86,18 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 
   void loadProfile(Map<String, dynamic> data) {
     final categoryIds = List<String>.from(data['preferredCategoryIds'] ?? []);
+    final sectorId = categoryIds.isNotEmpty ? categoryIds.first : null;
+    
     state = state.copyWith(
-      selectedSector: categoryIds.isNotEmpty ? categoryIds.first : null,
+      selectedSector: sectorId,
       fieldsOfStudy: List<String>.from(data['preferredSubCategoryIds'] ?? []),
       preferredWorkTypes: List<String>.from(data['preferredJobTypes'] ?? []),
       academicLevel: data['educationLevelId'],
     );
+
+    if (sectorId != null) {
+      FirebaseMessagingService().updateSectorSubscription(sectorId);
+    }
   }
 
   Future<void> saveAndComplete() async {
@@ -121,6 +128,10 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
         currentUser.uid,
         userModel.toMap(),
       );
+
+      if (state.selectedSector != null) {
+        FirebaseMessagingService().updateSectorSubscription(state.selectedSector!);
+      }
 
       state = state.copyWith(isLoading: false);
     } catch (e) {

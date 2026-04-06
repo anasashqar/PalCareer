@@ -3,44 +3,23 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/notifications_provider.dart';
+import '../../jobs/providers/jobs_provider.dart';
+import 'package:go_router/go_router.dart';
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-
-    // Mock data based directly on the provided user image mapped into standard textual sentences
-    final List<Map<String, dynamic>> mockNotifications = [
-      {
-        'title': 'مطور أندرويد أول (Senior)',
-        'company': 'شركة جوال (Jawwal)',
-        'time': 'منذ ساعة',
-        'isUnread': true,
-      },
-      {
-        'title': 'مهندس برمجيات (Android SDK)',
-        'company': 'عسل للتكنولوجيا (Asal Technologies)',
-        'time': 'منذ 3 ساعات',
-        'isUnread': false,
-      },
-      {
-        'title': 'مطور تطبيقات جوال (Flutter)',
-        'company': 'شركة حضارة',
-        'time': 'منذ 6 ساعات',
-        'isUnread': false,
-      },
-      {
-        'title': 'مطور أندرويد متدرب',
-        'company': 'ستارت أب بال (StartUp Pal)',
-        'time': 'منذ يوم واحد',
-        'isUnread': false,
-      },
-    ];
+    
+    final notifications = ref.watch(notificationsProvider);
+    final jobsState = ref.watch(jobsProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.surface, // Flat clean background
+      backgroundColor: AppColors.surface,
       appBar: AppBar(
         backgroundColor: AppColors.surface,
         elevation: 0,
@@ -61,24 +40,58 @@ class NotificationsScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: ListView.separated(
-        itemCount: mockNotifications.length,
-        separatorBuilder: (context, index) => Divider(
-          height: 1,
-          thickness: 1,
-          color: AppColors.outlineVariant.withValues(alpha: 0.15),
-        ),
-        itemBuilder: (context, index) {
-          final notif = mockNotifications[index];
-          return _NotificationTile(
-            title: notif['title'],
-            company: notif['company'],
-            time: notif['time'],
-            isUnread: notif['isUnread'],
-          );
-        },
-      ),
+      body: jobsState.isLoading
+          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          : notifications.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.notifications_off_outlined,
+                          size: 64, color: AppColors.outlineVariant),
+                      const SizedBox(height: 16),
+                      Text(
+                        'لا يوجد إشعارات جديدة حالياً',
+                        style: GoogleFonts.cairo(
+                          fontSize: 16,
+                          color: AppColors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : ListView.separated(
+                  itemCount: notifications.length,
+                  separatorBuilder: (context, index) => Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: AppColors.outlineVariant.withValues(alpha: 0.15),
+                  ),
+                  itemBuilder: (context, index) {
+                    final notif = notifications[index];
+                    return _NotificationTile(
+                      title: notif.job.getLocalizedTitle('ar'), // Fallback lang, usually dynamic
+                      company: notif.job.company,
+                      time: _formatDate(notif.job.postedAt),
+                      isUnread: notif.isUnread,
+                      onTap: () {
+                        // Mark as read
+                        ref.read(readNotificationsProvider.notifier).markAsRead(notif.job.id);
+                        // Navigate to job details
+                        context.push('/job/${notif.job.id}', extra: notif.job);
+                      },
+                    );
+                  },
+                ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    final diff = DateTime.now().difference(date);
+    if (diff.inDays > 0) return 'منذ ${diff.inDays} يوم';
+    if (diff.inHours > 0) return 'منذ ${diff.inHours} ساعة';
+    if (diff.inMinutes > 0) return 'منذ ${diff.inMinutes} دقيقة';
+    return 'الآن';
   }
 }
 
@@ -87,12 +100,14 @@ class _NotificationTile extends StatelessWidget {
   final String company;
   final String time;
   final bool isUnread;
+  final VoidCallback onTap;
 
   const _NotificationTile({
     required this.title,
     required this.company,
     required this.time,
     required this.isUnread,
+    required this.onTap,
   });
 
   @override
@@ -103,9 +118,7 @@ class _NotificationTile extends StatelessWidget {
         : 'C';
 
     return InkWell(
-      onTap: () {
-        // Handle navigation to job details
-      },
+      onTap: onTap,
       child: Container(
         color: isUnread
             ? AppColors.secondary.withValues(alpha: 0.08)

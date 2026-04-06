@@ -11,19 +11,24 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:palcareer/firebase_options.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'core/services/firebase_messaging_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
   await Hive.openBox('settings');
-  await Hive.openBox<List<String>>('bookmarks');
+  await Hive.openBox<List>('bookmarks');
+  await Hive.openBox<bool>('read_notifications');
 
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
     await GoogleSignIn.instance.initialize();
+    
+    // Initialize FCM Push Notifications
+    await FirebaseMessagingService().init();
   } catch (e) {
     debugPrint('Firebase/GoogleSignIn initialization error = $e');
   }

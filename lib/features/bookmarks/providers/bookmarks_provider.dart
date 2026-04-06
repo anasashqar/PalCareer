@@ -2,11 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class BookmarksNotifier extends StateNotifier<Set<String>> {
-  final Box<List<String>> _box = Hive.box<List<String>>('bookmarks');
+  final Box<List> _box = Hive.box<List>('bookmarks');
 
   BookmarksNotifier() : super({}) {
     final saved = _box.get('job_bookmarks') ?? [];
-    state = saved.toSet();
+    state = saved.cast<String>().toSet();
   }
 
   void toggleBookmark(String jobId) {
