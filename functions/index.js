@@ -36,7 +36,15 @@ exports.onJobAdded = functions.firestore
       notification: {
         title: "فرصة عمل تتناسب مع مجالك! 🚀",
         body: `أعلنت ${companyName} للتو عن شاغر: ${jobTitle}. قدم الآن!`,
-        sound: "default",
+      },
+      android: {
+        priority: "high", // 👈 ضروري جداً لظهور الإشعار فوراً
+        notification: {
+          sound: "default",
+          channelId: "high_importance_channel", // 👈 يجب أن يطابق ما وضعناه في الـ AndroidManifest
+          priority: "high",
+          clickAction: "FLUTTER_NOTIFICATION_CLICK",
+        }
       },
       data: {
         click_action: "FLUTTER_NOTIFICATION_CLICK",
@@ -45,7 +53,7 @@ exports.onJobAdded = functions.firestore
       },
       topic: topic,
     };
-
+    
     try {
       const response = await admin.messaging().send(payload);
       console.log(`Successfully sent message to topic ${topic}:`, response);

@@ -24,6 +24,9 @@ class FirebaseMessagingService {
 
     debugPrint('FCM Authorization: ${settings.authorizationStatus}');
 
+    String? token = await _fcm.getToken();
+    debugPrint("📱 MY TOKEN IS: $token");
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('Foreground Message: ${message.notification?.title}');
     });
@@ -35,12 +38,9 @@ class FirebaseMessagingService {
 
     final box = Hive.box('settings');
     final String? currentSubscription = box.get('current_fcm_sector');
-    
+
     // Sanitize topic name (no spaces/special chars) first!
-    final safeTopic = sectorId.replaceAll(
-      RegExp(r'[^a-zA-Z0-9-_.~%]+'),
-      '_',
-    );
+    final safeTopic = sectorId.replaceAll(RegExp(r'[^a-zA-Z0-9-_.~%]+'), '_');
 
     // Unsubscribe from old topic if it changed
     if (currentSubscription != null && currentSubscription != safeTopic) {
