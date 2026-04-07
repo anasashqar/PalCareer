@@ -12,7 +12,20 @@
           "package_name": "com.example.palcareer"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "391434676871-tn0hnl86kmdrho6m7mebnu8t7jeuhiqg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.palcareer",
+            "certificate_hash": "bb4dffbfdd9c892c464d73463b63872f18c7e870"
+          }
+        },
+        {
+          "client_id": "391434676871-8lvnah1ems1m6l5l1satsc0jmfufg52m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyD7xUzYFY-skeiHIzjlSZ2t-553qafja4w"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "391434676871-8lvnah1ems1m6l5l1satsc0jmfufg52m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

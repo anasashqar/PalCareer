@@ -317,7 +317,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     child: FadeTransition(
                       opacity: _fadeAnimation3,
                       child: Text(
-                        'بتسجيلك أنت ترافق على شروطنا وسياسة الخصوصية.',
+                        'بتسجيلك أنت توافق على شروطنا وسياسة الخصوصية.',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.cairo(
                           fontSize: 14,
