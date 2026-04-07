@@ -51,6 +51,7 @@ app.*.map.json
 # Firebase config (prevent leaking sensitive IDs if needed project-wise)
 google-services.json
 GoogleService-Info.plist
+lib/firebase_options.dart
 
 # iOS / macOS build directories
 **/Pods/
