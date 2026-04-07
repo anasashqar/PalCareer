@@ -68,15 +68,11 @@ class FirebaseAuthRepository implements AuthRepository {
   Future<void> signOut() async {
     try {
       try {
-        await _googleSignIn.disconnect();
-      } catch (_) {
         await _googleSignIn.signOut();
+      } catch (_) {
+        // Ignore Google Sign In errors, we just want to clear Firebase Auth
       }
-    } catch (_) {
-      // Ignore Google Sign In errors, we just want to clear Firebase Auth
-    }
 
-    try {
       await _firebaseAuth.signOut();
     } catch (e) {
       throw Exception('فشل تسجيل الخروج. حاول مرة أخرى.');

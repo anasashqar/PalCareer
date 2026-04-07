@@ -31,7 +31,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final FirestoreService _firestoreService;
 
   AuthNotifier(this._repository, this._firestoreService)
-    : super(const AuthState());
+    : super(AuthState(isAuthenticated: _repository.currentUser != null)) {
+    _repository.authStateChanges.listen((user) {
+      if (mounted) {
+        state = state.copyWith(isAuthenticated: user != null);
+      }
+    });
+  }
 
   Future<void> signInWithGoogle() async {
     state = state.copyWith(isLoading: true, error: null);

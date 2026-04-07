@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../../../core/constants/firestore_keys.dart';
 import '../../../shared/models/job_model.dart';
 import '../../../shared/providers/profile_provider.dart';
+import 'dart:async';
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
 final contractTypeProvider = StateProvider<String?>((ref) => null);
@@ -60,6 +61,7 @@ class JobsState {
 
 class JobsNotifier extends Notifier<JobsState> {
   static const int _limit = 10;
+  Timer? _debounceTimer;
 
   @override
   JobsState build() {
@@ -82,8 +84,11 @@ class JobsNotifier extends Notifier<JobsState> {
   }
 
   void _refresh() {
-    state = JobsState(); // Reset state completely
-    fetchJobs();
+    if (_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 100), () {
+      state = JobsState(); // Reset state completely
+      fetchJobs();
+    });
   }
 
   Future<void> fetchJobs({bool fetchMore = false}) async {
