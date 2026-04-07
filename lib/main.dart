@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/providers/theme_provider.dart';
@@ -27,6 +28,12 @@ void main() async {
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    // Provide the OAuth Web Client ID for GoogleSignIn (required in newer google_sign_in versions)
+    await GoogleSignIn.instance.initialize(
+      serverClientId:
+          '391434676871-8lvnah1ems1m6l5l1satsc0jmfufg52m.apps.googleusercontent.com',
     );
 
     // Initialize Remote Config for App Strings and Theme
