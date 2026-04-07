@@ -62,3 +62,10 @@ lib/firebase_options.dart
 # Uncomment if using build_runner and prefer not tracking generated files
 # *.g.dart
 # *.freezed.dart
+
+# Firebase & Cloud Functions
+node_modules/
+functions/node_modules/
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
