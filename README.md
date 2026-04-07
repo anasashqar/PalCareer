@@ -1,17 +1,77 @@
-# palcareer
+<div dir="rtl">
 
-A new Flutter project.
+# PalCareer — منصة التوظيف الفلسطينية الذكية
 
-## Getting Started
+> وظائف مُرشَّحة بذكاء بدلاً من البحث اليدوي
 
-This project is a starting point for a Flutter application.
+</div>
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## 🇵🇸 عن المشروع (About)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+**PalCareer** هو تطبيق Android مبني خصيصاً للطلاب والخريجين الجدد في السوق الفلسطيني.  
+بدلاً من البحث اليدوي وتصفح عشرات الوظائف غير المفيدة، يقوم التطبيق بتعلم تخصصك ومستواك التعليمي عند التسجيل (Onboarding) ليعرض لك أهم الخيارات المطابقة لمجالك بمستويات تصنيفية (تطابق تام، اقتراحات بديلة، استكشاف) مع إرسال إشعارات فورية بالوظائف الجديدة.
+
+---
+
+## ✨ الميزات الوظيفية والتطويرية
+
+- **التصنيف الذكي:** فرز وتصنيف الوظائف حسب التخصص (Best Matches, Suggestions, Explore) مع شارات ذكية.
+- **التصفح الفعّال (Pagination):** جلب البيانات بذكاء من Firestore لتوفير الاستهلاك وتسريع أداء التطبيق.
+- **الإشعارات المخصصة (Notifications):** نظام إرسال إشعارات فورية (FCM) يعمل بناءً على المطابقة بين مجالات الوظيفة واهتمامات المستخدم.
+- **المرجعيات (Bookmarks):** إمكانية حفظ الوظائف للعودة إليها.
+- **التشغيل والإدارة (Remote Config):** يتم تغذية التطبيق والتصنيفات ديناميكياً لتجنب تعديلات الكود عند كل تحديث.
+- **تصميم متقدم (UI/UX):** واجهات عصرية (The Civic Curator)، دعم كامل للغة العربية (RTL)، تأثيرات تحميل احترافية (Shimmer Loading)، سحب للتحديث.
+
+---
+
+## 🏗️ التقنيات المستخدمة (Tech Stack)
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | Flutter (Android Min Sdk 21+) |
+| **State Management** | Riverpod |
+| **Navigation** | GoRouter (StatefulShellRoute) |
+| **Authentication** | Firebase Authentication (Google Sign-In) |
+| **Database** | Cloud Firestore |
+| **Push Notifications** | Firebase Cloud Messaging (FCM) |
+| **Local Storage** | Hive (لحفظ سجل الإشعارات للمستخدم) |
+| **Localization (i18n)** | `flutter_localizations` (يدعم AR / EN) |
+
+---
+
+## 📁 الهيكلية (Feature-First Clean Architecture)
+
+يعتمد التطبيق بنية تقسيم الملفات بناءً على الميزات:
+```text
+lib/
+├── core/              # الإعدادات العامة للمتجر، التوجيه (Router)، الثوابت، ثيمات التطبيق
+├── shared/            # نماذج البيانات (Models)، خدمات خارجية كـ Firestore و FCM، مكوّنات (Widgets) مشتركة
+├── features/          # الميزات الأساسية:
+│    ├── auth/         # شاشات ومزودات تسجيل الدخول 
+│    ├── onboarding/   # تعريف اهتمامات المستخدم خطوة بخطوة
+│    ├── jobs/         # تغذية الوظائف وتفاصيلها (Jobs Feed & Details)  
+│    ├── notifications/# استقبال وعرض وحفظ الإشعارات
+│    └── profile/      # إدارة حساب المستخدم والمفضلات (Bookmarks)
+└── main.dart          # النقطة المركزية لتهيئة التطبيق و Firebase
+```
+
+---
+
+## 🚧 الحالة الحالية (Project Status)
+
+تجاوز التطبيق مرحلة الواجهات الوهمية (Mock) ودخل مرحلة الربط المتقدم بـ Firebase حيث تم الانتهاء من:
+✅ بناء واجهات التطبيق وعمل نظام Routing متكامل.
+✅ ربط تسجيل الدخول وإعداد بيانات المستخدم بالـ Firestore.
+✅ تصنيف وفلترة الوظائف باستخدام الاستعلامات المباشرة (Paginated Queries).
+✅ تحسين معمارية وحماية بيانات المسارات والتخزين.
+✅ ربط التنبيهات المباشرة والإشارات المرجعية.
+
+**خارج نطاق النسخة الحالية (V1):**
+التسجيل الداخلي للوظائف في التطبيق عبر CV، الويب كلوحة تحكم، منصة iOS (مؤجلة).
+
+---
+
+## 👤 جهة التطوير
+مشروع قيد التطوير بصيغة منتج أوّلي (MVP) لاستهداف سوق العمل الفلسطيني.
