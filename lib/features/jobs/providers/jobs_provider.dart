@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import '../../../core/constants/firestore_keys.dart';
 import '../../../shared/models/job_model.dart';
-
+import '../../../shared/providers/profile_provider.dart';
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
 final contractTypeProvider = StateProvider<String?>((ref) => null);
@@ -12,7 +12,9 @@ final experienceLevelProvider = StateProvider<String?>((ref) => null);
 final datePostedProvider = StateProvider<String?>((ref) => null);
 
 class JobsState {
-  final List<JobModel> jobs;
+  final List<JobModel> bestMatches;
+  final List<JobModel> goodMatches;
+  final List<JobModel> otherJobs;
   final bool isLoading;
   final bool isFetchingMore;
   final bool hasRechedEnd;
@@ -20,7 +22,9 @@ class JobsState {
   final String? error;
 
   JobsState({
-    this.jobs = const [],
+    this.bestMatches = const [],
+    this.goodMatches = const [],
+    this.otherJobs = const [],
     this.isLoading = true,
     this.isFetchingMore = false,
     this.hasRechedEnd = false,
@@ -28,8 +32,13 @@ class JobsState {
     this.error,
   });
 
+  bool get isEmpty => bestMatches.isEmpty && goodMatches.isEmpty && otherJobs.isEmpty;
+  List<JobModel> get jobs => [...bestMatches, ...goodMatches, ...otherJobs];
+
   JobsState copyWith({
-    List<JobModel>? jobs,
+    List<JobModel>? bestMatches,
+    List<JobModel>? goodMatches,
+    List<JobModel>? otherJobs,
     bool? isLoading,
     bool? isFetchingMore,
     bool? hasRechedEnd,
@@ -37,7 +46,9 @@ class JobsState {
     String? error,
   }) {
     return JobsState(
-      jobs: jobs ?? this.jobs,
+      bestMatches: bestMatches ?? this.bestMatches,
+      goodMatches: goodMatches ?? this.goodMatches,
+      otherJobs: otherJobs ?? this.otherJobs,
       isLoading: isLoading ?? this.isLoading,
       isFetchingMore: isFetchingMore ?? this.isFetchingMore,
       hasRechedEnd: hasRechedEnd ?? this.hasRechedEnd,
@@ -58,6 +69,13 @@ class JobsNotifier extends Notifier<JobsState> {
     ref.listen(workModeProvider, (previous, next) => _refresh());
     ref.listen(experienceLevelProvider, (previous, next) => _refresh());
     ref.listen(datePostedProvider, (previous, next) => _refresh());
+    
+    // Listen to profile updates so the categorization matches their newly selected fields
+    ref.listen(profileProvider, (previous, next) {
+      if (previous != next) {
+        _refresh();
+      }
+    });
 
     Future.microtask(() => fetchJobs());
     return JobsState();
@@ -71,10 +89,7 @@ class JobsNotifier extends Notifier<JobsState> {
   Future<void> fetchJobs({bool fetchMore = false}) async {
     if (state.hasRechedEnd) return;
     if (fetchMore && state.isFetchingMore) return;
-    if (!fetchMore && !state.isLoading) {
-       // Already fetching initial
-       return;
-    }
+    if (!fetchMore && !state.isLoading) return;
 
     if (fetchMore) {
       state = state.copyWith(isFetchingMore: true);
@@ -84,83 +99,111 @@ class JobsNotifier extends Notifier<JobsState> {
 
     try {
       final firestore = FirebaseFirestore.instance;
-      Query query = firestore
-          .collection(FirestoreKeys.jobsCollection)
-          .where('isActive', isEqualTo: true);
+      final user = ref.read(profileProvider);
 
-      // Apply server-side filters where possible
+      List<JobModel> newBestMatches = [];
+      List<JobModel> newGoodMatches = [];
+      List<JobModel> newOtherJobs = [];
+
+      // Filters to apply locally across ALL fetched jobs
       final contractFilter = ref.read(contractTypeProvider);
       final experienceFilter = ref.read(experienceLevelProvider);
-
-      if (contractFilter != null) {
-        query = query.where('jobType', isEqualTo: contractFilter);
-      }
-      if (experienceFilter != null) {
-        query = query.where('level', isEqualTo: experienceFilter);
-      }
-
-      // Order by date descending
-      query = query.orderBy('postedAt', descending: true);
-
-      // Apply pagination cursor
-      if (fetchMore && state.lastDoc != null) {
-        query = query.startAfterDocument(state.lastDoc!);
-      }
-
-      query = query.limit(_limit);
-
-      final snapshot = await query.get();
-
-      if (snapshot.docs.isEmpty) {
-        state = state.copyWith(
-          isFetchingMore: false,
-          isLoading: false,
-          hasRechedEnd: true,
-        );
-        return;
-      }
-
-      var newJobs = snapshot.docs
-          .map((doc) => JobModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
-          .toList();
-
-      // Client-Side filtering for fields that can't be easily compound-indexed dynamically
-      // like textual search or complex date math, but applied ONLY to the fetched chunk:
       final search = ref.read(searchQueryProvider).toLowerCase().trim();
       final workModeFilter = ref.read(workModeProvider);
       final dateFilter = ref.read(datePostedProvider);
 
-      newJobs = newJobs.where((job) {
-        bool matchesSearch = true;
+      bool passesLocalFilters(JobModel job) {
+        if (contractFilter != null && job.jobType != contractFilter) return false;
+        if (experienceFilter != null && job.level != experienceFilter) return false;
+        if (workModeFilter != null) {
+          if (workModeFilter == 'remote' && job.jobType != 'remote') return false;
+          if (workModeFilter == 'on_site' && job.jobType == 'remote') return false; // assuming anything else is on-site
+        }
+        if (dateFilter != null) {
+          final now = DateTime.now();
+          if (dateFilter == 'past_24h' && now.difference(job.postedAt).inDays > 1) return false;
+          if (dateFilter == 'past_week' && now.difference(job.postedAt).inDays > 7) return false;
+          if (dateFilter == 'past_month' && now.difference(job.postedAt).inDays > 30) return false;
+        }
         if (search.isNotEmpty) {
-          matchesSearch =
+          final matchesSearch =
               (job.title['ar']?.toLowerCase().contains(search) ?? false) ||
               (job.title['en']?.toLowerCase().contains(search) ?? false) ||
               job.company.toLowerCase().contains(search);
+          if (!matchesSearch) return false;
+        }
+        return true;
+      }
+
+      // 1 & 2. Fetch Top Tiers (Only on initial load, not pagination)
+      if (!fetchMore && user != null) {
+        // --- Best Matches ---
+        if (user.preferredSubCategoryIds.isNotEmpty) {
+          try {
+            final chunks = user.preferredSubCategoryIds.take(10).toList();
+            final snap = await firestore.collection(FirestoreKeys.jobsCollection)
+                .where('isActive', isEqualTo: true)
+                .where('subCategoryId', whereIn: chunks)
+                .limit(30) // Fallback limit to prevent giant reads
+                .get();
+            var list = snap.docs.map((d) => JobModel.fromMap(d.data() as Map<String, dynamic>, d.id)).toList();
+            list.sort((a, b) => b.postedAt.compareTo(a.postedAt));
+            newBestMatches = list.where(passesLocalFilters).take(10).toList();
+          } catch(e) { debugPrint('Best Matches Error: $e'); }
         }
 
-        final matchesWorkMode = workModeFilter == null ||
-            (workModeFilter == 'remote' && job.jobType == 'remote') ||
-            (workModeFilter == 'on_site' && job.jobType != 'remote');
-
-        bool matchesDate = true;
-        if (dateFilter != null) {
-          final now = DateTime.now();
-          if (dateFilter == 'past_24h') {
-            matchesDate = now.difference(job.postedAt).inDays <= 1;
-          } else if (dateFilter == 'past_week') {
-            matchesDate = now.difference(job.postedAt).inDays <= 7;
-          } else if (dateFilter == 'past_month') {
-            matchesDate = now.difference(job.postedAt).inDays <= 30;
-          }
+        // --- Good Matches ---
+        if (user.preferredCategoryIds.isNotEmpty) {
+          try {
+            final chunks = user.preferredCategoryIds.take(10).toList();
+            final snap = await firestore.collection(FirestoreKeys.jobsCollection)
+                .where('isActive', isEqualTo: true)
+                .where('categoryId', whereIn: chunks)
+                .limit(40)
+                .get();
+            var list = snap.docs.map((d) => JobModel.fromMap(d.data() as Map<String, dynamic>, d.id)).toList();
+            list.sort((a, b) => b.postedAt.compareTo(a.postedAt));
+            // Exclude jobs already in Best Matches
+            final bestIds = newBestMatches.map((e) => e.id).toSet();
+            newGoodMatches = list.where((j) => passesLocalFilters(j) && !bestIds.contains(j.id)).take(15).toList();
+          } catch(e) { debugPrint('Good Matches Error: $e'); }
         }
+      } // End of top tiers fetch
 
-        return matchesSearch && matchesWorkMode && matchesDate;
-      }).toList();
+      // 3. Fetch Diverse / Other Jobs (Paginated Stream)
+      Query qDiverse = firestore.collection(FirestoreKeys.jobsCollection)
+          .where('isActive', isEqualTo: true);
+      // We can keep these server-side to help basic pagination efficiency for Explore
+      if (contractFilter != null) qDiverse = qDiverse.where('jobType', isEqualTo: contractFilter);
+      if (experienceFilter != null) qDiverse = qDiverse.where('level', isEqualTo: experienceFilter);
+      
+      qDiverse = qDiverse.orderBy('postedAt', descending: true).limit(_limit);
+
+      if (fetchMore && state.lastDoc != null) {
+        qDiverse = qDiverse.startAfterDocument(state.lastDoc!);
+      }
+
+      final snapshot = await qDiverse.get();
+      var paginatedList = snapshot.docs.map((doc) => JobModel.fromMap(doc.data() as Map<String, dynamic>, doc.id)).toList();
+      
+      // Filter the paginated list locally for search & dates
+      paginatedList = paginatedList.where(passesLocalFilters).toList();
+
+      // Exclude jobs that are already sitting in Best or Good from previous pages or top fetches
+      final existingBestIds = fetchMore ? state.bestMatches.map((e)=>e.id).toSet() : newBestMatches.map((e)=>e.id).toSet();
+      final existingGoodIds = fetchMore ? state.goodMatches.map((e)=>e.id).toSet() : newGoodMatches.map((e)=>e.id).toSet();
+      
+      for (var job in paginatedList) {
+        if (!existingBestIds.contains(job.id) && !existingGoodIds.contains(job.id)) {
+          newOtherJobs.add(job);
+        }
+      }
 
       state = state.copyWith(
-        jobs: fetchMore ? [...state.jobs, ...newJobs] : newJobs,
-        lastDoc: snapshot.docs.last,
+        bestMatches: fetchMore ? state.bestMatches : newBestMatches,
+        goodMatches: fetchMore ? state.goodMatches : newGoodMatches,
+        otherJobs: fetchMore ? [...state.otherJobs, ...newOtherJobs] : newOtherJobs,
+        lastDoc: snapshot.docs.isNotEmpty ? snapshot.docs.last : state.lastDoc,
         isLoading: false,
         isFetchingMore: false,
         hasRechedEnd: snapshot.docs.length < _limit,

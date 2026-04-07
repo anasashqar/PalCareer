@@ -265,7 +265,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                 ),
               ),
 
-              if (jobsState.isLoading && jobsState.jobs.isEmpty)
+              if (jobsState.isLoading && jobsState.isEmpty)
                 SliverFillRemaining(
                   child: ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -287,13 +287,13 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                     },
                   ),
                 )
-              else if (jobsState.error != null && jobsState.jobs.isEmpty)
+              else if (jobsState.error != null && jobsState.isEmpty)
                 SliverFillRemaining(
                   child: Center(
                     child: Text('Error: ${jobsState.error}', style: const TextStyle(color: Colors.red)),
                   ),
                 )
-              else if (jobsState.jobs.isEmpty)
+              else if (jobsState.isEmpty)
                 SliverFillRemaining(
                   child: Center(
                     child: Column(
@@ -317,51 +317,95 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                     ),
                   ),
                 )
-              else
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      if (index == jobsState.jobs.length) {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: jobsState.isFetchingMore
-                                ? const CircularProgressIndicator()
-                                : (jobsState.hasRechedEnd
-                                    ? Text(
-                                        langCode == 'ar' ? 'نهاية الوظائف' : 'End of jobs',
-                                        style: GoogleFonts.cairo(color: Theme.of(context).colorScheme.onSurfaceVariant),
-                                      )
-                                    : const SizedBox.shrink()),
-                          ),
-                        );
-                      }
-
-                      final job = jobsState.jobs[index];
-                      // Simple animation
-                      return TweenAnimationBuilder<double>(
-                        key: ValueKey(job.id),
-                        tween: Tween(begin: 0.0, end: 1.0),
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeOutCubic,
-                        builder: (context, value, child) {
-                          return Opacity(
-                            opacity: value,
-                            child: Transform.translate(
-                              offset: Offset(0, 20 * (1 - value)),
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: JobCardWidget(
-                          job: job,
-                          onTap: () => context.push('/job-details', extra: job),
+              else ...[
+                if (jobsState.bestMatches.isNotEmpty) ...[
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
+                      child: Text(
+                        langCode == 'ar' ? '🔥 الأنسب لاختياراتك' : '🔥 Top Matches',
+                        style: GoogleFonts.cairo(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                      );
-                    },
-                    childCount: jobsState.jobs.length + 1,
+                      ),
+                    ),
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final job = jobsState.bestMatches[index];
+                        return _buildAnimatedJobCard(context, job);
+                      },
+                      childCount: jobsState.bestMatches.length,
+                    ),
+                  ),
+                ],
+                if (jobsState.goodMatches.isNotEmpty) ...[
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+                      child: Text(
+                        langCode == 'ar' ? '💡 مقترحات أخرى في مجالك' : '💡 Suggestions In Your Field',
+                        style: GoogleFonts.cairo(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final job = jobsState.goodMatches[index];
+                        return _buildAnimatedJobCard(context, job);
+                      },
+                      childCount: jobsState.goodMatches.length,
+                    ),
+                  ),
+                ],
+                if (jobsState.otherJobs.isNotEmpty) ...[
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+                      child: Text(
+                        langCode == 'ar' ? '🔭 استكشف وظائف متنوعة' : '🔭 Explore Diverse Jobs',
+                        style: GoogleFonts.cairo(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final job = jobsState.otherJobs[index];
+                        return _buildAnimatedJobCard(context, job);
+                      },
+                      childCount: jobsState.otherJobs.length,
+                    ),
+                  ),
+                ],
+                SliverToBoxAdapter(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: jobsState.isFetchingMore
+                          ? const CircularProgressIndicator()
+                          : (jobsState.hasRechedEnd && !jobsState.isEmpty
+                              ? Text(
+                                  langCode == 'ar' ? 'نهاية الوظائف' : 'End of jobs',
+                                  style: GoogleFonts.cairo(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                )
+                              : const SizedBox.shrink()),
+                    ),
                   ),
                 ),
+              ],
             ],
           ),
         ),
@@ -643,4 +687,26 @@ class _FilterChip extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget _buildAnimatedJobCard(BuildContext context, dynamic job) {
+  return TweenAnimationBuilder<double>(
+    key: ValueKey(job.id),
+    tween: Tween(begin: 0.0, end: 1.0),
+    duration: const Duration(milliseconds: 300),
+    curve: Curves.easeOutCubic,
+    builder: (context, value, child) {
+      return Opacity(
+        opacity: value,
+        child: Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: child,
+        ),
+      );
+    },
+    child: JobCardWidget(
+      job: job,
+      onTap: () => context.push('/job-details', extra: job),
+    ),
+  );
 }
