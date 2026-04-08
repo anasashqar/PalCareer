@@ -6,7 +6,7 @@ import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import '../providers/jobs_provider.dart';
 import '../widgets/job_card.dart';
-import 'package:shimmer/shimmer.dart';
+import '../widgets/job_card_skeleton.dart';
 
 class JobsFeedScreen extends ConsumerStatefulWidget {
   const JobsFeedScreen({super.key});
@@ -268,22 +268,10 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
               if (jobsState.isLoading && jobsState.isEmpty)
                 SliverFillRemaining(
                   child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                    padding: const EdgeInsets.only(top: 24, bottom: 24),
                     itemCount: 5,
                     itemBuilder: (context, index) {
-                      return Shimmer.fromColors(
-                        baseColor: Theme.of(context).colorScheme.surfaceContainerLowest.withValues(alpha: 0.5),
-                        highlightColor: Theme.of(context).colorScheme.surface,
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          height: 140,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.1)),
-                          ),
-                        ),
-                      );
+                      return const JobCardSkeleton();
                     },
                   ),
                 )

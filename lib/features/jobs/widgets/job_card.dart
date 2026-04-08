@@ -1,10 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import '../../../../shared/models/job_model.dart';
 import '../../bookmarks/providers/bookmarks_provider.dart';
+
+IconData? getJobIcon(String title) {
+  final t = title.toLowerCase();
+  if (t.contains('flutter') || t.contains('react') || t.contains('developer') || t.contains('software') || t.contains('backend') || t.contains('frontend') || t.contains('fullstack') || t.contains('engineer') || t.contains('programmer') || t.contains('مطور') || t.contains('مبرمج') || t.contains('هندسة') || t.contains('مهندس') || t.contains('برمجة')) {
+    return LucideIcons.code;
+  }
+  if (t.contains('design') || t.contains('ui') || t.contains('ux') || t.contains('graphic') || t.contains('art') || t.contains('مصمم') || t.contains('تصميم')) {
+    return LucideIcons.penTool;
+  }
+  if (t.contains('data') || t.contains('analyst') || t.contains('analytics') || t.contains('database') || t.contains('machine learning') || t.contains('بيانات') || t.contains('محلل') || t.contains('ذكاء')) {
+    return LucideIcons.database;
+  }
+  if (t.contains('market') || t.contains('sales') || t.contains('seo') || t.contains('social') || t.contains('تسويق') || t.contains('مبيعات')) {
+    return LucideIcons.megaphone;
+  }
+  if (t.contains('manag') || t.contains('product') || t.contains('project') || t.contains('director') || t.contains('مدير') || t.contains('إدارة') || t.contains('ادارة')) {
+    return LucideIcons.briefcase;
+  }
+  if (t.contains('hr') || t.contains('human') || t.contains('recruit') || t.contains('talent') || t.contains('موارد') || t.contains('توظيف') || t.contains('بشرية')) {
+    return LucideIcons.users;
+  }
+  if (t.contains('finance') || t.contains('account') || t.contains('audit') || t.contains('bank') || t.contains('محاسب') || t.contains('مالية')) {
+    return LucideIcons.calculator;
+  }
+  if (t.contains('support') || t.contains('customer') || t.contains('service') || t.contains('دعم') || t.contains('عملاء')) {
+    return LucideIcons.headphones;
+  }
+  if (t.contains('teacher') || t.contains('education') || t.contains('tutor') || t.contains('مدرس') || t.contains('معلم') || t.contains('تعليم')) {
+    return LucideIcons.graduationCap;
+  }
+  if (t.contains('health') || t.contains('medic') || t.contains('nurse') || t.contains('doctor') || t.contains('طبيب') || t.contains('ممرض') || t.contains('صحة') || t.contains('طب')) {
+    return LucideIcons.stethoscope;
+  }
+  if (t.contains('security') || t.contains('cyber') || t.contains('guard') || t.contains('أمن') || t.contains('حماية')) {
+    return LucideIcons.shield;
+  }
+  if (t.contains('write') || t.contains('content') || t.contains('copy') || t.contains('كاتب') || t.contains('محتوى') || t.contains('تحرير')) {
+    return LucideIcons.fileText;
+  }
+  if (t.contains('video') || t.contains('media') || t.contains('فيديو') || t.contains('ميديا') || t.contains('تصوير')) {
+    return LucideIcons.video;
+  }
+  return null;
+}
 
 class JobCardWidget extends StatefulWidget {
   final JobModel job;
@@ -57,6 +102,36 @@ class _JobCardWidgetState extends State<JobCardWidget>
         ? widget.job.company.substring(0, 1).toUpperCase()
         : 'C';
 
+    // Dynamic avatar styling
+    final bgColors = [
+      const Color(0xFFE3F2FD), // Light Blue
+      const Color(0xFFF3E5F5), // Light Purple
+      const Color(0xFFE8F5E9), // Light Green
+      const Color(0xFFFFF3E0), // Light Orange
+      const Color(0xFFFFEBEE), // Light Red
+      const Color(0xFFE0F7FA), // Light Cyan
+      const Color(0xFFFFF8E1), // Light Amber
+      const Color(0xFFECEFF1), // Light Blue Grey
+    ];
+    final fgColors = [
+      const Color(0xFF1976D2),
+      const Color(0xFF7B1FA2),
+      const Color(0xFF388E3C),
+      const Color(0xFFF57C00),
+      const Color(0xFFD32F2F),
+      const Color(0xFF0097A7),
+      const Color(0xFFFFA000),
+      const Color(0xFF455A64),
+    ];
+    
+    int colorIndex = widget.job.company.hashCode.abs() % bgColors.length;
+    final avatarBgColor = bgColors[colorIndex];
+    final avatarFgColor = fgColors[colorIndex];
+
+    // Attempt to map an icon from the title
+    final titleString = '${widget.job.title['en'] ?? ''} ${widget.job.title['ar'] ?? ''}';
+    final jobIcon = getJobIcon(titleString);
+
     return GestureDetector(
       onTapDown: (_) => _animController.forward(),
       onTapUp: (_) {
@@ -101,30 +176,28 @@ class _JobCardWidgetState extends State<JobCardWidget>
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Company Logo Placeholder
+                // Company / Category Avatar
                 Container(
                   width: 44,
                   height: 44,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                    color: avatarBgColor,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.05),
+                      color: avatarFgColor.withValues(alpha: 0.1),
                     ),
                   ),
-                  child: Text(
-                    companyInitial,
-                    style: GoogleFonts.cairo(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
+                  child: jobIcon != null
+                      ? Icon(jobIcon, color: avatarFgColor, size: 24)
+                      : Text(
+                          companyInitial,
+                          style: GoogleFonts.cairo(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: avatarFgColor,
+                          ),
+                        ),
                 ),
                 const SizedBox(width: 12),
                 // Title and Company Info
