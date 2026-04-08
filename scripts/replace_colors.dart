@@ -8,7 +8,8 @@ void main() {
       if (content.contains('AppColors.')) {
         final newContent = content.replaceAll('AppColors.', 'Theme.of(context).colorScheme.');
         file.writeAsStringSync(newContent);
-        print('Updated \${file.path}');
+        // ignore: avoid_print
+        print('Updated ${file.path}');
       }
     }
   }

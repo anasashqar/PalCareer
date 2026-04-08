@@ -195,7 +195,7 @@ class _StepOneSector extends ConsumerWidget {
               style: _primaryButtonStyle(context),
               child: Text(
                 l10n.nextBtn,
-                style: TextStyle(fontFamily: 'Alexandria',
+                style: const TextStyle(fontFamily: 'Alexandria',
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -288,7 +288,7 @@ class _StepTwoSpecialization extends ConsumerWidget {
               style: _primaryButtonStyle(context),
               child: Text(
                 l10n.nextBtn,
-                style: TextStyle(fontFamily: 'Alexandria',
+                style: const TextStyle(fontFamily: 'Alexandria',
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -442,7 +442,7 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
                     )
                   : Text(
                       l10n.saveFinishBtn,
-                      style: TextStyle(fontFamily: 'Alexandria',
+                      style: const TextStyle(fontFamily: 'Alexandria',
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),

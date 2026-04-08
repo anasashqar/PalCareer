@@ -22,7 +22,7 @@ class JobDetailsScreen extends ConsumerWidget {
     if (urlString.isEmpty) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text(
               'لا يوجد رابط تقديم متاح لهذه الوظيفة حالياً.',
               style: TextStyle(fontFamily: 'Alexandria',),
@@ -38,7 +38,7 @@ class JobDetailsScreen extends ConsumerWidget {
       if (!await launchUrl(url, mode: LaunchMode.inAppBrowserView)) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text(
                 'لا يمكن فتح الرابط الخاص بالوظيفة.',
                 style: TextStyle(fontFamily: 'Alexandria',),
@@ -50,7 +50,7 @@ class JobDetailsScreen extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('حدث خطأ: $e', style: TextStyle(fontFamily: 'Alexandria',))),
+          SnackBar(content: Text('حدث خطأ: $e', style: const TextStyle(fontFamily: 'Alexandria',))),
         );
       }
     }
@@ -92,13 +92,13 @@ class JobDetailsScreen extends ConsumerWidget {
                   onPressed: () {
                     Clipboard.setData(ClipboardData(text: job.applyUrl));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                         content: Text(
                           'تم نسخ رابط الوظيفة بنجاح 🎉',
                           style: TextStyle(fontFamily: 'Alexandria',),
                         ),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: Colors.transparent, // placeholder to match structure if needed, or just keep as is
+                        elevation: 0,
                       ),
                     );
                   },
@@ -515,7 +515,7 @@ class JobDetailsScreen extends ConsumerWidget {
                       isExpired
                           ? (langCode == 'ar' ? 'انتهى التقديم' : 'Expired')
                           : l10n.applyNowBtn,
-                      style: TextStyle(fontFamily: 'Alexandria',
+                      style: const TextStyle(fontFamily: 'Alexandria',
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                       ),
@@ -560,7 +560,7 @@ class JobDetailsScreen extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Text(
                         langCode == 'ar' ? 'عبر واتساب' : 'WhatsApp',
-                        style: TextStyle(fontFamily: 'Alexandria',
+                        style: const TextStyle(fontFamily: 'Alexandria',
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
                         ),

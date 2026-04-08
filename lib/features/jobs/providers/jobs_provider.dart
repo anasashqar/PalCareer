@@ -151,7 +151,7 @@ class JobsNotifier extends Notifier<JobsState> {
                 .where('subCategoryId', whereIn: chunks)
                 .limit(30) // Fallback limit to prevent giant reads
                 .get();
-            var list = snap.docs.map((d) => JobModel.fromMap(d.data() as Map<String, dynamic>, d.id)).toList();
+            var list = snap.docs.map((d) => JobModel.fromMap(d.data(), d.id)).toList();
             list.sort((a, b) => b.postedAt.compareTo(a.postedAt));
             newBestMatches = list.where(passesLocalFilters).take(10).toList();
           } catch(e) { debugPrint('Best Matches Error: $e'); }
@@ -166,7 +166,7 @@ class JobsNotifier extends Notifier<JobsState> {
                 .where('categoryId', whereIn: chunks)
                 .limit(40)
                 .get();
-            var list = snap.docs.map((d) => JobModel.fromMap(d.data() as Map<String, dynamic>, d.id)).toList();
+            var list = snap.docs.map((d) => JobModel.fromMap(d.data(), d.id)).toList();
             list.sort((a, b) => b.postedAt.compareTo(a.postedAt));
             // Exclude jobs already in Best Matches
             final bestIds = newBestMatches.map((e) => e.id).toSet();

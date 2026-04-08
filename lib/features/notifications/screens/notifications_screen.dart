@@ -100,9 +100,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           children: [
             Icon(Icons.error_outline, size: 60, color: Theme.of(context).colorScheme.error),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'حدث خطأ في تحميل الإشعارات',
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: 'Alexandria',
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -111,7 +111,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             const SizedBox(height: 8),
             ElevatedButton(
               onPressed: () => ref.read(notificationsProvider.notifier).fetchInitial(),
-              child: Text('إعادة المحاولة', style: const TextStyle(fontFamily: 'Alexandria')),
+              child: const Text('إعادة المحاولة', style: TextStyle(fontFamily: 'Alexandria')),
             ),
           ],
         ),

@@ -466,7 +466,7 @@ class _FilterSheetContent extends ConsumerWidget {
                       ),
                       child: Text(
                         isAr ? 'مسح الكل' : 'Clear All',
-                        style: TextStyle(fontFamily: 'Alexandria',
+                        style: const TextStyle(fontFamily: 'Alexandria',
                           color: Colors.redAccent,
                           fontWeight: FontWeight.w700,
                         ),

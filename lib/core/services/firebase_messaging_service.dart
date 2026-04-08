@@ -25,7 +25,7 @@ class FirebaseMessagingService {
     debugPrint('FCM Authorization: ${settings.authorizationStatus}');
 
     String? token = await _fcm.getToken();
-    debugPrint("📱 MY TOKEN IS: $token");
+    debugPrint('📱 MY TOKEN IS: $token');
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('Foreground Message: ${message.notification?.title}');

@@ -9,8 +9,6 @@ import '../../../../core/providers/settings_provider.dart';
 import '../../../../core/utils/app_toast.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../onboarding/providers/onboarding_provider.dart';
-import '../../../../shared/services/firestore_service.dart';
-import '../../../../core/constants/firestore_keys.dart';
 import '../../../../core/providers/taxonomy_provider.dart';
 import '../../../../shared/providers/profile_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -72,7 +70,7 @@ class ProfileScreen extends ConsumerWidget {
                     width: 48,
                     height: 6,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -104,9 +102,9 @@ class ProfileScreen extends ConsumerWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
+                      border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)),
                     ),
                     child: Column(
                       children: [
@@ -126,7 +124,7 @@ class ProfileScreen extends ConsumerWidget {
                             context.push('/onboarding');
                           },
                           icon: const Icon(Icons.route_rounded, size: 18),
-                          label: Text('إعادة ضبط المسار المهني', style: TextStyle(fontFamily: 'Alexandria',fontWeight: FontWeight.bold)),
+                          label: const Text('إعادة ضبط المسار المهني', style: TextStyle(fontFamily: 'Alexandria',fontWeight: FontWeight.bold)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).colorScheme.primary,
                             foregroundColor: Colors.white,
@@ -159,7 +157,7 @@ class ProfileScreen extends ConsumerWidget {
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       ),
-                      child: Text('حفظ التغييرات', style: TextStyle(fontFamily: 'Alexandria',fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
+                      child: const Text('حفظ التغييرات', style: TextStyle(fontFamily: 'Alexandria',fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],
@@ -198,7 +196,7 @@ class ProfileScreen extends ConsumerWidget {
                   Positioned(
                     bottom: -20,
                     right: -40,
-                    child: Icon(Icons.account_circle, size: 250, color: Colors.white.withOpacity(0.1)),
+                    child: Icon(Icons.account_circle, size: 250, color: Colors.white.withValues(alpha: 0.1)),
                   ),
                   SafeArea(
                     child: Column(
@@ -218,7 +216,7 @@ class ProfileScreen extends ConsumerWidget {
                                   border: Border.all(color: Colors.white, width: 4),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.15),
+                                      color: Colors.black.withValues(alpha: 0.15),
                                       blurRadius: 20,
                                       offset: const Offset(0, 10),
                                     ),
@@ -250,7 +248,7 @@ class ProfileScreen extends ConsumerWidget {
                         const SizedBox(height: 16),
                         Text(
                           userName,
-                          style: TextStyle(fontFamily: 'Alexandria',
+                          style: const TextStyle(fontFamily: 'Alexandria',
                             fontSize: 24,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
@@ -260,12 +258,12 @@ class ProfileScreen extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
+                            color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             subtitle,
-                            style: TextStyle(fontFamily: 'Alexandria',
+                            style: const TextStyle(fontFamily: 'Alexandria',
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
@@ -307,7 +305,7 @@ class ProfileScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Theme.of(context).colorScheme.shadow.withOpacity(0.05),
+                            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.05),
                             blurRadius: 20,
                             offset: const Offset(0, 4),
                           ),
@@ -319,7 +317,7 @@ class ProfileScreen extends ConsumerWidget {
                             context: context,
                             icon: Icons.edit_note_rounded,
                             title: 'تعديل التوجه والبيانات',
-                            iconBgColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                            iconBgColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                             iconColor: Theme.of(context).colorScheme.primary,
                             onTap: showEditProfileSheet,
                           ),
@@ -332,7 +330,7 @@ class ProfileScreen extends ConsumerWidget {
                             iconColor: const Color(0xFFF57C00),
                             trailing: Switch(
                               value: pushEnabled,
-                              activeColor: Theme.of(context).colorScheme.primary,
+                              activeThumbColor: Theme.of(context).colorScheme.primary,
                               onChanged: (val) async {
                                 if (val) {
                                   bool? granted = await showDialog<bool>(
@@ -343,10 +341,10 @@ class ProfileScreen extends ConsumerWidget {
                                         children: [
                                           Icon(Icons.notifications_active_rounded, color: Theme.of(context).colorScheme.primary),
                                           const SizedBox(width: 8),
-                                          Text('تفعيل الإشعارات؟', style: TextStyle(fontFamily: 'Alexandria',fontSize: 18, fontWeight: FontWeight.bold)),
+                                          const Text('تفعيل الإشعارات؟', style: TextStyle(fontFamily: 'Alexandria',fontSize: 18, fontWeight: FontWeight.bold)),
                                         ],
                                       ),
-                                      content: Text('يرغب تطبيق PalCareer في إرسال إشعارات لتنبيهك بالفرص الوظيفية فور توافرها.', style: TextStyle(fontFamily: 'Alexandria',fontSize: 14)),
+                                      content: const Text('يرغب تطبيق PalCareer في إرسال إشعارات لتنبيهك بالفرص الوظيفية فور توافرها.', style: TextStyle(fontFamily: 'Alexandria',fontSize: 14)),
                                       actions: [
                                         TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('رفض', style: TextStyle(fontFamily: 'Alexandria',color: Theme.of(context).colorScheme.error))),
                                         ElevatedButton(
@@ -356,7 +354,7 @@ class ProfileScreen extends ConsumerWidget {
                                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                           ),
                                           onPressed: () => Navigator.pop(ctx, true),
-                                          child: Text('سماح', style: TextStyle(fontFamily: 'Alexandria',)),
+                                          child: const Text('سماح', style: TextStyle(fontFamily: 'Alexandria',)),
                                         ),
                                       ],
                                     ),
@@ -377,7 +375,7 @@ class ProfileScreen extends ConsumerWidget {
                             context: context,
                             icon: Icons.language_rounded,
                             title: "تغيير اللغة (${currentLocale.languageCode == 'ar' ? 'English' : 'عربي'})",
-                            iconBgColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                            iconBgColor: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
                             iconColor: Theme.of(context).colorScheme.secondary,
                             onTap: () {
                               final isAr = currentLocale.languageCode == 'ar';
@@ -392,7 +390,7 @@ class ProfileScreen extends ConsumerWidget {
                             context: context,
                             icon: Icons.info_outline_rounded,
                             title: l10n.aboutApp,
-                            iconBgColor: Colors.grey.withOpacity(0.1),
+                            iconBgColor: Colors.grey.withValues(alpha: 0.1),
                             iconColor: Colors.grey.shade700,
                             onTap: () {
                               showAboutDialog(
@@ -400,7 +398,7 @@ class ProfileScreen extends ConsumerWidget {
                                 applicationName: 'PalCareer\nوظائف فلسطين',
                                 applicationVersion: '1.0.0+1',
                                 applicationIcon: Container(
-                                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(16)),
+                                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)),
                                   padding: const EdgeInsets.all(16),
                                   child: Icon(Icons.work_rounded, color: Theme.of(context).colorScheme.primary, size: 40),
                                 ),
@@ -417,9 +415,9 @@ class ProfileScreen extends ConsumerWidget {
                       height: 56,
                       child: ElevatedButton.icon(
                         icon: const Icon(Icons.logout_rounded, size: 22),
-                        label: Text(l10n.logoutBtn, style: TextStyle(fontFamily: 'Alexandria',fontSize: 16, fontWeight: FontWeight.bold)),
+                        label: Text(l10n.logoutBtn, style: const TextStyle(fontFamily: 'Alexandria',fontSize: 16, fontWeight: FontWeight.bold)),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.errorContainer.withOpacity(0.5),
+                          backgroundColor: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.5),
                           foregroundColor: Theme.of(context).colorScheme.error,
                           elevation: 0,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
