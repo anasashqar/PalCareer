@@ -21,7 +21,6 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch auth notifier so profile screen triggers rebuild on login/out
     ref.watch(authNotifierProvider);
 
     final l10n = AppLocalizations.of(context)!;
@@ -39,6 +38,18 @@ class ProfileScreen extends ConsumerWidget {
     final obState = ref.watch(onboardingProvider);
     final taxonomyAsync = ref.watch(taxonomyProvider);
 
+    final String? sectorLocalized = obState.selectedSector != null && taxonomyAsync.hasValue && taxonomyAsync.value!.sectors.isNotEmpty
+        ? taxonomyAsync.value!.sectors
+            .firstWhere((s) => s.id == obState.selectedSector, orElse: () => taxonomyAsync.value!.sectors.first)
+            .getLocalizedName(currentLocale.languageCode)
+        : null;
+
+    final String? levelLocalized = obState.academicLevel == 'student'
+        ? (currentLocale.languageCode == 'ar' ? 'طالب' : 'Student')
+        : (obState.academicLevel == 'graduate' ? (currentLocale.languageCode == 'ar' ? 'خريج جديد' : 'Fresh Graduate') : null);
+
+    final subtitle = levelLocalized != null && sectorLocalized != null ? '$levelLocalized في $sectorLocalized' : 'مكتشف وظائف فلسطين';
+
     void showEditProfileSheet() {
       final nameController = TextEditingController(text: userName);
       showModalBottomSheet(
@@ -47,28 +58,21 @@ class ProfileScreen extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         builder: (ctx) {
           return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(ctx).viewInsets.bottom,
-            ),
+            padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
             child: Container(
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(40),
-                ),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
                     width: 48,
                     height: 6,
                     decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.outlineVariant.withValues(alpha: 0.3),
+                      color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -82,27 +86,16 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  // Name Field
                   TextField(
                     controller: nameController,
                     decoration: InputDecoration(
                       labelText: 'الاسم الكامل',
-                      prefixIcon: Icon(
-                        Icons.person_rounded,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      labelStyle: GoogleFonts.cairo(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                      prefixIcon: Icon(Icons.person_rounded, color: Theme.of(context).colorScheme.primary),
+                      labelStyle: GoogleFonts.cairo(color: Theme.of(context).colorScheme.outline),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 2,
-                        ),
+                        borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                       ),
                     ),
                   ),
@@ -111,15 +104,9 @@ class ProfileScreen extends ConsumerWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                      color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.primary.withValues(alpha: 0.2),
-                      ),
+                      border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.2)),
                     ),
                     child: Column(
                       children: [
@@ -128,9 +115,7 @@ class ProfileScreen extends ConsumerWidget {
                           textAlign: TextAlign.center,
                           style: GoogleFonts.cairo(
                             fontSize: 14,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurfaceVariant,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -140,27 +125,17 @@ class ProfileScreen extends ConsumerWidget {
                             Navigator.pop(ctx);
                             context.push('/onboarding');
                           },
-                          icon: const Icon(Icons.tune_rounded, size: 18),
-                          label: Text(
-                            'إعادة ضبط المسار المهني',
-                            style: GoogleFonts.cairo(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          icon: const Icon(Icons.route_rounded, size: 18),
+                          label: Text('إعادة ضبط المسار المهني', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(
-                              context,
-                            ).colorScheme.primary,
+                            backgroundColor: Theme.of(context).colorScheme.primary,
                             foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                           ),
                         ),
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 40),
                   SizedBox(
                     width: double.infinity,
@@ -172,33 +147,19 @@ class ProfileScreen extends ConsumerWidget {
                           ref.read(userNameProvider.notifier).state = newName;
                           await ref.read(profileProvider.notifier).updateUserDisplayName(newName);
                         }
-
                         if (ctx.mounted) {
                           Navigator.pop(ctx);
-                          // Interactive Feedback!
                           if (context.mounted) {
-                            AppToast.showSuccess(
-                              context,
-                              'تم حفظ وتحديث ملفك الشخصي بنجاح 🚀',
-                            );
+                            AppToast.showSuccess(context, 'تم حفظ وتحديث ملفك الشخصي بنجاح 🚀');
                           }
                         }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.primary,
                         elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       ),
-                      child: Text(
-                        'حفظ التغييرات',
-                        style: GoogleFonts.cairo(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      child: Text('حفظ التغييرات', style: GoogleFonts.cairo(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],
@@ -209,511 +170,319 @@ class ProfileScreen extends ConsumerWidget {
       );
     }
 
-    final String? sectorLocalized =
-        obState.selectedSector != null &&
-            taxonomyAsync.hasValue &&
-            taxonomyAsync.value!.sectors.isNotEmpty
-        ? taxonomyAsync.value!.sectors
-              .firstWhere(
-                (s) => s.id == obState.selectedSector,
-                orElse: () => taxonomyAsync.value!.sectors.first,
-              )
-              .getLocalizedName(currentLocale.languageCode)
-        : null;
-
-    final String? levelLocalized = obState.academicLevel == 'student'
-        ? (currentLocale.languageCode == 'ar' ? 'طالب' : 'Student')
-        : (obState.academicLevel == 'graduate'
-              ? (currentLocale.languageCode == 'ar'
-                    ? 'خريج جديد'
-                    : 'Fresh Graduate')
-              : null);
-
-    final subtitle = levelLocalized != null && sectorLocalized != null
-        ? '$levelLocalized في $sectorLocalized'
-        : 'مكتشف وظائف فلسطين';
-
     return Scaffold(
-      backgroundColor: Theme.of(
-        context,
-      ).colorScheme.surfaceContainerLowest, // Lighter, cleaner background
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          physics: const BouncingScrollPhysics(),
-          children: [
-            // Centered Modern User Header
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).colorScheme.primary,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.primary.withValues(alpha: 0.3),
-                            blurRadius: 24,
-                            offset: const Offset(0, 10),
-                          ),
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 280,
+            pinned: true,
+            elevation: 0,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context).colorScheme.tertiary,
                         ],
-                      ),
-                      alignment: Alignment.center,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(50),
-                        child: photoUrl != null && photoUrl.isNotEmpty
-                            ? CachedNetworkImage(
-                                imageUrl: photoUrl,
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) =>
-                                    const CircularProgressIndicator(
-                                      color: Colors.white,
-                                    ),
-                                errorWidget: (context, url, error) =>
-                                    _buildFallbackAvatar(context, userName),
-                              )
-                            : _buildFallbackAvatar(context, userName),
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
                     ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: InkWell(
-                        onTap: showEditProfileSheet,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surface,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .outlineVariant
-                                  .withValues(alpha: 0.2),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.edit_rounded,
-                            color: Theme.of(context).colorScheme.primary,
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  userName,
-                  style: GoogleFonts.cairo(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    color: Theme.of(context).colorScheme.onSurface,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 6,
+                  Positioned(
+                    bottom: -20,
+                    right: -40,
+                    child: Icon(Icons.account_circle, size: 250, color: Colors.white.withOpacity(0.1)),
                   ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.secondary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.secondary.withValues(alpha: 0.2),
-                    ),
-                  ),
-                  child: Text(
-                    subtitle,
-                    style: GoogleFonts.cairo(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextButton.icon(
-                  onPressed: showEditProfileSheet,
-                  icon: const Icon(Icons.tune_rounded, size: 20),
-                  label: Text(
-                    'تعديل التوجه والبيانات',
-                    style: GoogleFonts.cairo(fontWeight: FontWeight.bold),
-                  ),
-                  style: TextButton.styleFrom(
-                    foregroundColor: Theme.of(context).colorScheme.primary,
-                    backgroundColor: Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer.withValues(alpha: 0.3),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 48),
-
-            Text(
-              l10n.settingsTitle,
-              style: GoogleFonts.cairo(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Grouped Settings Cluster (Modern iOS / Material 3 style)
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                borderRadius: BorderRadius.circular(28),
-                border: Border.all(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.outlineVariant.withValues(alpha: 0.2),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.03),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(28),
-                child: Column(
-                  children: [
-                    _SettingsItemLine(
-                      icon: Icons.notifications_active_rounded,
-                      title: l10n.pushNotificationsToggle,
-                      iconColor: const Color(0xFFE5A93C),
-                      trailing: Transform.scale(
-                        scale: 0.85,
-                        child: Switch(
-                          value: pushEnabled,
-                          activeThumbColor: Colors.white,
-                          activeTrackColor: Theme.of(
-                            context,
-                          ).colorScheme.primary,
-                          inactiveTrackColor: Theme.of(
-                            context,
-                          ).colorScheme.surfaceContainerLow,
-                          inactiveThumbColor: Theme.of(
-                            context,
-                          ).colorScheme.onSurfaceVariant,
-                          onChanged: (val) async {
-                            if (val == true) {
-                              bool? granted = await showDialog<bool>(
-                                context: context,
-                                builder: (ctx) => AlertDialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
-                                  title: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.notifications_active_rounded,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        'السماح بالإشعارات؟',
-                                        style: GoogleFonts.cairo(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  content: Text(
-                                    'يرغب تطبيق PalCareer في إرسال إشعارات لتنبيهك بالفرص الوظيفية فور توافرها.',
-                                    style: GoogleFonts.cairo(fontSize: 14),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(ctx, false),
-                                      child: Text(
-                                        'رفض',
-                                        style: GoogleFonts.cairo(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.error,
-                                        ),
-                                      ),
-                                    ),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Theme.of(
-                                          context,
-                                        ).colorScheme.primary,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                      ),
-                                      onPressed: () => Navigator.pop(ctx, true),
-                                      child: Text(
-                                        'سماح',
-                                        style: GoogleFonts.cairo(
-                                          color: Colors.white,
-                                        ),
-                                      ),
+                  SafeArea(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Spacer(),
+                        Hero(
+                          tag: 'avatar',
+                          child: Stack(
+                            alignment: Alignment.bottomRight,
+                            children: [
+                              Container(
+                                width: 110,
+                                height: 110,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(color: Colors.white, width: 4),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 10),
                                     ),
                                   ],
                                 ),
-                              );
-
-                              if (granted == true) {
-                                ref
-                                    .read(pushNotificationsProvider.notifier)
-                                    .setEnabled(true);
-                                if (context.mounted) {
-                                  AppToast.showSuccess(
-                                    context,
-                                    'تم تفعيل الإشعارات بنجاح 🎉',
-                                  );
-                                }
-                              }
-                            } else {
-                              ref
-                                  .read(pushNotificationsProvider.notifier)
-                                  .setEnabled(false);
-                            }
-                          },
+                                child: ClipOval(
+                                  child: photoUrl != null && photoUrl.isNotEmpty
+                                      ? CachedNetworkImage(
+                                          imageUrl: photoUrl,
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) => const CircularProgressIndicator(color: Colors.white),
+                                          errorWidget: (context, url, error) => _buildFallbackAvatar(context, userName),
+                                        )
+                                      : _buildFallbackAvatar(context, userName),
+                                ),
+                              ),
+                              CircleAvatar(
+                                radius: 18,
+                                backgroundColor: Theme.of(context).colorScheme.surface,
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: Icon(Icons.edit_rounded, size: 18, color: Theme.of(context).colorScheme.primary),
+                                  onPressed: showEditProfileSheet,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                    Divider(
-                      height: 1,
-                      indent: 64,
-                      endIndent: 20,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.outlineVariant.withValues(alpha: 0.15),
-                    ),
-                    _SettingsItemLine(
-                      icon: Icons.language_rounded,
-                      title:
-                          "تغيير اللغة (${currentLocale.languageCode == 'ar' ? 'English' : 'عربي'})",
-                      iconColor: Theme.of(context).colorScheme.secondary,
-                      onTap: () {
-                        final isAr = currentLocale.languageCode == 'ar';
-                        final newLocale = Locale(isAr ? 'en' : 'ar');
-                        ref.read(localeProvider.notifier).setLocale(newLocale);
-                        context.setLocale(newLocale);
-                        AppToast.showInfo(
-                          context,
-                          'تم طلاء التطبيق بلغة جديدة 🌍',
-                        );
-                      },
-                    ),
-                    Divider(
-                      height: 1,
-                      indent: 64,
-                      endIndent: 20,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.outlineVariant.withValues(alpha: 0.15),
-                    ),
-                    _SettingsItemLine(
-                      icon: Icons.info_outline_rounded,
-                      title: l10n.aboutApp,
-                      iconColor: Theme.of(context).colorScheme.primary,
-                      onTap: () {
-                        showAboutDialog(
-                          context: context,
-                          applicationName: 'PalCareer\nوظائف فلسطين',
-                          applicationVersion: '1.0.0+1',
-                          applicationIcon: Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            padding: const EdgeInsets.all(16),
-                            child: Icon(
-                              Icons.work_rounded,
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 40,
+                        const SizedBox(height: 16),
+                        Text(
+                          userName,
+                          style: GoogleFonts.cairo(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            subtitle,
+                            style: GoogleFonts.cairo(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
                             ),
                           ),
-                          applicationLegalese:
-                              '© 2026 PalCareer Team.\nتم التطوير من أجل مساعدة الشباب الفلسطيني في إيجاد فرص عمل بكفاءة وسهولة.',
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 48),
-
-            // Logout Button
-            TextButton(
-              onPressed: () async {
-                try {
-                  // Forcibly navigate immediately to stop any rebuild loops
-                  context.go('/login');
-                  AppToast.showInfo(context, 'تم تسجيل الخروج بنجاح 👋');
-
-                  // Then process the signout blindly in background
-                  await ref.read(authNotifierProvider.notifier).signOut();
-                } catch (e) {
-                  debugPrint('Logout error: $e');
-                }
-              },
-              style: TextButton.styleFrom(
-                backgroundColor: Theme.of(
-                  context,
-                ).colorScheme.errorContainer.withValues(alpha: 0.4),
-                foregroundColor: Theme.of(context).colorScheme.error,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.logout_rounded, size: 22),
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n.logoutBtn,
-                    style: GoogleFonts.cairo(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
+                        ),
+                        const Spacer(),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-          ],
-        ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              transform: Matrix4.translationValues(0.0, -24.0, 0.0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 32, 24, 48),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.settingsTitle,
+                      style: GoogleFonts.cairo(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context).colorScheme.shadow.withOpacity(0.05),
+                            blurRadius: 20,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          _buildSettingTile(
+                            context: context,
+                            icon: Icons.edit_note_rounded,
+                            title: 'تعديل التوجه والبيانات',
+                            iconBgColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                            iconColor: Theme.of(context).colorScheme.primary,
+                            onTap: showEditProfileSheet,
+                          ),
+                          const Divider(height: 1, indent: 64, endIndent: 24),
+                          _buildSettingTile(
+                            context: context,
+                            icon: Icons.notifications_active_rounded,
+                            title: l10n.pushNotificationsToggle,
+                            iconBgColor: const Color(0xFFFFF3E0),
+                            iconColor: const Color(0xFFF57C00),
+                            trailing: Switch(
+                              value: pushEnabled,
+                              activeColor: Theme.of(context).colorScheme.primary,
+                              onChanged: (val) async {
+                                if (val) {
+                                  bool? granted = await showDialog<bool>(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                                      title: Row(
+                                        children: [
+                                          Icon(Icons.notifications_active_rounded, color: Theme.of(context).colorScheme.primary),
+                                          const SizedBox(width: 8),
+                                          Text('تفعيل الإشعارات؟', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold)),
+                                        ],
+                                      ),
+                                      content: Text('يرغب تطبيق PalCareer في إرسال إشعارات لتنبيهك بالفرص الوظيفية فور توافرها.', style: GoogleFonts.cairo(fontSize: 14)),
+                                      actions: [
+                                        TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('رفض', style: GoogleFonts.cairo(color: Theme.of(context).colorScheme.error))),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Theme.of(context).colorScheme.primary,
+                                            foregroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          ),
+                                          onPressed: () => Navigator.pop(ctx, true),
+                                          child: Text('سماح', style: GoogleFonts.cairo()),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+
+                                  if (granted == true) {
+                                    ref.read(pushNotificationsProvider.notifier).setEnabled(true);
+                                    if (context.mounted) AppToast.showSuccess(context, 'تم تفعيل الإشعارات 🎉');
+                                  }
+                                } else {
+                                  ref.read(pushNotificationsProvider.notifier).setEnabled(false);
+                                }
+                              },
+                            ),
+                          ),
+                          const Divider(height: 1, indent: 64, endIndent: 24),
+                          _buildSettingTile(
+                            context: context,
+                            icon: Icons.language_rounded,
+                            title: "تغيير اللغة (${currentLocale.languageCode == 'ar' ? 'English' : 'عربي'})",
+                            iconBgColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+                            iconColor: Theme.of(context).colorScheme.secondary,
+                            onTap: () {
+                              final isAr = currentLocale.languageCode == 'ar';
+                              final newLocale = Locale(isAr ? 'en' : 'ar');
+                              ref.read(localeProvider.notifier).setLocale(newLocale);
+                              context.setLocale(newLocale);
+                              AppToast.showInfo(context, 'تم طلاء التطبيق بلغة جديدة 🌍');
+                            },
+                          ),
+                          const Divider(height: 1, indent: 64, endIndent: 24),
+                          _buildSettingTile(
+                            context: context,
+                            icon: Icons.info_outline_rounded,
+                            title: l10n.aboutApp,
+                            iconBgColor: Colors.grey.withOpacity(0.1),
+                            iconColor: Colors.grey.shade700,
+                            onTap: () {
+                              showAboutDialog(
+                                context: context,
+                                applicationName: 'PalCareer\nوظائف فلسطين',
+                                applicationVersion: '1.0.0+1',
+                                applicationIcon: Container(
+                                  decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(16)),
+                                  padding: const EdgeInsets.all(16),
+                                  child: Icon(Icons.work_rounded, color: Theme.of(context).colorScheme.primary, size: 40),
+                                ),
+                                applicationLegalese: '© 2026 PalCareer Team.\nتم التطوير من أجل مساعدة الشباب الفلسطيني في إيجاد فرص عمل بكفاءة وسهولة.',
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.logout_rounded, size: 22),
+                        label: Text(l10n.logoutBtn, style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.errorContainer.withOpacity(0.5),
+                          foregroundColor: Theme.of(context).colorScheme.error,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        ),
+                        onPressed: () async {
+                          try {
+                            context.go('/login');
+                            AppToast.showInfo(context, 'تم تسجيل الخروج بنجاح 👋');
+                            await ref.read(authNotifierProvider.notifier).signOut();
+                          } catch (e) {
+                            debugPrint('Logout error: $e');
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 60),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildFallbackAvatar(BuildContext context, String userName) {
     return Container(
-      width: 100,
-      height: 100,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.secondary,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
+      color: Theme.of(context).colorScheme.primaryContainer,
       alignment: Alignment.center,
       child: Text(
         userName.isNotEmpty ? userName.substring(0, 1) : 'م',
         style: GoogleFonts.cairo(
           fontSize: 40,
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.w800,
         ),
       ),
     );
   }
-}
 
-class _SettingsItemLine extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final Color iconColor;
-  final Widget? trailing;
-  final VoidCallback? onTap;
-
-  const _SettingsItemLine({
-    required this.icon,
-    required this.title,
-    required this.iconColor,
-    this.trailing,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: iconColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: iconColor, size: 20),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  title,
-                  style: GoogleFonts.cairo(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ),
-              if (trailing != null)
-                trailing!
-              else
-                Icon(
-                  Icons.keyboard_arrow_left_rounded,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  size: 20,
-                ),
-            ],
-          ),
-        ),
+  Widget _buildSettingTile({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required Color iconBgColor,
+    required Color iconColor,
+    Widget? trailing,
+    VoidCallback? onTap,
+  }) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      leading: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(color: iconBgColor, borderRadius: BorderRadius.circular(12)),
+        child: Icon(icon, color: iconColor, size: 22),
       ),
+      title: Text(
+        title,
+        style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.w700, color: Theme.of(context).colorScheme.onSurface),
+      ),
+      trailing: trailing ?? Icon(Icons.keyboard_arrow_left_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
+      onTap: onTap,
     );
   }
 }
