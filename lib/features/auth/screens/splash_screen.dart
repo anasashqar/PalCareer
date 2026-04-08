@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repositories/auth_repository.dart';
 import '../../../shared/services/firestore_service.dart';
@@ -221,12 +221,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                           offset: Offset(0, _titleSlideAnimation.value),
                           child: Text(
                             'PalCareer',
-                            style: GoogleFonts.manrope(
+                            style: const TextStyle(
+                              fontFamily: 'Alexandria',
                               fontSize: 44,
                               fontWeight: FontWeight.w800,
-                              color: Theme.of(context).colorScheme.onPrimary,
                               letterSpacing: 1.2,
-                            ),
+                            ).copyWith(color: Theme.of(context).colorScheme.onPrimary),
                           ),
                         ),
                       ),
@@ -236,13 +236,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         opacity: _subtitleFadeAnimation.value,
                         child: Text(
                           'مسارك المهني الموثوق',
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                            fontFamily: 'Alexandria',
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onPrimary.withValues(alpha: 0.9),
                             letterSpacing: 0.5,
+                            color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.9),
                           ),
                         ),
                       ),

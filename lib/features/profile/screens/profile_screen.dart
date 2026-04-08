@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import '../../../../core/providers/settings_provider.dart';
@@ -79,7 +79,7 @@ class ProfileScreen extends ConsumerWidget {
                   const SizedBox(height: 24),
                   Text(
                     'تحديث البيانات',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(fontFamily: 'Alexandria',
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
                       color: Theme.of(context).colorScheme.onSurface,
@@ -91,7 +91,7 @@ class ProfileScreen extends ConsumerWidget {
                     decoration: InputDecoration(
                       labelText: 'الاسم الكامل',
                       prefixIcon: Icon(Icons.person_rounded, color: Theme.of(context).colorScheme.primary),
-                      labelStyle: GoogleFonts.cairo(color: Theme.of(context).colorScheme.outline),
+                      labelStyle: TextStyle(fontFamily: 'Alexandria',color: Theme.of(context).colorScheme.outline),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -113,7 +113,7 @@ class ProfileScreen extends ConsumerWidget {
                         Text(
                           'لتغيير تخصصك واهتماماتك الوظيفية بدقة عالية، يرجى الاستعانة بمرشد المسار المهني',
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(fontFamily: 'Alexandria',
                             fontSize: 14,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w600,
@@ -126,7 +126,7 @@ class ProfileScreen extends ConsumerWidget {
                             context.push('/onboarding');
                           },
                           icon: const Icon(Icons.route_rounded, size: 18),
-                          label: Text('إعادة ضبط المسار المهني', style: GoogleFonts.cairo(fontWeight: FontWeight.bold)),
+                          label: Text('إعادة ضبط المسار المهني', style: TextStyle(fontFamily: 'Alexandria',fontWeight: FontWeight.bold)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).colorScheme.primary,
                             foregroundColor: Colors.white,
@@ -159,7 +159,7 @@ class ProfileScreen extends ConsumerWidget {
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       ),
-                      child: Text('حفظ التغييرات', style: GoogleFonts.cairo(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
+                      child: Text('حفظ التغييرات', style: TextStyle(fontFamily: 'Alexandria',fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],
@@ -250,7 +250,7 @@ class ProfileScreen extends ConsumerWidget {
                         const SizedBox(height: 16),
                         Text(
                           userName,
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(fontFamily: 'Alexandria',
                             fontSize: 24,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
@@ -265,7 +265,7 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                           child: Text(
                             subtitle,
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(fontFamily: 'Alexandria',
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
@@ -294,7 +294,7 @@ class ProfileScreen extends ConsumerWidget {
                   children: [
                     Text(
                       l10n.settingsTitle,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(fontFamily: 'Alexandria',
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
                         color: Theme.of(context).colorScheme.onSurface,
@@ -343,12 +343,12 @@ class ProfileScreen extends ConsumerWidget {
                                         children: [
                                           Icon(Icons.notifications_active_rounded, color: Theme.of(context).colorScheme.primary),
                                           const SizedBox(width: 8),
-                                          Text('تفعيل الإشعارات؟', style: GoogleFonts.cairo(fontSize: 18, fontWeight: FontWeight.bold)),
+                                          Text('تفعيل الإشعارات؟', style: TextStyle(fontFamily: 'Alexandria',fontSize: 18, fontWeight: FontWeight.bold)),
                                         ],
                                       ),
-                                      content: Text('يرغب تطبيق PalCareer في إرسال إشعارات لتنبيهك بالفرص الوظيفية فور توافرها.', style: GoogleFonts.cairo(fontSize: 14)),
+                                      content: Text('يرغب تطبيق PalCareer في إرسال إشعارات لتنبيهك بالفرص الوظيفية فور توافرها.', style: TextStyle(fontFamily: 'Alexandria',fontSize: 14)),
                                       actions: [
-                                        TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('رفض', style: GoogleFonts.cairo(color: Theme.of(context).colorScheme.error))),
+                                        TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('رفض', style: TextStyle(fontFamily: 'Alexandria',color: Theme.of(context).colorScheme.error))),
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Theme.of(context).colorScheme.primary,
@@ -356,7 +356,7 @@ class ProfileScreen extends ConsumerWidget {
                                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                           ),
                                           onPressed: () => Navigator.pop(ctx, true),
-                                          child: Text('سماح', style: GoogleFonts.cairo()),
+                                          child: Text('سماح', style: TextStyle(fontFamily: 'Alexandria',)),
                                         ),
                                       ],
                                     ),
@@ -417,7 +417,7 @@ class ProfileScreen extends ConsumerWidget {
                       height: 56,
                       child: ElevatedButton.icon(
                         icon: const Icon(Icons.logout_rounded, size: 22),
-                        label: Text(l10n.logoutBtn, style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.bold)),
+                        label: Text(l10n.logoutBtn, style: TextStyle(fontFamily: 'Alexandria',fontSize: 16, fontWeight: FontWeight.bold)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).colorScheme.errorContainer.withOpacity(0.5),
                           foregroundColor: Theme.of(context).colorScheme.error,
@@ -452,7 +452,7 @@ class ProfileScreen extends ConsumerWidget {
       alignment: Alignment.center,
       child: Text(
         userName.isNotEmpty ? userName.substring(0, 1) : 'م',
-        style: GoogleFonts.cairo(
+        style: TextStyle(fontFamily: 'Alexandria',
           fontSize: 40,
           color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.w800,
@@ -479,7 +479,7 @@ class ProfileScreen extends ConsumerWidget {
       ),
       title: Text(
         title,
-        style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.w700, color: Theme.of(context).colorScheme.onSurface),
+        style: TextStyle(fontFamily: 'Alexandria',fontSize: 16, fontWeight: FontWeight.w700, color: Theme.of(context).colorScheme.onSurface),
       ),
       trailing: trailing ?? Icon(Icons.keyboard_arrow_left_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
       onTap: onTap,

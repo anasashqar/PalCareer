@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'theme_config.dart';
+
+const String _fontFamily = 'Alexandria';
 
 class AppTheme {
   AppTheme._();
@@ -9,57 +10,24 @@ class AppTheme {
   static ThemeData lightTheme(ThemeConfig config) {
     final baseTheme = ThemeData.light();
 
-    // The Display Voice
-    final headlineTheme = GoogleFonts.manropeTextTheme(baseTheme.textTheme)
-        .copyWith(
-          displayLarge: GoogleFonts.manrope(
-            color: config.onSurface,
-            fontWeight: FontWeight.bold,
-          ),
-          displayMedium: GoogleFonts.manrope(
-            color: config.onSurface,
-            fontWeight: FontWeight.bold,
-          ),
-          displaySmall: GoogleFonts.manrope(
-            color: config.onSurface,
-            fontWeight: FontWeight.bold,
-          ),
-          titleLarge: GoogleFonts.manrope(
-            color: config.onSurface,
-            fontWeight: FontWeight.w600,
-          ),
-          titleMedium: GoogleFonts.manrope(
-            color: config.onSurface,
-            fontWeight: FontWeight.w600,
-          ),
-          titleSmall: GoogleFonts.manrope(
-            color: config.onSurface,
-            fontWeight: FontWeight.w600,
-          ),
-        );
-
-    // The Utility Voice
-    final bodyTheme = GoogleFonts.interTextTheme(headlineTheme).copyWith(
-      bodyLarge: GoogleFonts.inter(color: config.onSurface),
-      bodyMedium: GoogleFonts.inter(color: config.onSurface),
-      bodySmall: GoogleFonts.inter(color: config.onSurfaceVariant),
-      labelLarge: GoogleFonts.inter(
-        color: config.onSurface,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 0.5,
-      ),
-      labelMedium: GoogleFonts.inter(
-        color: config.onSurface,
-        fontWeight: FontWeight.w500,
-      ),
-      labelSmall: GoogleFonts.inter(
-        color: config.onSurfaceVariant,
-        fontWeight: FontWeight.w500,
-      ),
+    final textTheme = baseTheme.textTheme.copyWith(
+      displayLarge: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.bold),
+      displayMedium: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.bold),
+      displaySmall: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.bold),
+      titleLarge: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.w600),
+      titleMedium: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.w600),
+      titleSmall: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.w600),
+      bodyLarge: TextStyle(fontFamily: _fontFamily, color: config.onSurface),
+      bodyMedium: TextStyle(fontFamily: _fontFamily, color: config.onSurface),
+      bodySmall: TextStyle(fontFamily: _fontFamily, color: config.onSurfaceVariant),
+      labelLarge: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.w500, letterSpacing: 0.5),
+      labelMedium: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.w500),
+      labelSmall: TextStyle(fontFamily: _fontFamily, color: config.onSurfaceVariant, fontWeight: FontWeight.w500),
     );
 
     return ThemeData(
       useMaterial3: true,
+      fontFamily: _fontFamily,
       colorScheme: ColorScheme.light(
         primary: config.primary,
         primaryContainer: config.primaryContainer,
@@ -77,16 +45,16 @@ class AppTheme {
         outlineVariant: config.outlineVariant,
       ),
       scaffoldBackgroundColor: config.background,
-      textTheme: bodyTheme,
+      textTheme: textTheme,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: config.primary,
           foregroundColor: config.onPrimary,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.0), // xl rounded corners
+            borderRadius: BorderRadius.circular(24.0),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          textStyle: bodyTheme.labelLarge?.copyWith(
+          textStyle: textTheme.labelLarge?.copyWith(
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
           ),
@@ -102,7 +70,7 @@ class AppTheme {
           side: BorderSide(
             color: config.outlineVariant,
             width: 1,
-          ), // "Ghost Border"
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         ),
       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 
@@ -143,11 +143,11 @@ class _NavBarItem extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 8.0, right: 2.0),
                   child: Text(
                     label,
-                    style: GoogleFonts.cairo(
+                    style: const TextStyle(
+                      fontFamily: 'Alexandria',
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                    ).copyWith(color: Theme.of(context).colorScheme.primary),
                   ),
                 ),
               ),

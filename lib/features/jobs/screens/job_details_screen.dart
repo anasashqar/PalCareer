@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
@@ -9,6 +9,7 @@ import '../widgets/job_card.dart';
 import '../../bookmarks/providers/bookmarks_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class JobDetailsScreen extends ConsumerWidget {
   final JobModel job;
@@ -24,7 +25,7 @@ class JobDetailsScreen extends ConsumerWidget {
           SnackBar(
             content: Text(
               'لا يوجد رابط تقديم متاح لهذه الوظيفة حالياً.',
-              style: GoogleFonts.cairo(),
+              style: TextStyle(fontFamily: 'Alexandria',),
             ),
           ),
         );
@@ -40,7 +41,7 @@ class JobDetailsScreen extends ConsumerWidget {
             SnackBar(
               content: Text(
                 'لا يمكن فتح الرابط الخاص بالوظيفة.',
-                style: GoogleFonts.cairo(),
+                style: TextStyle(fontFamily: 'Alexandria',),
               ),
             ),
           );
@@ -49,7 +50,7 @@ class JobDetailsScreen extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('حدث خطأ: $e', style: GoogleFonts.cairo())),
+          SnackBar(content: Text('حدث خطأ: $e', style: TextStyle(fontFamily: 'Alexandria',))),
         );
       }
     }
@@ -94,7 +95,7 @@ class JobDetailsScreen extends ConsumerWidget {
                       SnackBar(
                         content: Text(
                           'تم نسخ رابط الوظيفة بنجاح 🎉',
-                          style: GoogleFonts.cairo(),
+                          style: TextStyle(fontFamily: 'Alexandria',),
                         ),
                         backgroundColor: Theme.of(context).colorScheme.primary,
                         behavior: SnackBarBehavior.floating,
@@ -198,7 +199,7 @@ class JobDetailsScreen extends ConsumerWidget {
                 Text(
                   job.getLocalizedTitle(langCode),
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(fontFamily: 'Alexandria',
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                     color: Theme.of(context).colorScheme.primary,
@@ -221,7 +222,7 @@ class JobDetailsScreen extends ConsumerWidget {
                     ),
                     child: Text(
                       l10n.newBadge,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(fontFamily: 'Alexandria',
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
                         color: Theme.of(context).colorScheme.secondary,
@@ -234,7 +235,7 @@ class JobDetailsScreen extends ConsumerWidget {
                 Text(
                   job.company,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(fontFamily: 'Alexandria',
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -305,7 +306,7 @@ class JobDetailsScreen extends ConsumerWidget {
               ),
               child: Text(
                 job.getLocalizedDescription(langCode),
-                style: GoogleFonts.cairo(
+                style: TextStyle(fontFamily: 'Alexandria',
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -354,7 +355,7 @@ class JobDetailsScreen extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           req,
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(fontFamily: 'Alexandria',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Theme.of(
@@ -514,7 +515,7 @@ class JobDetailsScreen extends ConsumerWidget {
                       isExpired
                           ? (langCode == 'ar' ? 'انتهى التقديم' : 'Expired')
                           : l10n.applyNowBtn,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(fontFamily: 'Alexandria',
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                       ),
@@ -528,12 +529,15 @@ class JobDetailsScreen extends ConsumerWidget {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
-                    final encodedMessage = Uri.encodeComponent(
-                      'مرحباً، أود التقدم لوظيفة: ${job.getLocalizedTitle('ar')} (ID: ${job.id}) عبر PalCareer',
-                    );
+                    final displayName = FirebaseAuth.instance.currentUser?.displayName ?? '';
+                    final firstName = displayName.split(' ').first;
+                    final nameGreeting = firstName.isNotEmpty ? '، معك $firstName' : '';
+                    
+                    final message = 'مرحباً 👋$nameGreeting\nأود التقدم لوظيفة: *${job.getLocalizedTitle('ar')}*\n🏢 الشركة: ${job.company}\n\nعبر تطبيق PalCareer 🚀';
+                    final encodedMessage = Uri.encodeComponent(message);
                     launchUrl(
                       Uri.parse(
-                        'https://wa.me/970597142475?text=$encodedMessage',
+                        'https://wa.me/972592741718?text=$encodedMessage',
                       ),
                       mode: LaunchMode.externalApplication,
                     );
@@ -556,7 +560,7 @@ class JobDetailsScreen extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Text(
                         langCode == 'ar' ? 'عبر واتساب' : 'WhatsApp',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(fontFamily: 'Alexandria',
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
                         ),
@@ -590,7 +594,7 @@ class JobDetailsScreen extends ConsumerWidget {
         const SizedBox(width: 8),
         Text(
           title,
-          style: GoogleFonts.cairo(
+          style: TextStyle(fontFamily: 'Alexandria',
             fontSize: 18,
             fontWeight: FontWeight.w800,
             color: Theme.of(context).colorScheme.onSurface,
@@ -621,7 +625,7 @@ class JobDetailsScreen extends ConsumerWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(fontFamily: 'Alexandria',
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: Theme.of(context).colorScheme.primary,
@@ -634,7 +638,7 @@ class JobDetailsScreen extends ConsumerWidget {
             const SizedBox(height: 6),
             Text(
               subtitle,
-              style: GoogleFonts.cairo(
+              style: TextStyle(fontFamily: 'Alexandria',
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -679,7 +683,7 @@ class _MetaPill extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.cairo(
+            style: TextStyle(fontFamily: 'Alexandria',
               fontSize: 12,
               fontWeight: FontWeight.w700,
               color: color ?? Theme.of(context).colorScheme.onSurfaceVariant,

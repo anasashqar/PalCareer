@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/notifications_provider.dart';
@@ -50,7 +50,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         surfaceTintColor: Colors.transparent,
         title: Text(
           l10n.notificationsTitle,
-          style: GoogleFonts.cairo(
+          style: TextStyle(
+            fontFamily: 'Alexandria',
             fontSize: 22,
             fontWeight: FontWeight.w800,
             color: Theme.of(context).colorScheme.onSurface,
@@ -101,7 +102,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             const SizedBox(height: 16),
             Text(
               'حدث خطأ في تحميل الإشعارات',
-              style: GoogleFonts.cairo(
+              style: const TextStyle(
+                fontFamily: 'Alexandria',
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -109,7 +111,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             const SizedBox(height: 8),
             ElevatedButton(
               onPressed: () => ref.read(notificationsProvider.notifier).fetchInitial(),
-              child: Text('إعادة المحاولة', style: GoogleFonts.cairo()),
+              child: Text('إعادة المحاولة', style: const TextStyle(fontFamily: 'Alexandria')),
             ),
           ],
         ),
@@ -133,16 +135,17 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'لا توجد إشعارات جديدة',
-                  style: GoogleFonts.cairo(
+                  style: const TextStyle(
+                    fontFamily: 'Alexandria',
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                  ).copyWith(color: Theme.of(context).colorScheme.onSurface),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'سنعلمك عند توفر وظائف تناسب تخصصك',
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                    fontFamily: 'Alexandria',
                     fontSize: 15,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
@@ -253,7 +256,8 @@ class _NotificationTile extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Text(
                     companyInitial,
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(
+                      fontFamily: 'Alexandria',
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
                       color: Theme.of(context).colorScheme.onPrimary,
@@ -273,11 +277,11 @@ class _NotificationTile extends StatelessWidget {
                           Expanded(
                             child: Text(
                               company,
-                              style: GoogleFonts.cairo(
+                              style: const TextStyle(
+                                fontFamily: 'Alexandria',
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                              ).copyWith(color: Theme.of(context).colorScheme.primary),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -296,7 +300,8 @@ class _NotificationTile extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         'وظيفة جديدة: $title',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                          fontFamily: 'Alexandria',
                           fontSize: 15,
                           fontWeight: notif.isUnread ? FontWeight.w800 : FontWeight.w600,
                           color: Theme.of(context).colorScheme.onSurface,
@@ -316,7 +321,8 @@ class _NotificationTile extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             time,
-                            style: GoogleFonts.cairo(
+                            style: TextStyle(
+                              fontFamily: 'Alexandria',
                               fontSize: 12,
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w500,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
@@ -192,7 +192,8 @@ class _JobCardWidgetState extends State<JobCardWidget>
                       ? Icon(jobIcon, color: avatarFgColor, size: 24)
                       : Text(
                           companyInitial,
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(
+                            fontFamily: 'Alexandria',
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
                             color: avatarFgColor,
@@ -207,7 +208,8 @@ class _JobCardWidgetState extends State<JobCardWidget>
                     children: [
                       Text(
                         widget.job.getLocalizedTitle(langCode),
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                          fontFamily: 'Alexandria',
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
                           color: Theme.of(context).colorScheme.onSurface,
@@ -219,14 +221,11 @@ class _JobCardWidgetState extends State<JobCardWidget>
                       const SizedBox(height: 4),
                       Text(
                         '${widget.job.company} • ${widget.job.getLocalizedLocation(langCode)}',
-                        style: GoogleFonts.cairo(
-                          color: isUrgent
-                              ? const Color(0xFFD32F2F)
-                              : Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontWeight: isUrgent
-                              ? FontWeight.bold
-                              : FontWeight.w600,
+                        style: TextStyle(
+                          fontFamily: 'Alexandria',
                           fontSize: 13,
+                          fontWeight: isUrgent ? FontWeight.bold : FontWeight.w600,
+                          color: isUrgent ? const Color(0xFFD32F2F) : Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -302,8 +301,9 @@ class _JobCardWidgetState extends State<JobCardWidget>
                         const SizedBox(width: 4),
                         Text(
                           l10n.newBadge,
-                          style: GoogleFonts.cairo(
-                            color: const Color(0xFF2E7D32),
+                          style: const TextStyle(
+                            fontFamily: 'Alexandria',
+                            color: Color(0xFF2E7D32),
                             fontWeight: FontWeight.w800,
                             fontSize: 11,
                           ),
@@ -333,18 +333,13 @@ class _JobCardWidgetState extends State<JobCardWidget>
                             : (langCode == 'ar'
                                   ? 'ينتهي بعد $daysUntilExpiry يوم'
                                   : 'Expires in ${daysUntilExpiry}d'),
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                          fontFamily: 'Alexandria',
+                          fontSize: 11,
+                          fontWeight: isUrgent ? FontWeight.bold : FontWeight.w600,
                           color: isExpired
                               ? Theme.of(context).colorScheme.error
-                              : (isUrgent
-                                    ? const Color(0xFFD32F2F)
-                                    : Theme.of(
-                                        context,
-                                      ).colorScheme.onSurfaceVariant),
-                          fontWeight: isUrgent
-                              ? FontWeight.bold
-                              : FontWeight.w600,
-                          fontSize: 11,
+                              : (isUrgent ? const Color(0xFFD32F2F) : Theme.of(context).colorScheme.onSurfaceVariant),
                         ),
                       ),
                     ],
@@ -373,11 +368,11 @@ class _MetadataChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.cairo(
+        style: const TextStyle(
+          fontFamily: 'Alexandria',
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
+        ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     );
   }

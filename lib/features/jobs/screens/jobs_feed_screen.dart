@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import '../providers/jobs_provider.dart';
@@ -106,21 +106,19 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                     vertical: 12,
                   ),
                   expandedTitleScale: 1.0,
-                  title: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.jobsHomeTitle,
-                        style: GoogleFonts.cairo(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w800,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          letterSpacing: -0.5,
-                        ),
+                  title: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: langCode == 'ar' ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Text(
+                      l10n.jobsHomeTitle,
+                      style: TextStyle(
+                        fontFamily: 'Alexandria',
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: Theme.of(context).colorScheme.onSurface,
+                        letterSpacing: -0.5,
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -166,7 +164,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                                   hintText: langCode == 'ar'
                                       ? 'بحث عن وظيفة...'
                                       : 'Search jobs...',
-                                  hintStyle: GoogleFonts.cairo(
+                                  hintStyle: TextStyle(fontFamily: 'Alexandria',
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.onSurfaceVariant,
@@ -224,7 +222,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                                     vertical: 14,
                                   ),
                                 ),
-                                style: GoogleFonts.cairo(
+                                style: TextStyle(fontFamily: 'Alexandria',
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.onSurface,
@@ -295,7 +293,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                         const SizedBox(height: 16),
                         Text(
                           langCode == 'ar' ? 'لا توجد نتائج مطابقة لبحثك' : 'No matches found',
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(fontFamily: 'Alexandria',
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -312,7 +310,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                       padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
                       child: Text(
                         langCode == 'ar' ? '🔥 الأنسب لاختياراتك' : '🔥 Top Matches',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(fontFamily: 'Alexandria',
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                           color: Theme.of(context).colorScheme.primary,
@@ -336,7 +334,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                       padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
                       child: Text(
                         langCode == 'ar' ? '💡 مقترحات أخرى في مجالك' : '💡 Suggestions In Your Field',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(fontFamily: 'Alexandria',
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                           color: Theme.of(context).colorScheme.onSurface,
@@ -360,7 +358,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                       padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
                       child: Text(
                         langCode == 'ar' ? '🔭 استكشف وظائف متنوعة' : '🔭 Explore Diverse Jobs',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(fontFamily: 'Alexandria',
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                           color: Theme.of(context).colorScheme.onSurface,
@@ -387,7 +385,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                           : (jobsState.hasRechedEnd && !jobsState.isEmpty
                               ? Text(
                                   langCode == 'ar' ? 'نهاية الوظائف' : 'End of jobs',
-                                  style: GoogleFonts.cairo(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                  style: TextStyle(fontFamily: 'Alexandria',color: Theme.of(context).colorScheme.onSurfaceVariant),
                                 )
                               : const SizedBox.shrink()),
                     ),
@@ -444,7 +442,7 @@ class _FilterSheetContent extends ConsumerWidget {
                 children: [
                   Text(
                     isAr ? 'تصفية متطورة' : 'Advanced Filters',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(fontFamily: 'Alexandria',
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
                       color: Theme.of(context).colorScheme.primary,
@@ -468,7 +466,7 @@ class _FilterSheetContent extends ConsumerWidget {
                       ),
                       child: Text(
                         isAr ? 'مسح الكل' : 'Clear All',
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(fontFamily: 'Alexandria',
                           color: Colors.redAccent,
                           fontWeight: FontWeight.w700,
                         ),
@@ -479,7 +477,7 @@ class _FilterSheetContent extends ConsumerWidget {
               const SizedBox(height: 24),
               Text(
                 isAr ? 'طبيعة العمل' : 'Work Mode',
-                style: GoogleFonts.cairo(
+                style: TextStyle(fontFamily: 'Alexandria',
                   fontWeight: FontWeight.w700,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -512,7 +510,7 @@ class _FilterSheetContent extends ConsumerWidget {
               const SizedBox(height: 24),
               Text(
                 isAr ? 'مستوى الخبرة' : 'Experience Level',
-                style: GoogleFonts.cairo(
+                style: TextStyle(fontFamily: 'Alexandria',
                   fontWeight: FontWeight.w700,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -554,7 +552,7 @@ class _FilterSheetContent extends ConsumerWidget {
               const SizedBox(height: 24),
               Text(
                 isAr ? 'نوع العقد' : 'Contract Type',
-                style: GoogleFonts.cairo(
+                style: TextStyle(fontFamily: 'Alexandria',
                   fontWeight: FontWeight.w700,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -587,7 +585,7 @@ class _FilterSheetContent extends ConsumerWidget {
               const SizedBox(height: 24),
               Text(
                 isAr ? 'تاريخ النشر' : 'Date Posted',
-                style: GoogleFonts.cairo(
+                style: TextStyle(fontFamily: 'Alexandria',
                   fontWeight: FontWeight.w700,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -665,7 +663,7 @@ class _FilterChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.cairo(
+          style: TextStyle(fontFamily: 'Alexandria',
             color: isSelected
                 ? Colors.white
                 : Theme.of(context).colorScheme.onSurface,

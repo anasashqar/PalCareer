@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import '../../jobs/widgets/job_card.dart';
@@ -22,7 +22,7 @@ class BookmarksScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(
           l10n.bookmarksTab,
-          style: GoogleFonts.cairo(
+          style: TextStyle(fontFamily: 'Alexandria',
             fontSize: 20,
             fontWeight: FontWeight.w800,
             color: Theme.of(context).colorScheme.onSurface,
@@ -47,7 +47,7 @@ class BookmarksScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   Text(
                     'لم تقم بحفظ أي وظيفة بعد',
-                    style: GoogleFonts.cairo(
+                    style: TextStyle(fontFamily: 'Alexandria',
                       fontSize: 16,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
@@ -73,7 +73,7 @@ class BookmarksScreen extends ConsumerWidget {
                         const SizedBox(height: 16),
                         Text(
                           'لم تقم بحفظ أي وظيفة بعد',
-                          style: GoogleFonts.cairo(
+                          style: TextStyle(fontFamily: 'Alexandria',
                             fontSize: 16,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w600,

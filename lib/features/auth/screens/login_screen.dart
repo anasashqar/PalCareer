@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:go_router/go_router.dart';
 
 import '../../../l10n/generated/app_localizations.dart';
@@ -99,7 +99,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       if (next.error != null && next.error != previous?.error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(next.error!, style: GoogleFonts.cairo()),
+            content: Text(next.error!, style: const TextStyle(fontFamily: 'Alexandria')),
             backgroundColor: Theme.of(context).colorScheme.error,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -186,20 +186,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           children: [
                             TextSpan(
                               text: AppLocalizations.of(context)!.loginWelcome,
-                              style: GoogleFonts.cairo(
+                              style: const TextStyle(
+                                fontFamily: 'Alexandria',
                                 fontSize: 42,
                                 fontWeight: FontWeight.bold,
                                 height: 1.3,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
+                              ).copyWith(color: Theme.of(context).colorScheme.onSurface),
                             ),
                             TextSpan(
                               text: 'PalCareer',
-                              style: GoogleFonts.manrope(
+                              style: const TextStyle(
+                                fontFamily: 'Alexandria',
                                 fontSize: 44,
                                 fontWeight: FontWeight.w800,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
+                              ).copyWith(color: Theme.of(context).colorScheme.primary),
                             ),
                           ],
                         ),
@@ -216,11 +216,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       opacity: _fadeAnimation2,
                       child: Text(
                         AppLocalizations.of(context)!.loginSubtitle,
-                        style: GoogleFonts.cairo(
+                        style: const TextStyle(
+                          fontFamily: 'Alexandria',
                           fontSize: 18,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           height: 1.6,
-                        ),
+                        ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
                     ),
                   ),
@@ -298,7 +298,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                     const SizedBox(width: 12),
                                     Text(
                                       AppLocalizations.of(context)!.loginGoogle,
-                                      style: GoogleFonts.cairo(
+                                      style: const TextStyle(
+                                        fontFamily: 'Alexandria',
                                         fontSize: 18,
                                         fontWeight: FontWeight.w700,
                                       ),
@@ -320,11 +321,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       child: Text(
                         AppLocalizations.of(context)!.loginTerms,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.cairo(
+                        style: TextStyle(
+                          fontFamily: 'Alexandria',
                           fontSize: 14,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                         ),
                       ),
                     ),

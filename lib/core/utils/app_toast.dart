@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 
 import '../theme/app_colors.dart';
 
@@ -75,7 +75,8 @@ class AppToast {
               Expanded(
                 child: Text(
                   message,
-                  style: GoogleFonts.cairo(
+                  style: TextStyle(
+                    fontFamily: 'Alexandria',
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: Theme.of(context).colorScheme.onSurface,

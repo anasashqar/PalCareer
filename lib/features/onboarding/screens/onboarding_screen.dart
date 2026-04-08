@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:palcareer/l10n/generated/app_localizations.dart';
 
 import '../../../shared/models/career_taxonomy.dart';
@@ -149,7 +149,7 @@ class _StepOneSector extends ConsumerWidget {
             langCode == 'ar'
                 ? 'ما هو قطاعك المهني؟'
                 : 'What is your career sector?', // dynamic if no l10n entry
-            style: GoogleFonts.cairo(
+            style: TextStyle(fontFamily: 'Alexandria',
               fontSize: 26,
               fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.primary,
@@ -161,7 +161,7 @@ class _StepOneSector extends ConsumerWidget {
             langCode == 'ar'
                 ? 'اختر مجالك الرئيسي لنقوم بتخصيص باقي الخيارات.'
                 : 'Select your main field to customize your experience.',
-            style: GoogleFonts.cairo(
+            style: TextStyle(fontFamily: 'Alexandria',
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -195,7 +195,7 @@ class _StepOneSector extends ConsumerWidget {
               style: _primaryButtonStyle(context),
               child: Text(
                 l10n.nextBtn,
-                style: GoogleFonts.cairo(
+                style: TextStyle(fontFamily: 'Alexandria',
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -238,7 +238,7 @@ class _StepTwoSpecialization extends ConsumerWidget {
             langCode == 'ar'
                 ? 'أين تجد نفسك تحديداً؟'
                 : 'Where do you specialize?',
-            style: GoogleFonts.cairo(
+            style: TextStyle(fontFamily: 'Alexandria',
               fontSize: 26,
               fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.primary,
@@ -250,7 +250,7 @@ class _StepTwoSpecialization extends ConsumerWidget {
             langCode == 'ar'
                 ? 'يمكنك اختيار أكثر من تخصص لتنويع فرصك.'
                 : 'You can select multiple specializations.',
-            style: GoogleFonts.cairo(
+            style: TextStyle(fontFamily: 'Alexandria',
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -263,7 +263,7 @@ class _StepTwoSpecialization extends ConsumerWidget {
               langCode == 'ar'
                   ? 'لا يوجد تخصصات متوفرة لهذا القطاع حالياً.'
                   : 'No specializations available.',
-              style: GoogleFonts.cairo(color: Theme.of(context).colorScheme.error),
+              style: TextStyle(fontFamily: 'Alexandria',color: Theme.of(context).colorScheme.error),
             )
           else
             Wrap(
@@ -288,7 +288,7 @@ class _StepTwoSpecialization extends ConsumerWidget {
               style: _primaryButtonStyle(context),
               child: Text(
                 l10n.nextBtn,
-                style: GoogleFonts.cairo(
+                style: TextStyle(fontFamily: 'Alexandria',
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
@@ -346,7 +346,7 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
         children: [
           Text(
             langCode == 'ar' ? 'الخطوة الأخيرة!' : 'Final Step!',
-            style: GoogleFonts.cairo(
+            style: TextStyle(fontFamily: 'Alexandria',
               fontSize: 26,
               fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.primary,
@@ -358,7 +358,7 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
             langCode == 'ar'
                 ? 'أخبرنا عن مستواك وتفضيلات العمل لتصلك الفرص المناسبة.'
                 : 'Share your level and work preferences.',
-            style: GoogleFonts.cairo(
+            style: TextStyle(fontFamily: 'Alexandria',
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -442,7 +442,7 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
                     )
                   : Text(
                       l10n.saveFinishBtn,
-                      style: GoogleFonts.cairo(
+                      style: TextStyle(fontFamily: 'Alexandria',
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -498,7 +498,7 @@ class _SectionHeader extends StatelessWidget {
         Expanded(
           child: Text(
             title,
-            style: GoogleFonts.cairo(
+            style: TextStyle(fontFamily: 'Alexandria',
               fontSize: 17,
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface,
@@ -581,7 +581,7 @@ class _SelectionCard extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.cairo(
+                style: TextStyle(fontFamily: 'Alexandria',
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                   color: isSelected
@@ -644,7 +644,7 @@ class _SelectionCardSimple extends StatelessWidget {
         child: Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.cairo(
+          style: TextStyle(fontFamily: 'Alexandria',
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
             color: isSelected
@@ -704,7 +704,7 @@ class _TagCard extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.cairo(
+          style: TextStyle(fontFamily: 'Alexandria',
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
             color: isSelected
