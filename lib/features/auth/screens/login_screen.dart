@@ -96,7 +96,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           '/onboarding',
         ); // or '/home' depending on if it's first login
       }
-      if (next.error != null) {
+      if (next.error != null && next.error != previous?.error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.error!, style: GoogleFonts.cairo()),

@@ -17,11 +17,16 @@ class AuthState {
     this.error,
   });
 
-  AuthState copyWith({bool? isLoading, bool? isAuthenticated, String? error}) {
+  AuthState copyWith({
+    bool? isLoading,
+    bool? isAuthenticated,
+    String? error,
+    bool clearError = false,
+  }) {
     return AuthState(
       isLoading: isLoading ?? this.isLoading,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
-      error: error ?? this.error,
+      error: clearError ? null : (error ?? this.error),
     );
   }
 }
@@ -40,7 +45,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> signInWithGoogle() async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true, clearError: true);
     try {
       await _repository.signInWithGoogle();
 
@@ -77,9 +82,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
         } catch (e) {
           debugPrint('Could not initialize user profile: $e');
         }
+        
+        state = state.copyWith(isLoading: false, isAuthenticated: true);
+      } else {
+         // User canceled sign-in
+         state = state.copyWith(isLoading: false);
       }
-
-      state = state.copyWith(isLoading: false, isAuthenticated: true);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }

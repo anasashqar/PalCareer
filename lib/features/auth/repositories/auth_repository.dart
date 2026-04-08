@@ -28,12 +28,16 @@ class FirebaseAuthRepository implements AuthRepository {
       if (kIsWeb) {
         // Use Firebase Auth native web popup instead of google_sign_in package
         final googleProvider = GoogleAuthProvider();
-        return await _firebaseAuth.signInWithPopup(googleProvider);
+        return await _firebaseAuth.signInWithPopup(googleProvider).timeout(const Duration(seconds: 45));
       }
 
+      // Cleanup any previous stuck sessions before attempting a new sign in
+      try {
+        await _googleSignIn.signOut();
+      } catch (_) {}
+
       // Prompt user to select Google Account (For Android/iOS)
-      final GoogleSignInAccount googleUser = await _googleSignIn
-          .authenticate();
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate().timeout(const Duration(seconds: 45));
 
       // Obtain the identity details (idToken)
       final GoogleSignInAuthentication googleAuth = googleUser.authentication;
@@ -42,7 +46,7 @@ class FirebaseAuthRepository implements AuthRepository {
       final authResult = await googleUser.authorizationClient.authorizeScopes([
         'email',
         'profile',
-      ]);
+      ]).timeout(const Duration(seconds: 45));
 
       // Create a new credential
       final AuthCredential credential = GoogleAuthProvider.credential(
@@ -51,12 +55,12 @@ class FirebaseAuthRepository implements AuthRepository {
       );
 
       // Sign in to Firebase with the credential
-      return await _firebaseAuth.signInWithCredential(credential);
+      return await _firebaseAuth.signInWithCredential(credential).timeout(const Duration(seconds: 45));
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
     } catch (e) {
-      if (e.toString().contains('تم إلغاء')) {
-        rethrow;
+      if (e.toString().contains('تم إلغاء') || e.toString().contains('sign_in_canceled')) {
+        throw Exception('تم إلغاء تسجيل الدخول');
       }
       throw Exception(
         'حدث خطأ أثناء الاتصال بجوجل. تأكد من اتصالك بالإنترنت ($e)',
@@ -68,6 +72,7 @@ class FirebaseAuthRepository implements AuthRepository {
   Future<void> signOut() async {
     try {
       try {
+        await _googleSignIn.disconnect();
         await _googleSignIn.signOut();
       } catch (_) {
         // Ignore Google Sign In errors, we just want to clear Firebase Auth
