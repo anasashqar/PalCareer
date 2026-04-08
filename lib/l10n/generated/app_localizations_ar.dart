@@ -134,4 +134,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get bookmarksTab => 'محفوظاتي';
+
+  @override
+  String get loginWelcome => 'مرحباً بك في\n';
+
+  @override
+  String get loginSubtitle =>
+      'اكتشف الوظائف التي تناسب مسارك المهني\nبذكاء وسهولة.';
+
+  @override
+  String get loginGoogle => 'المتابعة باستخدام Google';
+
+  @override
+  String get loginTerms => 'بتسجيلك أنت توافق على شروطنا وسياسة الخصوصية.';
 }

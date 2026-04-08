@@ -349,6 +349,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saved'**
   String get bookmarksTab;
+
+  /// No description provided for @loginWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to\n'**
+  String get loginWelcome;
+
+  /// No description provided for @loginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover jobs that fit your career path\nsmartly and easily.'**
+  String get loginSubtitle;
+
+  /// No description provided for @loginGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get loginGoogle;
+
+  /// No description provided for @loginTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'By signing in, you agree to our terms and privacy policy.'**
+  String get loginTerms;
 }
 
 class _AppLocalizationsDelegate

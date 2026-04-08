@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../l10n/generated/app_localizations.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -184,7 +185,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: 'مرحباً بك في\n',
+                              text: AppLocalizations.of(context)!.loginWelcome,
                               style: GoogleFonts.cairo(
                                 fontSize: 42,
                                 fontWeight: FontWeight.bold,
@@ -214,7 +215,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     child: FadeTransition(
                       opacity: _fadeAnimation2,
                       child: Text(
-                        'اكتشف الوظائف التي تناسب مسارك المهني\nبذكاء وسهولة.',
+                        AppLocalizations.of(context)!.loginSubtitle,
                         style: GoogleFonts.cairo(
                           fontSize: 18,
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -296,7 +297,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                     ),
                                     const SizedBox(width: 12),
                                     Text(
-                                      'المتابعة باستخدام Google',
+                                      AppLocalizations.of(context)!.loginGoogle,
                                       style: GoogleFonts.cairo(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w700,
@@ -317,7 +318,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                     child: FadeTransition(
                       opacity: _fadeAnimation3,
                       child: Text(
-                        'بتسجيلك أنت توافق على شروطنا وسياسة الخصوصية.',
+                        AppLocalizations.of(context)!.loginTerms,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.cairo(
                           fontSize: 14,

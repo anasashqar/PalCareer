@@ -41,5 +41,9 @@
   "logoutBtn": "تسجيل الخروج",
   "homeTab": "الرئيسية",
   "profileTab": "حسابي",
-  "bookmarksTab": "محفوظاتي"
+  "bookmarksTab": "محفوظاتي",
+  "loginWelcome": "مرحباً بك في\n",
+  "loginSubtitle": "اكتشف الوظائف التي تناسب مسارك المهني\nبذكاء وسهولة.",
+  "loginGoogle": "المتابعة باستخدام Google",
+  "loginTerms": "بتسجيلك أنت توافق على شروطنا وسياسة الخصوصية."
 }

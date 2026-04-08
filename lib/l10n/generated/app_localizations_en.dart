@@ -134,4 +134,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bookmarksTab => 'Saved';
+
+  @override
+  String get loginWelcome => 'Welcome to\n';
+
+  @override
+  String get loginSubtitle =>
+      'Discover jobs that fit your career path\nsmartly and easily.';
+
+  @override
+  String get loginGoogle => 'Continue with Google';
+
+  @override
+  String get loginTerms =>
+      'By signing in, you agree to our terms and privacy policy.';
 }

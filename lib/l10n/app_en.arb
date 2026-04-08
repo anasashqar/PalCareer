@@ -41,5 +41,9 @@
   "logoutBtn": "Logout",
   "homeTab": "Home",
   "profileTab": "Profile",
-  "bookmarksTab": "Saved"
+  "bookmarksTab": "Saved",
+  "loginWelcome": "Welcome to\n",
+  "loginSubtitle": "Discover jobs that fit your career path\nsmartly and easily.",
+  "loginGoogle": "Continue with Google",
+  "loginTerms": "By signing in, you agree to our terms and privacy policy."
 }
