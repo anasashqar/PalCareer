@@ -188,7 +188,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               text: AppLocalizations.of(context)!.loginWelcome,
                               style: const TextStyle(
                                 fontFamily: 'Alexandria',
-                                fontSize: 42,
+                                fontSize: 32,
                                 fontWeight: FontWeight.bold,
                                 height: 1.3,
                               ).copyWith(color: Theme.of(context).colorScheme.onSurface),
@@ -197,7 +197,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               text: 'PalCareer',
                               style: const TextStyle(
                                 fontFamily: 'Alexandria',
-                                fontSize: 44,
+                                fontSize: 34,
                                 fontWeight: FontWeight.w800,
                               ).copyWith(color: Theme.of(context).colorScheme.primary),
                             ),
@@ -218,7 +218,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                         AppLocalizations.of(context)!.loginSubtitle,
                         style: const TextStyle(
                           fontFamily: 'Alexandria',
-                          fontSize: 18,
+                          fontSize: 15,
                           height: 1.6,
                         ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
@@ -300,7 +300,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                       AppLocalizations.of(context)!.loginGoogle,
                                       style: const TextStyle(
                                         fontFamily: 'Alexandria',
-                                        fontSize: 18,
+                                        fontSize: 15,
                                         fontWeight: FontWeight.w700,
                                       ),
                                     ),

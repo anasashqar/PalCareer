@@ -223,7 +223,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                             'PalCareer',
                             style: const TextStyle(
                               fontFamily: 'Alexandria',
-                              fontSize: 44,
+                              fontSize: 36,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.2,
                             ).copyWith(color: Theme.of(context).colorScheme.onPrimary),
@@ -238,7 +238,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                           'مسارك المهني الموثوق',
                           style: TextStyle(
                             fontFamily: 'Alexandria',
-                            fontSize: 18,
+                            fontSize: 15,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 0.5,
                             color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.9),

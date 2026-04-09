@@ -150,7 +150,7 @@ class _StepOneSector extends ConsumerWidget {
                 ? 'ما هو قطاعك المهني؟'
                 : 'What is your career sector?', // dynamic if no l10n entry
             style: TextStyle(fontFamily: 'Alexandria',
-              fontSize: 26,
+              fontSize: 22,
               fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.primary,
               height: 1.3,
@@ -162,7 +162,7 @@ class _StepOneSector extends ConsumerWidget {
                 ? 'اختر مجالك الرئيسي لنقوم بتخصيص باقي الخيارات.'
                 : 'Select your main field to customize your experience.',
             style: TextStyle(fontFamily: 'Alexandria',
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -197,7 +197,7 @@ class _StepOneSector extends ConsumerWidget {
                 l10n.nextBtn,
                 style: const TextStyle(fontFamily: 'Alexandria',
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 14,
                 ),
               ),
             ),
@@ -239,7 +239,7 @@ class _StepTwoSpecialization extends ConsumerWidget {
                 ? 'أين تجد نفسك تحديداً؟'
                 : 'Where do you specialize?',
             style: TextStyle(fontFamily: 'Alexandria',
-              fontSize: 26,
+              fontSize: 22,
               fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.primary,
               height: 1.3,
@@ -347,7 +347,7 @@ class _StepThreePreferencesState extends ConsumerState<_StepThreePreferences> {
           Text(
             langCode == 'ar' ? 'الخطوة الأخيرة!' : 'Final Step!',
             style: TextStyle(fontFamily: 'Alexandria',
-              fontSize: 26,
+              fontSize: 22,
               fontWeight: FontWeight.w800,
               color: Theme.of(context).colorScheme.primary,
               height: 1.3,
@@ -499,7 +499,7 @@ class _SectionHeader extends StatelessWidget {
           child: Text(
             title,
             style: TextStyle(fontFamily: 'Alexandria',
-              fontSize: 17,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
               color: Theme.of(context).colorScheme.onSurface,
             ),
@@ -582,7 +582,7 @@ class _SelectionCard extends StatelessWidget {
               child: Text(
                 label,
                 style: TextStyle(fontFamily: 'Alexandria',
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                   color: isSelected
                       ? Theme.of(context).colorScheme.onSurface

@@ -2,6 +2,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:go_router/go_router.dart';
+import '../router/app_router.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -27,9 +29,35 @@ class FirebaseMessagingService {
     String? token = await _fcm.getToken();
     debugPrint('📱 MY TOKEN IS: $token');
 
+    // Handle tapping on notification when app is in background
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      _handleMessageTap(message);
+    });
+
+    // Handle notification when app is terminated
+    final initialMessage = await _fcm.getInitialMessage();
+    if (initialMessage != null) {
+      // Delay navigation slightly to let the router and root widget mount
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        _handleMessageTap(initialMessage);
+      });
+    }
+
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('Foreground Message: ${message.notification?.title}');
     });
+  }
+
+  void _handleMessageTap(RemoteMessage message) {
+    debugPrint('Message clicked! Data: ${message.data}');
+    final String? jobId = message.data['jobId'] ?? message.data['id'];
+    
+    if (jobId != null && jobId.isNotEmpty) {
+      final context = rootNavigatorKey.currentContext;
+      if (context != null) {
+        context.push('/job-details?id=$jobId');
+      }
+    }
   }
 
   /// Ensures user is subscribed ONLY to their relevant sector topic

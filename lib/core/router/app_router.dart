@@ -1,6 +1,7 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/splash_screen.dart';
@@ -24,10 +25,13 @@ class RouterNotifier extends ChangeNotifier {
   }
 }
 
+final rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final appRouterProvider = Provider<GoRouter>((ref) {
   final notifier = RouterNotifier(ref);
 
   return GoRouter(
+    navigatorKey: rootNavigatorKey,
     initialLocation: '/',
     refreshListenable: notifier,
     redirect: (context, state) {
@@ -81,8 +85,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/job-details',
         builder: (context, state) {
-          final job = state.extra as JobModel;
-          return JobDetailsScreen(job: job);
+          final job = state.extra as JobModel?;
+          final jobId = state.uri.queryParameters['id'];
+          if (job != null) {
+            return JobDetailsScreen(job: job);
+          } else if (jobId != null) {
+            return _JobLoaderWrapper(jobId: jobId);
+          }
+          return const Scaffold(body: Center(child: Text('Not found')));
         },
       ),
       GoRoute(
@@ -92,3 +102,42 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
+class _JobLoaderWrapper extends StatelessWidget {
+  final String jobId;
+  const _JobLoaderWrapper({required this.jobId});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<JobModel?>(
+      future: _fetchJob(jobId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('...'), backgroundColor: Colors.transparent),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+          return Scaffold(
+            appBar: AppBar(backgroundColor: Colors.transparent),
+            body: Center(child: Text('Could not load job: ${snapshot.error ?? 'Not found'}')),
+          );
+        }
+        return JobDetailsScreen(job: snapshot.data!);
+      },
+    );
+  }
+
+  Future<JobModel?> _fetchJob(String id) async {
+    try {
+      final doc = await FirebaseFirestore.instance.collection('jobs').doc(id).get();
+      if (doc.exists) {
+        return JobModel.fromMap(doc.data()!, doc.id);
+      }
+    } catch (e) {
+      debugPrint('Error fetching job: $e');
+    }
+    return null;
+  }
+}

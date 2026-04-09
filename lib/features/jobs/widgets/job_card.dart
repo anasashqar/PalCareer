@@ -194,7 +194,7 @@ class _JobCardWidgetState extends State<JobCardWidget>
                           companyInitial,
                           style: TextStyle(
                             fontFamily: 'Alexandria',
-                            fontSize: 20,
+                            fontSize: 17,
                             fontWeight: FontWeight.w800,
                             color: avatarFgColor,
                           ),

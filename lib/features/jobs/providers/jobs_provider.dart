@@ -142,18 +142,31 @@ class JobsNotifier extends Notifier<JobsState> {
 
       // 1 & 2. Fetch Top Tiers (Only on initial load, not pagination)
       if (!fetchMore && user != null) {
+        debugPrint('═══ Jobs Fetch Debug ═══');
+        debugPrint('User preferredCategoryIds: ${user.preferredCategoryIds}');
+        debugPrint('User preferredSubCategoryIds: ${user.preferredSubCategoryIds}');
+
         // --- Best Matches ---
         if (user.preferredSubCategoryIds.isNotEmpty) {
           try {
             final chunks = user.preferredSubCategoryIds.take(10).toList();
+            debugPrint('Querying Best Matches with subCategoryIds: $chunks');
             final snap = await firestore.collection(FirestoreKeys.jobsCollection)
                 .where('isActive', isEqualTo: true)
                 .where('subCategoryId', whereIn: chunks)
                 .limit(30) // Fallback limit to prevent giant reads
                 .get();
+            debugPrint('Best Matches raw results: ${snap.docs.length} jobs found');
+            if (snap.docs.isNotEmpty) {
+              for (var doc in snap.docs.take(3)) {
+                final data = doc.data();
+                debugPrint('  → Job "${data['title']?['ar'] ?? data['title']?['en']}" | categoryId="${data['categoryId']}" | subCategoryId="${data['subCategoryId']}"');
+              }
+            }
             var list = snap.docs.map((d) => JobModel.fromMap(d.data(), d.id)).toList();
             list.sort((a, b) => b.postedAt.compareTo(a.postedAt));
             newBestMatches = list.where(passesLocalFilters).take(10).toList();
+            debugPrint('Best Matches after filters: ${newBestMatches.length}');
           } catch(e) { debugPrint('Best Matches Error: $e'); }
         }
 
@@ -161,18 +174,34 @@ class JobsNotifier extends Notifier<JobsState> {
         if (user.preferredCategoryIds.isNotEmpty) {
           try {
             final chunks = user.preferredCategoryIds.take(10).toList();
+            debugPrint('Querying Good Matches with categoryIds: $chunks');
             final snap = await firestore.collection(FirestoreKeys.jobsCollection)
                 .where('isActive', isEqualTo: true)
                 .where('categoryId', whereIn: chunks)
                 .limit(40)
                 .get();
+            debugPrint('Good Matches raw results: ${snap.docs.length} jobs found');
+            if (snap.docs.isEmpty) {
+              // Extra debug: fetch ANY active jobs to see what categoryIds exist
+              debugPrint('⚠️ No Good Matches found! Sampling existing categoryIds...');
+              final sampleSnap = await firestore.collection(FirestoreKeys.jobsCollection)
+                  .where('isActive', isEqualTo: true)
+                  .limit(10)
+                  .get();
+              final sampleCategories = sampleSnap.docs.map((d) => (d.data())['categoryId']).toSet();
+              debugPrint('Existing categoryIds in DB: $sampleCategories');
+              debugPrint('Your query was looking for: $chunks');
+              debugPrint('Possible fix: ensure jobs categoryId matches taxonomy sector id');
+            }
             var list = snap.docs.map((d) => JobModel.fromMap(d.data(), d.id)).toList();
             list.sort((a, b) => b.postedAt.compareTo(a.postedAt));
             // Exclude jobs already in Best Matches
             final bestIds = newBestMatches.map((e) => e.id).toSet();
             newGoodMatches = list.where((j) => passesLocalFilters(j) && !bestIds.contains(j.id)).take(15).toList();
+            debugPrint('Good Matches after filters: ${newGoodMatches.length}');
           } catch(e) { debugPrint('Good Matches Error: $e'); }
         }
+        debugPrint('═══ End Jobs Debug ═══');
       } // End of top tiers fetch
 
       // 3. Fetch Diverse / Other Jobs (Paginated Stream)

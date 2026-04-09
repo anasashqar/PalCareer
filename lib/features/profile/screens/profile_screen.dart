@@ -78,7 +78,7 @@ class ProfileScreen extends ConsumerWidget {
                   Text(
                     'تحديث البيانات',
                     style: TextStyle(fontFamily: 'Alexandria',
-                      fontSize: 22,
+                      fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
@@ -157,7 +157,7 @@ class ProfileScreen extends ConsumerWidget {
                         elevation: 0,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       ),
-                      child: const Text('حفظ التغييرات', style: TextStyle(fontFamily: 'Alexandria',fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
+                      child: const Text('حفظ التغييرات', style: TextStyle(fontFamily: 'Alexandria',fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],
@@ -249,7 +249,7 @@ class ProfileScreen extends ConsumerWidget {
                         Text(
                           userName,
                           style: const TextStyle(fontFamily: 'Alexandria',
-                            fontSize: 24,
+                            fontSize: 20,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
                           ),
@@ -293,7 +293,7 @@ class ProfileScreen extends ConsumerWidget {
                     Text(
                       l10n.settingsTitle,
                       style: TextStyle(fontFamily: 'Alexandria',
-                        fontSize: 20,
+                        fontSize: 17,
                         fontWeight: FontWeight.w800,
                         color: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -415,7 +415,7 @@ class ProfileScreen extends ConsumerWidget {
                       height: 56,
                       child: ElevatedButton.icon(
                         icon: const Icon(Icons.logout_rounded, size: 22),
-                        label: Text(l10n.logoutBtn, style: const TextStyle(fontFamily: 'Alexandria',fontSize: 16, fontWeight: FontWeight.bold)),
+                        label: Text(l10n.logoutBtn, style: const TextStyle(fontFamily: 'Alexandria',fontSize: 14, fontWeight: FontWeight.bold)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.5),
                           foregroundColor: Theme.of(context).colorScheme.error,
@@ -433,7 +433,7 @@ class ProfileScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-                    const SizedBox(height: 60),
+                    const SizedBox(height: 100),
                   ],
                 ),
               ),
@@ -477,7 +477,7 @@ class ProfileScreen extends ConsumerWidget {
       ),
       title: Text(
         title,
-        style: TextStyle(fontFamily: 'Alexandria',fontSize: 16, fontWeight: FontWeight.w700, color: Theme.of(context).colorScheme.onSurface),
+        style: TextStyle(fontFamily: 'Alexandria',fontSize: 14, fontWeight: FontWeight.w700, color: Theme.of(context).colorScheme.onSurface),
       ),
       trailing: trailing ?? Icon(Icons.keyboard_arrow_left_rounded, color: Theme.of(context).colorScheme.onSurfaceVariant),
       onTap: onTap,

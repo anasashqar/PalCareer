@@ -52,7 +52,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           l10n.notificationsTitle,
           style: TextStyle(
             fontFamily: 'Alexandria',
-            fontSize: 22,
+            fontSize: 18,
             fontWeight: FontWeight.w800,
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -137,7 +137,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   'لا توجد إشعارات جديدة',
                   style: const TextStyle(
                     fontFamily: 'Alexandria',
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ).copyWith(color: Theme.of(context).colorScheme.onSurface),
                 ),
@@ -258,7 +258,7 @@ class _NotificationTile extends StatelessWidget {
                     companyInitial,
                     style: TextStyle(
                       fontFamily: 'Alexandria',
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.w800,
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),

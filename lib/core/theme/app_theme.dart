@@ -11,18 +11,18 @@ class AppTheme {
     final baseTheme = ThemeData.light();
 
     final textTheme = baseTheme.textTheme.copyWith(
-      displayLarge: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.bold),
-      displayMedium: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.bold),
-      displaySmall: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.bold),
-      titleLarge: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.w600),
-      titleMedium: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.w600),
-      titleSmall: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.w600),
-      bodyLarge: TextStyle(fontFamily: _fontFamily, color: config.onSurface),
-      bodyMedium: TextStyle(fontFamily: _fontFamily, color: config.onSurface),
-      bodySmall: TextStyle(fontFamily: _fontFamily, color: config.onSurfaceVariant),
-      labelLarge: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.w500, letterSpacing: 0.5),
-      labelMedium: TextStyle(fontFamily: _fontFamily, color: config.onSurface, fontWeight: FontWeight.w500),
-      labelSmall: TextStyle(fontFamily: _fontFamily, color: config.onSurfaceVariant, fontWeight: FontWeight.w500),
+      displayLarge: TextStyle(fontFamily: _fontFamily, fontSize: 28, color: config.onSurface, fontWeight: FontWeight.bold),
+      displayMedium: TextStyle(fontFamily: _fontFamily, fontSize: 24, color: config.onSurface, fontWeight: FontWeight.bold),
+      displaySmall: TextStyle(fontFamily: _fontFamily, fontSize: 20, color: config.onSurface, fontWeight: FontWeight.bold),
+      titleLarge: TextStyle(fontFamily: _fontFamily, fontSize: 18, color: config.onSurface, fontWeight: FontWeight.w600),
+      titleMedium: TextStyle(fontFamily: _fontFamily, fontSize: 15, color: config.onSurface, fontWeight: FontWeight.w600),
+      titleSmall: TextStyle(fontFamily: _fontFamily, fontSize: 13, color: config.onSurface, fontWeight: FontWeight.w600),
+      bodyLarge: TextStyle(fontFamily: _fontFamily, fontSize: 14, color: config.onSurface),
+      bodyMedium: TextStyle(fontFamily: _fontFamily, fontSize: 13, color: config.onSurface),
+      bodySmall: TextStyle(fontFamily: _fontFamily, fontSize: 11, color: config.onSurfaceVariant),
+      labelLarge: TextStyle(fontFamily: _fontFamily, fontSize: 13, color: config.onSurface, fontWeight: FontWeight.w500, letterSpacing: 0.5),
+      labelMedium: TextStyle(fontFamily: _fontFamily, fontSize: 11, color: config.onSurface, fontWeight: FontWeight.w500),
+      labelSmall: TextStyle(fontFamily: _fontFamily, fontSize: 10, color: config.onSurfaceVariant, fontWeight: FontWeight.w500),
     );
 
     return ThemeData(

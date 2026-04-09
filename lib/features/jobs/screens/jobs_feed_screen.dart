@@ -7,6 +7,7 @@ import 'package:palcareer/l10n/generated/app_localizations.dart';
 import '../providers/jobs_provider.dart';
 import '../widgets/job_card.dart';
 import '../widgets/job_card_skeleton.dart';
+import '../../notifications/providers/notifications_provider.dart';
 
 class JobsFeedScreen extends ConsumerStatefulWidget {
   const JobsFeedScreen({super.key});
@@ -91,12 +92,32 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                         ),
                       ],
                     ),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.notifications_none_rounded,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      onPressed: () => context.push('/notifications'),
+                    child: Consumer(
+                      builder: (context, ref, _) {
+                        final notifState = ref.watch(notificationsProvider);
+                        final unreadCount = notifState.notifications.where((n) => n.isUnread).length;
+
+                        return IconButton(
+                          icon: Badge(
+                            isLabelVisible: unreadCount > 0,
+                            label: Text(
+                              unreadCount > 99 ? '99+' : unreadCount.toString(),
+                              style: const TextStyle(
+                                fontFamily: 'Alexandria',
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            backgroundColor: Colors.redAccent,
+                            child: Icon(
+                              Icons.notifications_none_rounded,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          onPressed: () => context.push('/notifications'),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -113,10 +134,10 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                       l10n.jobsHomeTitle,
                       style: TextStyle(
                         fontFamily: 'Alexandria',
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.w800,
                         color: Theme.of(context).colorScheme.onSurface,
-                        letterSpacing: -0.5,
+                        letterSpacing: -0.3,
                       ),
                     ),
                   ),
@@ -294,7 +315,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                         Text(
                           langCode == 'ar' ? 'لا توجد نتائج مطابقة لبحثك' : 'No matches found',
                           style: TextStyle(fontFamily: 'Alexandria',
-                            fontSize: 18,
+                            fontSize: 15,
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -311,7 +332,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                       child: Text(
                         langCode == 'ar' ? '🔥 الأنسب لاختياراتك' : '🔥 Top Matches',
                         style: TextStyle(fontFamily: 'Alexandria',
-                          fontSize: 20,
+                          fontSize: 17,
                           fontWeight: FontWeight.w800,
                           color: Theme.of(context).colorScheme.primary,
                         ),
@@ -335,7 +356,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                       child: Text(
                         langCode == 'ar' ? '💡 مقترحات أخرى في مجالك' : '💡 Suggestions In Your Field',
                         style: TextStyle(fontFamily: 'Alexandria',
-                          fontSize: 20,
+                          fontSize: 17,
                           fontWeight: FontWeight.w800,
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -359,7 +380,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                       child: Text(
                         langCode == 'ar' ? '🔭 استكشف وظائف متنوعة' : '🔭 Explore Diverse Jobs',
                         style: TextStyle(fontFamily: 'Alexandria',
-                          fontSize: 20,
+                          fontSize: 17,
                           fontWeight: FontWeight.w800,
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -379,7 +400,7 @@ class _JobsFeedScreenState extends ConsumerState<JobsFeedScreen> {
                 SliverToBoxAdapter(
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(24.0),
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 100),
                       child: jobsState.isFetchingMore
                           ? const CircularProgressIndicator()
                           : (jobsState.hasRechedEnd && !jobsState.isEmpty
@@ -443,7 +464,7 @@ class _FilterSheetContent extends ConsumerWidget {
                   Text(
                     isAr ? 'تصفية متطورة' : 'Advanced Filters',
                     style: TextStyle(fontFamily: 'Alexandria',
-                      fontSize: 20,
+                      fontSize: 17,
                       fontWeight: FontWeight.w800,
                       color: Theme.of(context).colorScheme.primary,
                     ),

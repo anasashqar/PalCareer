@@ -23,7 +23,7 @@ class BookmarksScreen extends ConsumerWidget {
         title: Text(
           l10n.bookmarksTab,
           style: TextStyle(fontFamily: 'Alexandria',
-            fontSize: 20,
+            fontSize: 17,
             fontWeight: FontWeight.w800,
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -85,7 +85,7 @@ class BookmarksScreen extends ConsumerWidget {
                 }
 
                 return ListView.builder(
-                  padding: const EdgeInsets.only(top: 16, bottom: 32),
+                  padding: const EdgeInsets.only(top: 16, bottom: 100),
                   physics: const BouncingScrollPhysics(),
                   itemCount: savedJobs.length,
                   itemBuilder: (context, index) {
