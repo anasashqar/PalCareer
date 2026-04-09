@@ -59,6 +59,13 @@ lib/
 
 ---
 
+## 📄 الوثائق (Documents)
+يمكن العثور على الوثائق الإضافية وخطط العمل في مجلد `docs/`:
+- **[DASHBOARD_DATA_SCHEMA.md](file:///c:/Projects/PalCareer/docs/DASHBOARD_DATA_SCHEMA.md):** دليل هيكلية البيانات لمبرمج لوحة التحكم.
+- **[multi_category_plan.md](file:///c:/Projects/PalCareer/docs/multi_category_plan.md):** خطة تطوير ميزة تعدد الأقسام للوظائف.
+
+---
+
 ## 🚧 الحالة الحالية (Project Status)
 
 تجاوز التطبيق مرحلة الواجهات الوهمية (Mock) ودخل مرحلة الربط المتقدم بـ Firebase حيث تم الانتهاء من:
